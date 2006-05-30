@@ -1,0 +1,7 @@
+- use logger
+- commands:
+    - cleanup function - move not used files to trash
+    + copy - copy additional files like css, js and images
+    + generate - generate gallery 
+    + validate - validate XHTML files
+    - all - all above: copy, generate, cleanup

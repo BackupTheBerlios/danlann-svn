@@ -1,0 +1,51 @@
+#!/usr/bin/python
+
+import sys
+import os
+import os.path
+from ConfigParser import ConfigParser
+
+from danlann import DanlannGenerator
+from danlann.parser import parse
+from danlann.filemanager import FileManager
+
+if len(sys.argv) != 2:
+    print >> sys.stderr, 'usage:\n  %s conf_file.ini' % sys.argv[0]
+    sys.exit(1)
+
+fn = sys.argv[1] # only one parameter is accepted - danlann configuration file
+
+conf = ConfigParser()
+if not conf.read(fn):
+    print >> sys.stderr, '%s: config file %s does not exist' % tuple(sys.argv)
+    sys.exit(1)
+
+# get some configuration globals
+basedir = conf.get('danlann', 'outdir')
+validate = conf.get('danlann', 'validate') == 'True'
+
+# parse input files
+gallery = parse(conf)
+
+# create file manager instance
+fm = FileManager(basedir)
+
+fm.mkdir(fm.basedir)
+fm.copy(conf.get('danlann', 'files'))
+
+# create generator object and generate gallery
+generator = DanlannGenerator(conf, gallery, fm)
+generator.generate()
+
+for dir, subdirs, files in os.walk(basedir):
+    for fn in files:
+        if fn.endswith('.html'):
+
+            fn = os.path.join(dir, fn)
+            fm.formatXML(fn)
+
+            if validate:
+                print 'validating %s' % fn
+                if not fm.validate(fn):
+                    print 'failed: %s' % fn
+                    sys.exit(2)

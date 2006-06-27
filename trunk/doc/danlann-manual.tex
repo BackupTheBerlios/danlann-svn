@@ -1,0 +1,68 @@
+\documentclass[draft]{article}
+
+\usepackage{geometry}
+\usepackage{hyperref}
+
+\geometry{papername=a4paper, margin = 2cm}
+
+\title{Danlann Manual}
+\author{\url{wrobell@pld-linux.org}}
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+Internet and digital cameras save a~lot of time
+if one wants to publish his photos to the masses. Waiting for film
+development, scanning or finding a~publisher are not necessary currently to show
+own little art pieces to other people than family and friends. Just choose
+photos to be published, change size and sharpness and
+upload to a~hosting server on the Internet.
+
+Gallery creation process can be automated in many areas and do not require
+software with sophisticated user interface --- just specify photos and run
+software to perform repeatable tasks... This way Danlann idea was born.
+
+Danlann is a~command line photo web gallery generator.
+It takes text gallery description files and photos as an input and produces 
+nice looking web gallery of photos. Generated web gallery can be
+efficiently uploaded to hosting server using rsync or FTP client with
+mirror capability.
+
+Danlann features
+\begin{itemize}
+\itemsep0pt
+\item gallery can be edited with any text editor as format of input files
+    is easy to understand
+\item supports multiple input files to allow easy maintenance of gallery
+    description files
+\item supports albums and subalbums, a subalbum can be added to many albums
+\item off--line mode (obviously), there is no need to be connected to Internet while
+    editing gallery
+\item easy personalization of a gallery
+    \begin{itemize}
+    \itemsep0pt
+    \item custom CSS styles can be added to override default template
+    \item custom JavaScript files can be added to add bells and whistles
+    \item own templates in Python language can be developed
+    \end{itemize}
+\item photo and album navigation --- previous photo, next photo, previous
+    album, next album, parent album
+\item customizable EXIF
+\item gallery files consist of XHTML strict static files
+\end{itemize}
+
+\section{First Gallery}
+
+\section{Input Files}
+- gallery file
+- albums files
+- configuration files
+
+\section{Basic Customization}
+- css
+- js
+
+\section{Advanced Customization}
+\end{document}

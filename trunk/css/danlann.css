@@ -173,6 +173,7 @@ body.view div.footer {
 body {
     color: #dddddd;
     background-color: black;
+    font-size: 10pt;
 }
 
 a {

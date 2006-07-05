@@ -1,7 +1,8 @@
-\documentclass[draft]{article}
+\documentclass{article}
 
 \usepackage{geometry}
 \usepackage{hyperref}
+\usepackage{listings}
 
 \geometry{papername=a4paper, margin = 2cm}
 
@@ -56,13 +57,32 @@ Danlann features
 \section{First Gallery}
 
 \section{Input Files}
-- gallery file
-- albums files
-- configuration files
+Danlann input file defines albums and their content like subalbums and
+photos. Multiple files are accepted for easy maintenance of gallery.
+
+Input file consist of lines. Every line can contain album definition,
+subalbum or photo. A~line can be also a~comment or it can be empty.
+
+Grammar of input file is defined below.
+
+\begin{lstlisting}
+line      := album | albumref | photo | comment
+album     := dir ':' title [';' desc]
+subalbum  := dir
+photo     := file [';' title [';' desc]]
+title     := string
+desc      := string
+comment   := ^\#.*
+file      := ^[A-Za-z_]+
+dir       := ^/[A-Za-z_/]+
+string    := [^;]+
+\end{lstlisting}
+
+\section{Configuration Files}
 
 \section{Basic Customization}
-- css
-- js
+\subsection{CSS Styles}
+\subsection{JavaScript Effects}
 
 \section{Advanced Customization}
 \end{document}

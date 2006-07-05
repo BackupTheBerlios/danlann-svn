@@ -6,6 +6,7 @@ import os.path
 from ConfigParser import ConfigParser
 
 from danlann import DanlannGenerator
+from danlann.bc import Gallery
 from danlann.parser import parse
 from danlann.filemanager import FileManager
 
@@ -24,8 +25,16 @@ if not conf.read(fn):
 basedir = conf.get('danlann', 'outdir')
 validate = conf.get('danlann', 'validate') == 'True'
 
-# parse input files
-gallery = parse(conf)
+albums = conf.get('danlann', 'albums').split()
+gallery = Gallery()
+gallery.title = conf.get('danlann', 'title')
+gallery.description = conf.get('danlann', 'description')
+
+# read album files
+for fn in albums:
+    f = open(fn)
+    parse(gallery, f)
+    f.close()
 
 # create file manager instance
 fm = FileManager(basedir)

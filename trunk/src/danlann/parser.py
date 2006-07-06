@@ -75,11 +75,22 @@ def p_photo(p):
           | FILE SEMICOLON STRING
           | FILE SEMICOLON STRING SEMICOLON STRING
     """
-    p[0] = p[1]
+    photo = Photo()
+    p[0] = photo
+    photo.file = p[1]
+    if len(p) > 2:
+        photo.title = p[3]
+    else:
+        photo.title = ''
+    if len(p) > 4:
+        photo.description = p[5]
+    __album.photos.append(photo)
+    photo.album = __album
 
 
 
 import yacc
+yacc.yacc()
 
 ########
 from danlann.bc import Gallery, Album, Photo
@@ -99,16 +110,14 @@ def get_album(dir):
     else:
         album = Album()
         album.dir = dir
+        album.gallery = __gallery
         # root album directories do not contain slash,
         # store them in gallery
-        if '/' not in dir:
+        if '/' not in dir[1:]:
             __gallery.subalbums.append(album)
 
     return album
 ########
-
-
-yacc.yacc()
 
 def parse(gallery, f):
     """

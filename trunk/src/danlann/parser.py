@@ -86,6 +86,7 @@ def p_photo(p):
         photo.description = p[5]
     __album.photos.append(photo)
     photo.album = __album
+    photo.gallery = __gallery
 
 
 

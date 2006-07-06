@@ -24,12 +24,10 @@ class Item(Element):
     Basic class for albums and photos.
 
     @ivar gallery:     gallery reference
-    @ivar album:       parent album, can be @C{None}
     """
     def __init__(self):
         super(Item, self).__init__()
         self.gallery     = None
-        self.album       = None
 
 
 

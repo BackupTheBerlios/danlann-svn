@@ -3,7 +3,7 @@ import os
 import os.path
 
 from danlann.template import XHTMLGalleryIndexTemplate, XHTMLAlbumIndexTemplate, XHTMLPhotoTemplate, XHTMLExifTemplate
-from danlann.bc import Album, Photo
+from danlann.bc import Gallery, Album, Photo
 from danlann.filemanager import File
 
 
@@ -94,7 +94,7 @@ class DanlannGenerator(object):
         f.close()
 
         for album in self.gallery.subalbums:
-            self.generateAlbum(album)
+            self.generateAlbum(album, self.gallery)
 
 
     def generateNavigation(self, f, tmpl, item, data, *tmpl_args):
@@ -138,17 +138,15 @@ class DanlannGenerator(object):
         }
 
 
-    def processAlbumNavigation(self, f, album):
+    def processAlbumNavigation(self, f, album, parent):
         def get_fn(album):
             return '%s/%s/index.html' % (album.gallery.rootdir(album), album.dir)
 
-        parent_album = album.album
-        if parent_album:
-            subalbums = parent_album.subalbums
-            ptitle = 'album: %s' % parent_album.title
+        subalbums = parent.subalbums
+        if isinstance(parent, Gallery):
+            ptitle = 'gallery: %s' % parent.title
         else:
-            subalbums = album.gallery.subalbums
-            ptitle = 'gallery: %s' % album.gallery.title
+            ptitle = 'album: %s' % parent.title
 
         data = self.getPrevAndNext(subalbums, album, get_fn)
         data['parent'] = '../index.html'
@@ -178,7 +176,7 @@ class DanlannGenerator(object):
             f.write(apost)
 
 
-    def generateAlbum(self, album):
+    def generateAlbum(self, album, parent):
         self.fm.mkdir(self.getDir(album))
         f = File(self.getFile(album, 'index.html'))
 
@@ -194,7 +192,7 @@ class DanlannGenerator(object):
             f.write(pre)
             f.write(post)
 
-        self.processAlbumNavigation(f, album)
+        self.processAlbumNavigation(f, album, parent)
         self.generateSubalbums(f, album)
 
         if album.photos:
@@ -209,7 +207,7 @@ class DanlannGenerator(object):
         f.close()
 
         for subalbum in album.subalbums:
-            self.generateAlbum(subalbum)
+            self.generateAlbum(subalbum, album)
 
         for photo in album.photos:
             self.generateAlbumPhotos(photo)

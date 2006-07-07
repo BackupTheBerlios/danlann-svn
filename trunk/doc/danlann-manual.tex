@@ -67,15 +67,16 @@ Grammar of input file is defined below.
 
 \begin{lstlisting}
 line      := album | albumref | photo | comment
-album     := dir ':' title [';' desc]
-subalbum  := dir
+album     := slash dir ':' title [';' desc]
+subalbum  := slash dir
 photo     := file [';' title [';' desc]]
 title     := string
 desc      := string
 comment   := ^\#.*
 file      := ^[A-Za-z_]+
-dir       := ^/[A-Za-z_/]+
+dir       := [A-Za-z_/]+
 string    := [^;]+
+slash     := ^/
 \end{lstlisting}
 
 \section{Configuration Files}

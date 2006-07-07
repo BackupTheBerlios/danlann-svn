@@ -7,7 +7,7 @@ from ConfigParser import ConfigParser
 
 from danlann import DanlannGenerator
 from danlann.bc import Gallery
-from danlann.parser import parse
+from danlann.parser import parse, check
 from danlann.filemanager import FileManager
 
 if len(sys.argv) != 2:
@@ -35,6 +35,7 @@ for fn in albums:
     f = open(fn)
     parse(gallery, f)
     f.close()
+check(gallery)
 
 # create file manager instance
 fm = FileManager(basedir)

@@ -14,8 +14,8 @@ class Element(object):
     @ivar description: item description
     """
     def __init__(self):
-        self.title       = None
-        self.description = None
+        self.title       = ''
+        self.description = ''
 
 
 

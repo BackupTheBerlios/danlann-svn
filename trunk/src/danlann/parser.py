@@ -48,15 +48,19 @@ def p_subalbum(p):
     """
     subalbum : DIR
     """
-    album = get_album(p[1])
-    p[0] = album
+    subalbum = get_album(p[1])
+    p[0] = subalbum
 
     # if album is not stored then save it in references hashtable;
     # function p_album removes it from the references hashtable as it
     # creates the album
-    if album.dir not in __store:
-        __references[album.dir] = album
-    __album.subalbums.append(album)
+    if subalbum.dir not in __store:
+        __references[subalbum.dir] = subalbum
+    __album.subalbums.append(subalbum)
+
+    # subalbum cannot be root album
+    if subalbum in __gallery.subalbums:
+        __gallery.subalbums.remove(subalbum)
 
 
 def p_album(p):
@@ -67,6 +71,10 @@ def p_album(p):
     global __album
 
     album = get_album(p[1])
+
+    if album.dir in __store:
+        raise ParseError('album "%s" already defined' % album.dir)
+
     album.title = p[3]
     if len(p) == 6:
         album.description = p[5]
@@ -93,8 +101,6 @@ def p_photo(p):
     photo.file = p[1]
     if len(p) > 2:
         photo.title = p[3]
-    else:
-        photo.title = ''
     if len(p) > 4:
         photo.description = p[5]
     __album.photos.append(photo)
@@ -104,7 +110,7 @@ def p_photo(p):
 
 
 import yacc
-yacc.yacc()
+yacc.yacc(tabmodule = 'src/danlann/parsertab')
 
 
 
@@ -115,6 +121,7 @@ from danlann.bc import Gallery, Album, Photo
 
 # hashtable of albums (dir: album)
 __store = {}
+
 # hashtable of albums, which are referenced but not yet defined
 # (dir: album)
 __references = {}
@@ -126,7 +133,7 @@ def get_album(dir):
     If album is not found in reference hashtable nor in store, then new
     album is created.
     """
-    dir = os.path.normpath(dir)
+    dir = os.path.normpath(dir)[1:]
     if dir in __references:
         album = __references[dir]
     elif dir in __store:
@@ -136,10 +143,10 @@ def get_album(dir):
         album.dir = dir
         album.gallery = __gallery
 
-        # root album directories do not contain slash,
-        # store them in gallery
-        if '/' not in dir[1:]:
-            __gallery.subalbums.append(album)
+        # add every album to root albums by default;
+        # p_subalbum functions removes an album from __root_albums
+        # set if an album becomes subalbum
+        __gallery.subalbums.append(album)
 
     return album
 
@@ -177,4 +184,42 @@ def parse(gallery, f):
         if line:
             yacc.parse(line)
 
-__all__ = [parse, ParseError]
+
+def reset():
+    """
+    Reset parser. Should be used to parse multiple galleries.
+    """
+    global __store, __references, __album, __gallery, __lineno, __filename
+    __gallery = None
+    __album = None
+    __lineno = 0
+    __filename = None
+    __store = {}
+    __references = {}
+
+
+def check(gallery):
+    """
+    Check if gallery is build in appropriate way:
+      - there should be at least on root album
+      - every album should one or more subalbums or photos
+      - there should be no false references to albums
+    """
+    def check_album(album):
+        if len(album.subalbums) == 0 and len(album.photos) == 0:
+            raise ParseError('album "%s" contains no subalbums nor photos'
+                % album.dir)
+
+    if len(__references) > 0:
+        raise ParseError('unresolved album references found: %s'
+            % ''.join(dir for dir in __references))
+
+    if len(gallery.subalbums) == 0:
+        raise ParseError('no root albums in gallery')
+
+    for album in gallery.subalbums:
+        check_album(album)
+
+
+
+__all__ = [parse, reset, ParseError]

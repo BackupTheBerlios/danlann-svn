@@ -38,10 +38,10 @@ for fn in albums:
 check(gallery)
 
 # create file manager instance
-fm = FileManager(basedir)
+fm = FileManager()
 
 fm.mkdir(fm.basedir)
-fm.copy(conf.get('danlann', 'files'))
+fm.copy(conf.get('danlann', 'files'), basedir, '.svn|CVS|~$|\.swp$')
 
 # create generator object and generate gallery
 generator = DanlannGenerator(conf, gallery, fm)

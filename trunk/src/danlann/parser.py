@@ -110,7 +110,7 @@ def p_photo(p):
 
 
 import yacc
-yacc.yacc(tabmodule = 'src/danlann/parsertab')
+yacc.yacc()
 
 
 

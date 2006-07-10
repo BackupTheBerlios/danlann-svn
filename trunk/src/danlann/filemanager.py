@@ -1,4 +1,6 @@
 import os.path
+import re
+import shutil
 import libxml2
 
 class File(object):
@@ -19,25 +21,39 @@ class File(object):
 
 
 class FileManager(object):
-    def __init__(self, basedir):
-        self.basedir = basedir
-
-
     def mkdir(self, dir):
         if not os.path.exists(dir):
             os.makedirs(dir)
 
 
+    def walk(self, files, destdir, exclude):
+        """
+        @param files:   source files
+        @param destdir: destination directory
+        @param exclude: exclude regular expression
+        """
+        for fn in files.split():
+            fn = os.path.normpath(fn)
+
+            walk = []
+            if os.path.isdir(fn):
+                walk = ((tree[0], tree[2]) for tree in os.walk(fn))
+            elif os.path.isfile(fn):
+                walk = [[os.path.dirname(fn), [os.path.basename(fn)]]]
+            for dir, dir_files in walk:
+                dest = '%s/%s' % (destdir, dir)
+
+                for df in dir_files:
+                    src = '%s/%s' % (dir, df)
+                    if not re.search(exclude, src):
+                        print 'copying %s %s' % (src, dest) # fixme: use logger
+                        yield src, dest
+
+
     def copy(self, files):
-        args = ['cp', '-a']
-        args += files.split()
-        args.append(self.basedir)
-        if not os.fork():
-            os.execlp('cp', *args)
-        else:
-            pid, status = os.wait()
-            if os.WEXITSTATUS(status):
-                raise OSError, 'cannot copy files: %s' % files
+        for src, dest in self.walk(files):
+            self.mkdir(dest)
+            shutil.copy2(src, dest)
 
 
     def getExif(self, fn, headers):

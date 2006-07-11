@@ -30,7 +30,7 @@ class DanlannGenerator(object):
         self.conf = conf
         self.gallery = gallery
         self.inputdirs = self.conf.get('danlann', 'inputdirs').split()
-        self.outdir = fm.basedir
+        self.outdir = conf.get('danlann', 'outdir')
 
         self.exif_headers = ['Image timestamp', 'Exposure time',
             'Aperture', 'Exposure bias', 'Flash', 'Flash bias',

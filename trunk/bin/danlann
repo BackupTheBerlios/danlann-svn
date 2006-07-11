@@ -40,7 +40,7 @@ check(gallery)
 # create file manager instance
 fm = FileManager()
 
-fm.mkdir(fm.basedir)
+fm.mkdir(basedir)
 fm.copy(conf.get('danlann', 'files'), basedir, '.svn|CVS|~$|\.swp$')
 
 # create generator object and generate gallery

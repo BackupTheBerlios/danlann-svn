@@ -3,6 +3,9 @@ import re
 import shutil
 import libxml2
 
+import logging
+log = logging.getLogger('danlann.filemanager')
+
 class File(object):
     def __init__(self, fn):
         self.f = open(fn, 'w')
@@ -28,6 +31,11 @@ class FileManager(object):
 
     def walk(self, files, destdir, exclude):
         """
+        Return iterator of files to be copied.
+        
+        Tuple (src, dest) is returned, where src is path to file and dest
+        is destination directory.
+
         @param files:   source files
         @param destdir: destination directory
         @param exclude: exclude regular expression
@@ -35,23 +43,29 @@ class FileManager(object):
         for fn in files.split():
             fn = os.path.normpath(fn)
 
+            # amount of path elements to skip for destination
+            # as copy css/danlann.css to tmp should result
+            # in tmp/danlann.css instead of tmp/css/danlann.css
+            skip = len(fn.split(os.path.sep)[:-1])
+
             walk = []
             if os.path.isdir(fn):
                 walk = ((tree[0], tree[2]) for tree in os.walk(fn))
             elif os.path.isfile(fn):
                 walk = [[os.path.dirname(fn), [os.path.basename(fn)]]]
+
             for dir, dir_files in walk:
-                dest = '%s/%s' % (destdir, dir)
+                dest = os.path.join(destdir, *dir.split(os.path.sep)[skip:])
 
                 for df in dir_files:
                     src = '%s/%s' % (dir, df)
                     if not re.search(exclude, src):
-                        print 'copying %s %s' % (src, dest) # fixme: use logger
+                        log.debug('copying %s %s' % (src, dest))
                         yield src, dest
 
 
-    def copy(self, files):
-        for src, dest in self.walk(files):
+    def copy(self, files, destdir, exclude):
+        for src, dest in self.walk(files, destdir, exclude):
             self.mkdir(dest)
             shutil.copy2(src, dest)
 

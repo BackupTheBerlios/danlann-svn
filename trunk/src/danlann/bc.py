@@ -74,11 +74,15 @@ class Gallery(Element):
     """
     Gallery representation.
 
-    @ivar subalbums: gallery root albums
+    @ivar title:       gallery title
+    @ivar description: gallery description
+    @ivar subalbums:   gallery root albums
     """
-    def __init__(self):
+    def __init__(self, title, description):
         super(Gallery, self).__init__()
         self.subalbums = []
+        self.title = title
+        self.description = description
 
 
     def reldir(self, dir):

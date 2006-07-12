@@ -1,291 +1,172 @@
-import sys
-import os
-import os.path
+"""
+Danlann processor module.
+"""
 
-from danlann.template import XHTMLGalleryIndexTemplate, XHTMLAlbumIndexTemplate, XHTMLPhotoTemplate, XHTMLExifTemplate
-from danlann.bc import Gallery, Album, Photo
-from danlann.filemanager import File
-
-
-class DanlannGenerator(object):
+class Danlann(object):
     """
-    Gallery generator.
+    Danlann processor reads configuration and creates all necessary objects
+    required for gallery generation.
 
-    @ivar conf: danlann configuration
-    @ivar photo_dirs: danlann image input dir
+    Generating gallery is divided to specific tasks
+        - read configuration
+        - initialize and configure all objects
+            - danlann processor
+            - generator
+            - file manager
+            - gallery
+          after this stage all objects are configured
+        - parse album files; data are stored in gallery data instance
+        - copy files using file manager
+        - generate gallery with generator object
+        - reformat and validate output files if requested
 
-    @ivar inputdirs: gallery input directories
-    @ivar outdir: gallery output dir
-    @ivar gtmpl: gallery template
-    @ivar atmpl: album template
-    @ivar ptmpl: photo template
+    @ivar validate:  validate generated files
+    @ivar outdir:    output dir, all gallery files go to output directory
+    @ivar albums:    list of input album files
+    @ivar files:     list of additional gallery files, which should be
+                     copied to output directory 
+    @ivar exclude:   definition of excluded additional files (regular
+                     expression)
+                     
+    @ivar fm:        file manager
+    @ivar gallery:   gallery data
+    @ivar generator: gallery generator
     """
-    DEFAULT_CONVERT_OPTS = {
-        'thumb':   ['-resize', '128x128>',  '-quality', '90', '-unsharp', '3x3+0.5+0'],
-        'preview': ['-resize', '800x600>',  '-quality', '90', '-unsharp', '3x3+0.5+0'],
-        'view':    ['-resize', '1024x768>', '-quality', '90', '-unsharp', '3x3+0.5+0'],
-    }
+    def __init__(self):
+        self.validate = False
+        self.outdir = None
+        self.albums = []
+        self.files = []
+        self.exclude = '.svn|CVS|~$|\.swp$'
 
-    def __init__(self, conf, gallery, fm):
-        self.conf = conf
-        self.gallery = gallery
-        self.inputdirs = self.conf.get('danlann', 'inputdirs').split()
-        self.outdir = conf.get('danlann', 'outdir')
-
-        self.exif_headers = ['Image timestamp', 'Exposure time',
-            'Aperture', 'Exposure bias', 'Flash', 'Flash bias',
-            'Focal length', 'ISO speed', 'Exposure mode', 'Metering mode',
-            'White balance']
-        if self.conf.has_option('danlann', 'exif'):
-            self.exif_headers = [exif.strip() for exif in self.conf.get('danlann', 'exif').split(',')]
-        #fixme: logger.info('exif data: %s' % self.exif)
-
-        self.gtmpl = XHTMLGalleryIndexTemplate(conf)
-        self.atmpl = XHTMLAlbumIndexTemplate(conf)
-        self.ptmpl = XHTMLPhotoTemplate(conf)
-        self.etmpl = XHTMLExifTemplate(conf)
-
-        self.fm = fm
+        self.fm = None
 
 
-    def getDir(self, album):
-        return os.path.normpath('%s/%s' % (self.outdir, album.dir))
-
-
-    def getFile(self, album, file):
-        return '%s/%s' % (self.getDir(album), file)
-        
-
-    def getPhotoFile(self, photo, photo_type, ext = 'html'):
+    def readConf(self, fn):
         """
-        Return photo filename for given type of photo.
+        Read configuration file.
 
-        For example for dsc_0000 thumbnail we return
+        @param fn: configuration file name
 
-            dsc_0000.thumb.html
+        @return configuration object
+
+        @see ConfigParse
         """
-        return '%s.%s.%s' % (photo.file, photo_type, ext)
+        conf = ConfigParser()
+        if not conf.read(fn):
+            raise ValueError('config file %s does not exist' % fn)
+        return conf
 
 
-    def generate(self):
-        if not os.path.exists(self.outdir):
-            os.makedirs(self.outdir)
+    def initialize(self, conf):
+        """
+        Initialize and configure all required instances like
+            - generator
+            - file manager
+            - gallery
 
-        f = File('%s/index.html' % self.outdir)
+        After this stage all objects should configured including the
+        processor. Therefore processor configuration is set in
+        initialization method, too.
 
-        pre, post = self.gtmpl.body(self.gallery)
-        f.write(pre, post)
-
-        pre, post = self.gtmpl.title(self.gallery)
-        f.write(pre)
-        f.write(post)
-
-        pre, post = self.gtmpl.albums(self.gallery)
-        f.write(pre, post)
-
-        def gen_index(context):
-            for album in context.subalbums:
-                pre, post = self.gtmpl.album(album)
-                f.write(pre)
-                gen_index(album)
-                f.write(post)
-        gen_index(self.gallery)
-
-        f.close()
-
-        for album in self.gallery.subalbums:
-            self.generateAlbum(album, self.gallery)
-
-
-    def generateNavigation(self, f, tmpl, item, data, *tmpl_args):
-        pre, post = tmpl.navigation(item, data, *tmpl_args)
-        f.write(pre)
-        f.write(post)
-
-
-    def getPrevAndNext(self, items, item, f, *args):
-        prev_item = next_item = None
-        prev_url = next_url = None
-        prev_title = next_title = None
-
-        index = items.index(item)
-        if index > 0:
-            prev_item = items[index - 1]
-        if index < len(items) - 1:
-            next_item = items[index + 1]
-
-        if prev_item:
-            prev_url = f(prev_item, *args)
-            prev_title = prev_item.title
-        if next_item:
-            next_url = f(next_item, *args)
-            next_title = next_item.title
-
-        if isinstance(item, Album):
-            next_title = 'next album: %s' % next_title
-            prev_title = 'previous album: %s' % prev_title
-        elif isinstance(item, Photo):
-            next_title = 'next photo: %s' % next_title
-            prev_title = 'previous photo: %s' % prev_title
+        @param conf: configuration object
+        """
+        #
+        # configure processor
+        #
+        if conf.has_option('danlann', 'outdir'):
+            self.outdir = conf.get('danlann', 'outdir')
         else:
-            assert False, 'only Albums and Photos are supported'
+            raise ValueError('no output directory configuration')
 
-        return {
-            'prev_title': prev_title,
-            'prev_item': prev_url,
-            'next_title': next_title,
-            'next_item': next_url,
-        }
+        if conf.has_option('danlann', 'validate'):
+            self.validate = conf.getboolean('danlann', 'validate')
 
-
-    def processAlbumNavigation(self, f, album, parent):
-        def get_fn(album):
-            return '%s/%s/index.html' % (album.gallery.rootdir(album), album.dir)
-
-        subalbums = parent.subalbums
-        if isinstance(parent, Gallery):
-            ptitle = 'gallery: %s' % parent.title
+        if conf.has_option('danlann', 'albums'):
+            self.albums = conf.get('danlann', 'albums').split()
         else:
-            ptitle = 'album: %s' % parent.title
+            raise ValueError('no input album files configuration')
 
-        data = self.getPrevAndNext(subalbums, album, get_fn)
-        data['parent'] = '../index.html'
-        data['parent_title'] = ptitle
-        self.generateNavigation(f, self.atmpl, album, data)
+        if conf.has_option('danlann', 'files'):
+            self.files = conf.get('danlann', 'files').split()
+
+        if conf.has_option('danlann', 'exclude'):
+            self.exclude = conf.get('danlann', 'exclude')
+
+        #
+        # create gallery data instance
+        #
+        if conf.has_option('danlann', 'title'):
+            title = conf.get('danlann', 'title')
+        else:
+            raise ValueError('no gallery title configuration')
+
+        if conf.has_option('danlann', 'description'):
+            description = conf.get('danlann', 'description')
+        else:
+            description = ''
+
+        self.gallery = Gallery(title, description)
+
+        #
+        # create file manager
+        #
+        self.fm = FileManager()
+
+        #
+        # create gallery generator
+        #
+        self.generator = DanlannGenerator(gallery, fm)
 
 
-    def processPhotoNavigation(self, f, photo, photo_type):
-        data = self.getPrevAndNext(photo.album.photos, photo, self.getPhotoFile, photo_type)
-        data['parent'] = 'index.html'
-        data['parent_title'] = 'album: %s' % photo.album.title
-        self.generateNavigation(f, self.ptmpl, photo, data, photo_type)
-
-
-    def generateSubalbums(self, f, album):
+    def copy(self):
         """
-        Write list of album subalbums.
+        Copy additional gallery files to gallery output directory.
         """
-        if album.subalbums:
-            apre, apost = self.atmpl.albums(album)
-            f.write(apre)
-
-            for subalbum in album.subalbums:
-                pre, post = self.atmpl.album(subalbum)
-                f.write(pre)
-                f.write(post)
-            f.write(apost)
+        if self.files:
+            assert self.outdir
+            self.fm.copy(self.files, self.outdir, self.exclude)
 
 
-    def generateAlbum(self, album, parent):
-        self.fm.mkdir(self.getDir(album))
-        f = File(self.getFile(album, 'index.html'))
-
-        pre, post = self.atmpl.body(album)
-        f.write(pre, post)
-
-        pre, post = self.atmpl.title(album)
-        f.write(pre)
-        f.write(post)
-
-        if album.description:
-            pre, post = self.atmpl.description(album)
-            f.write(pre)
-            f.write(post)
-
-        self.processAlbumNavigation(f, album, parent)
-        self.generateSubalbums(f, album)
-
-        if album.photos:
-            pre, post = self.atmpl.photos(album)
-            f.write(pre, post)
-
-            for photo in album.photos:
-                pre, post = self.atmpl.photo(photo)
-                f.write(pre)
-                f.write(post)
-
-        f.close()
-
-        for subalbum in album.subalbums:
-            self.generateAlbum(subalbum, album)
-
-        for photo in album.photos:
-            self.generateAlbumPhotos(photo)
-
-
-    def generateAlbumPhotos(self, photo):
-        self.generateExif(photo)
-        self.convertPhoto(photo, 'thumb')
-        self.convertPhoto(photo, 'preview')
-        self.convertPhoto(photo, 'view')
-
-        self.generatePhoto(photo, 'preview')
-        self.generatePhoto(photo, 'view')
-
-
-    def generateExif(self, photo):
-        fn = self.fm.lookup(self.inputdirs, photo.file)
-        photo.exif = self.fm.getExif(fn, self.exif_headers)
-
-        if photo.exif:
-            f = File(self.getFile(photo.album, '%s.exif.html' % photo.file))
-
-            pre, post = self.etmpl.body(photo, 'exif')
-            f.write(pre, post)
-
-            pre, post = self.etmpl.title(photo, 'exif')
-            f.write(pre)
-            f.write(post)
-
-            pre, post = self.etmpl.photo(photo, 'exif')
-            f.write(pre)
-            f.write(post)
-
+    def parse(self):
+        """
+        Parse gallery data.
+        """
+        # read album files
+        for fn in self.albums:
+            f = open(fn)
+            parser.parse(self.gallery, f)
             f.close()
 
+        # check gallery data instance
+        parser.check(self.gallery)
 
 
-    def convertPhoto(self, photo, photo_type):
-        fn_out = '%s/%s/%s' % (self.outdir, photo.album.dir, self.getPhotoFile(photo, photo_type, 'jpg'))
-        if os.path.exists(fn_out):
-            print 'skipping %s' % fn_out # fixme: use logger
-        else:
-            try :
-                # get conversion parameters
-                args = self.conf.get(photo_type, 'params')
-                if args:
-                    args = args.split()
-                else:
-                    assert photo_type in self.DEFAULT_CONVERT_OPTS
-                    args = self.DEFAULT_CONVERT_OPTS[photo_type]
-
-                # lookup input file and convert it into gallery file
-                fn_in = self.fm.lookup(self.inputdirs, photo.file)
-                self.fm.convert(fn_in, fn_out, args)
-                print 'converted %s -> %s' % (fn_in, fn_out) # fixme: use logger
-            except OSError, msg:
-                print >> sys.stderr, 'failed %s: %s' % (fn_out, msg) # fixme: use logger
+    def generateGallery(self):
+        """
+        Generate gallery using gallery generator.
+        """
+        se3lf.generator.generate()
 
 
-    def generatePhoto(self, photo, photo_type):
+    def postprocess(self)
+        """
+        Reformat and validate output files if requested.
+        """
+        def html_files():
+            """
+            Get all HTML files.
+            """
+            for dir, subdirs, files in os.walk(self.outdir):
+                for fn in files:
+                    if fn.endswith('.html'):
+                        yield os.path.join(dir, fn)
 
-        f = File(self.getFile(photo.album, self.getPhotoFile(photo, photo_type)))
 
-        pre, post = self.ptmpl.body(photo, photo_type)
-        f.write(pre, post)
+        for fn in html_files():
+            self.fm.formatXML(fn)
 
-        pre, post = self.ptmpl.title(photo, photo_type)
-        f.write(pre)
-        f.write(post)
-
-        pre, post = self.ptmpl.description(photo, photo_type)
-        f.write(pre)
-        f.write(post)
-
-        self.processPhotoNavigation(f, photo, photo_type)
-        
-        pre, post = self.ptmpl.photo(photo, photo_type)
-        f.write(pre)
-        f.write(post)
-
-        f.close()
+            if self.validate:
+                log.debug('validating file: %s' % fn)
+                if not fm.validate(fn):
+                    log.debug('validating failed: %s' % fn)

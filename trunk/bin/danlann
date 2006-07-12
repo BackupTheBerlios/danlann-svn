@@ -16,46 +16,11 @@ if len(sys.argv) != 2:
 
 fn = sys.argv[1] # only one parameter is accepted - danlann configuration file
 
-conf = ConfigParser()
-if not conf.read(fn):
-    print >> sys.stderr, '%s: config file %s does not exist' % tuple(sys.argv)
-    sys.exit(1)
-
-# get some configuration globals
-basedir = conf.get('danlann', 'outdir')
-validate = conf.get('danlann', 'validate') == 'True'
-
-albums = conf.get('danlann', 'albums').split()
-gallery = Gallery()
-gallery.title = conf.get('danlann', 'title')
-gallery.description = conf.get('danlann', 'description')
-
-# read album files
-for fn in albums:
-    f = open(fn)
-    parse(gallery, f)
-    f.close()
-check(gallery)
-
-# create file manager instance
-fm = FileManager()
-
-fm.mkdir(basedir)
-fm.copy(conf.get('danlann', 'files'), basedir, '.svn|CVS|~$|\.swp$')
-
+processor = Danlann()
+conf = processor.readConf(fn)
+processor.initialize(conf)
+processor.copy()
+processor.generate()
 # create generator object and generate gallery
-generator = DanlannGenerator(conf, gallery, fm)
-generator.generate()
-
-for dir, subdirs, files in os.walk(basedir):
-    for fn in files:
-        if fn.endswith('.html'):
-
-            fn = os.path.join(dir, fn)
-            fm.formatXML(fn)
-
-            if validate:
-                print 'validating %s' % fn
-                if not fm.validate(fn):
-                    print 'failed: %s' % fn
-                    sys.exit(2)
+generator.generateGallery()
+generator.postprocess()

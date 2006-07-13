@@ -36,11 +36,14 @@ class FileManager(object):
         Tuple (src, dest) is returned, where src is path to file and dest
         is destination directory.
 
-        @param files:   source files
+        @param files:   list of source files
         @param destdir: destination directory
         @param exclude: exclude regular expression
         """
-        for fn in files.split():
+        if not hasattr(files, '__iter__') and isinstance(files, basestring):
+            raise ValueError('files should be iterable and not string')
+
+        for fn in files:
             fn = os.path.normpath(fn)
 
             # amount of path elements to skip for destination
@@ -111,6 +114,7 @@ class FileManager(object):
             pid, status = os.wait()
             if os.WEXITSTATUS(status):
                 raise OSError, 'cannot convert file %s' % fn_in
+        log.debug('converted %s -> %s' % (fn_in, fn_out))
 
 
     def validate(self, fn):

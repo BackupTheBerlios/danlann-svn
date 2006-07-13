@@ -6,7 +6,7 @@ from danlann.bc import Gallery
 
 class ParserTestCase(unittest.TestCase):
     def setUp(self):
-        self.gallery = Gallery()
+        self.gallery = Gallery('title', 'desc')
 
 
     def tearDown(self):

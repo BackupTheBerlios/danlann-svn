@@ -1,14 +1,11 @@
 #!/usr/bin/python
 
 import sys
-import os
-import os.path
-from ConfigParser import ConfigParser
 
-from danlann import DanlannGenerator
-from danlann.bc import Gallery
-from danlann.parser import parse, check
-from danlann.filemanager import FileManager
+import logging
+logging.basicConfig(level = logging.DEBUG)
+
+from danlann import Danlann
 
 if len(sys.argv) != 2:
     print >> sys.stderr, 'usage:\n  %s conf_file.ini' % sys.argv[0]
@@ -20,7 +17,5 @@ processor = Danlann()
 conf = processor.readConf(fn)
 processor.initialize(conf)
 processor.copy()
-processor.generate()
-# create generator object and generate gallery
-generator.generateGallery()
-generator.postprocess()
+processor.generateGallery()
+processor.postprocess()

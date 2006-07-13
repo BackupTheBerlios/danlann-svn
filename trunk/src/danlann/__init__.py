@@ -2,6 +2,31 @@
 Danlann processor module.
 """
 
+import os
+import os.path
+from ConfigParser import ConfigParser
+
+from danlann import parser
+from danlann.bc import Gallery
+from danlann.filemanager import FileManager
+from danlann.generator import DanlannGenerator
+
+from danlann.template import XHTMLGalleryIndexTemplate, XHTMLAlbumIndexTemplate, XHTMLPhotoTemplate, XHTMLExifTemplate
+
+import logging
+log = logging.getLogger('danlann')
+
+class ConfigurationError(Exception):
+    """
+    Danlann configuration error.
+    
+    Exception is thrown, when required configuration variable is missing or
+    when configuration variable has improper value.
+    """
+    pass
+
+
+
 class Danlann(object):
     """
     Danlann processor reads configuration and creates all necessary objects
@@ -34,12 +59,22 @@ class Danlann(object):
     """
     def __init__(self):
         self.validate = False
-        self.outdir = None
-        self.albums = []
-        self.files = []
-        self.exclude = '.svn|CVS|~$|\.swp$'
+        self.outdir   = None
+        self.albums   = []
+        self.files    = []
+        self.exclude  = '.svn|CVS|~$|\.swp$'
 
-        self.fm = None
+        self.fm        = None
+        self.gallery   = None
+        self.generator = None
+
+
+    def setConvertArgs(self, conf, photo_type):
+        section = 'photo:%s' % photo_type
+        for option in ('size', 'quality', 'unsharp'):
+            if conf.has_option(section, option):
+                value = conf.get(section, option) 
+                self.generator.setConvertArg(photo_type, option, value)
 
 
     def readConf(self, fn):
@@ -54,7 +89,7 @@ class Danlann(object):
         """
         conf = ConfigParser()
         if not conf.read(fn):
-            raise ValueError('config file %s does not exist' % fn)
+            raise ConfigurationError('config file %s does not exist' % fn)
         return conf
 
 
@@ -77,7 +112,7 @@ class Danlann(object):
         if conf.has_option('danlann', 'outdir'):
             self.outdir = conf.get('danlann', 'outdir')
         else:
-            raise ValueError('no output directory configuration')
+            raise ConfigurationError('no output directory configuration')
 
         if conf.has_option('danlann', 'validate'):
             self.validate = conf.getboolean('danlann', 'validate')
@@ -85,7 +120,7 @@ class Danlann(object):
         if conf.has_option('danlann', 'albums'):
             self.albums = conf.get('danlann', 'albums').split()
         else:
-            raise ValueError('no input album files configuration')
+            raise ConfigurationError('no input album files configuration')
 
         if conf.has_option('danlann', 'files'):
             self.files = conf.get('danlann', 'files').split()
@@ -99,7 +134,7 @@ class Danlann(object):
         if conf.has_option('danlann', 'title'):
             title = conf.get('danlann', 'title')
         else:
-            raise ValueError('no gallery title configuration')
+            raise ConfigurationError('no gallery title configuration')
 
         if conf.has_option('danlann', 'description'):
             description = conf.get('danlann', 'description')
@@ -116,7 +151,34 @@ class Danlann(object):
         #
         # create gallery generator
         #
-        self.generator = DanlannGenerator(gallery, fm)
+        if conf.has_option('danlann', 'inputdirs'):
+            inputdirs = conf.get('danlann', 'inputdirs').split()
+        else:
+            raise ConfigurationError('no input directory configured')
+
+        exif_headers = ['Image timestamp', 'Exposure time',
+            'Aperture', 'Exposure bias', 'Flash', 'Flash bias',
+            'Focal length', 'ISO speed', 'Exposure mode', 'Metering mode',
+            'White balance']
+
+        if conf.has_option('danlann', 'exif'):
+            headers = conf.get('danlann', 'exif').split(',')
+            exif_headers = [exif.strip() for exif in headers]
+
+        self.generator              = DanlannGenerator(self.gallery, self.fm)
+        self.generator.inputdirs    = inputdirs
+        self.generator.outdir       = self.outdir
+        self.generator.exif_headers = exif_headers
+
+        self.setConvertArgs(conf, 'thumb')
+        self.setConvertArgs(conf, 'preview')
+        self.setConvertArgs(conf, 'view')
+
+        self.generator.gtmpl = XHTMLGalleryIndexTemplate(conf)
+        self.generator.atmpl = XHTMLAlbumIndexTemplate(conf)
+        self.generator.ptmpl = XHTMLPhotoTemplate(conf)
+        self.generator.etmpl = XHTMLExifTemplate(conf)
+
 
 
     def copy(self):
@@ -146,10 +208,10 @@ class Danlann(object):
         """
         Generate gallery using gallery generator.
         """
-        se3lf.generator.generate()
+        self.generator.generate()
 
 
-    def postprocess(self)
+    def postprocess(self):
         """
         Reformat and validate output files if requested.
         """
@@ -168,5 +230,5 @@ class Danlann(object):
 
             if self.validate:
                 log.debug('validating file: %s' % fn)
-                if not fm.validate(fn):
+                if not self.fm.validate(fn):
                     log.debug('validating failed: %s' % fn)

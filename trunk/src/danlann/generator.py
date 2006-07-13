@@ -2,49 +2,52 @@ import sys
 import os
 import os.path
 
-from danlann.template import XHTMLGalleryIndexTemplate, XHTMLAlbumIndexTemplate, XHTMLPhotoTemplate, XHTMLExifTemplate
 from danlann.bc import Gallery, Album, Photo
 from danlann.filemanager import File
 
+import logging
+log = logging.getLogger('danlann.generator')
 
 class DanlannGenerator(object):
     """
     Gallery generator.
 
-    @ivar conf: danlann configuration
-    @ivar photo_dirs: danlann image input dir
-
     @ivar inputdirs: gallery input directories
-    @ivar outdir: gallery output dir
-    @ivar gtmpl: gallery template
-    @ivar atmpl: album template
-    @ivar ptmpl: photo template
+    @ivar outdir:    gallery output dir
+    @ivar gtmpl:     gallery template
+    @ivar atmpl:     album template
+    @ivar ptmpl:     photo template
     """
-    DEFAULT_CONVERT_OPTS = {
+    ARG_SIZE    = 1
+    ARG_QUALITY = 3
+    ARG_UNSHARP = 5
+    convert_args = {
         'thumb':   ['-resize', '128x128>',  '-quality', '90', '-unsharp', '3x3+0.5+0'],
         'preview': ['-resize', '800x600>',  '-quality', '90', '-unsharp', '3x3+0.5+0'],
         'view':    ['-resize', '1024x768>', '-quality', '90', '-unsharp', '3x3+0.5+0'],
     }
 
-    def __init__(self, conf, gallery, fm):
+    def __init__(self, gallery, fm):
         self.gallery = gallery
-        self.inputdirs = self.conf.get('danlann', 'inputdirs').split()
-        self.outdir = conf.get('danlann', 'outdir')
-
-        self.exif_headers = ['Image timestamp', 'Exposure time',
-            'Aperture', 'Exposure bias', 'Flash', 'Flash bias',
-            'Focal length', 'ISO speed', 'Exposure mode', 'Metering mode',
-            'White balance']
-        if self.conf.has_option('danlann', 'exif'):
-            self.exif_headers = [exif.strip() for exif in self.conf.get('danlann', 'exif').split(',')]
-        #fixme: logger.info('exif data: %s' % self.exif)
-
-        self.gtmpl = XHTMLGalleryIndexTemplate(conf)
-        self.atmpl = XHTMLAlbumIndexTemplate(conf)
-        self.ptmpl = XHTMLPhotoTemplate(conf)
-        self.etmpl = XHTMLExifTemplate(conf)
+        self.inputdirs = []
+        self.outdir = None
+        self.exif_headers = []
 
         self.fm = fm
+
+        self.generator.gtmpl = None
+        self.generator.atmpl = None
+        self.generator.ptmpl = None
+        self.generator.etmpl = None
+
+
+    def setConvertArg(self, photo_type, opt, value):
+        opt = 'ARG_%s' % opt.upper()
+        if not hasattr(self, opt):
+            raise ValueError('unsupported convert option "%s"' % opt)
+        index = getattr(self, opt)
+
+        self.convert_args[photo_type][index] = value
 
 
     def getDir(self, album):
@@ -251,19 +254,14 @@ class DanlannGenerator(object):
         else:
             try :
                 # get conversion parameters
-                args = self.conf.get(photo_type, 'params')
-                if args:
-                    args = args.split()
-                else:
-                    assert photo_type in self.DEFAULT_CONVERT_OPTS
-                    args = self.DEFAULT_CONVERT_OPTS[photo_type]
+                assert photo_type in self.convert_args
+                args = self.convert_args[photo_type]
 
                 # lookup input file and convert it into gallery file
                 fn_in = self.fm.lookup(self.inputdirs, photo.file)
                 self.fm.convert(fn_in, fn_out, args)
-                print 'converted %s -> %s' % (fn_in, fn_out) # fixme: use logger
             except OSError, msg:
-                print >> sys.stderr, 'failed %s: %s' % (fn_out, msg) # fixme: use logger
+                log.warn('failed conversion %s: %s' % (fn_out, msg))
 
 
     def generatePhoto(self, photo, photo_type):

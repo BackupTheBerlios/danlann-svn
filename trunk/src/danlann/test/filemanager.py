@@ -1,25 +1,33 @@
+"""
+File manager tests.
+"""
+
 import re
 import unittest
 
 from danlann.filemanager import FileManager
 
-class FileManagerTestCase(unittest.TestCase):
+class WalkTestCase(unittest.TestCase):
+    """
+    Test file manager directory tree generator.
+    """
+
     exclude = '.svn|~$|CVS|.sw[op]$'
 
     def testDirWalk(self):
         """directory walking"""
         fm = FileManager()
-        for src, dest in fm.walk('css', 'tmp', self.exclude):
+        for src, dest in fm.walk(['css'], 'tmp', self.exclude):
             self.assert_(not re.search('.svn', src))
 
-        w1 = tuple(fm.walk('css', 'tmp', self.exclude))
-        w2 = tuple(fm.walk('css/', 'tmp', self.exclude))
-        self.assertEqual(w1, w2)
+        walk1 = tuple(fm.walk(['css'], 'tmp', self.exclude))
+        walk2 = tuple(fm.walk(['css/'], 'tmp', self.exclude))
+        self.assertEqual(walk1, walk2)
 
-        src, dest = list(fm.walk('src/danlann', 'tmp', self.exclude))[0]
+        src, dest = list(fm.walk(['src/danlann'], 'tmp', self.exclude))[0]
         self.assert_(dest.startswith('tmp/danlann'))
 
-        src, dest = list(fm.walk('src/danlann/test', 'tmp', self.exclude))[0]
+        src, dest = list(fm.walk(['src/danlann/test'], 'tmp', self.exclude))[0]
         self.assert_(dest.startswith('tmp/test'))
 
 
@@ -27,10 +35,11 @@ class FileManagerTestCase(unittest.TestCase):
         """file walking"""
         fm = FileManager()
 
-        walk = list(fm.walk('css/danlann.css', 'tmp', self.exclude))
+        walk = list(fm.walk(['css/danlann.css'], 'tmp', self.exclude))
         src, dest = walk[0]
 
         self.assertEqual(len(walk), 1)
+        self.assertEqual(src, 'css/danlann.css')
         self.assertEqual(dest, 'tmp')
 
 

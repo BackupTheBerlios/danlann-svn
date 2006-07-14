@@ -16,6 +16,7 @@ fn = sys.argv[1] # only one parameter is accepted - danlann configuration file
 processor = Danlann()
 conf = processor.readConf(fn)
 processor.initialize(conf)
+processor.parse()
 processor.copy()
 processor.generateGallery()
 processor.postprocess()

@@ -84,7 +84,7 @@ photo_a4
 
 
     def testNoRootAlbumError(self):
-        """no item error"""
+        """no root album error"""
         f = self.getFile("""\
 /album1; test; desc1
 /album2

@@ -55,6 +55,33 @@ Danlann features
 \end{itemize}
 
 \section{First Gallery}
+\begin{lstlisting}
+Mi
+[danlann]
+title     = danlann title test
+
+albums    = a.txt b.txt
+inputdirs = input_dir
+outdir    = output_dir
+\end{lstlisting}
+
+Default photo conversion parameters
+\begin{lstlisting}
+[photo:view]
+size    = 1024x768>
+quality = 90
+unsharp = 3x3+0.5+0
+
+[photo:preview]
+size    = 800x600>
+quality = 92
+unsharp = 2
+
+[photo:thumb]
+size    = 128x128>
+quality = 90
+unsharp = 3x3+0.5+0
+\end{lstlisting}
 
 \section{Input Files}
 Danlann input file defines albums and their content like subalbums and

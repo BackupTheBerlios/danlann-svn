@@ -9,29 +9,30 @@ import unittest
 from danlann import Danlann
 
 # minimal configuration required by danlann
+# see Danlann Manual for specification of minimal configuration
 min_conf = """
 [danlann]
-title = danlann title test
+title     = danlann title test
 
-albums = a.txt b.txt
+albums    = a.txt b.txt
 inputdirs = input_dir
-outdir = output_dir
+outdir    = output_dir
 """
 
 # photo configuration changes
 photo_conf = """
 [photo:view]
-size = 11
+size    = 11
 quality = 91
 unsharp = 1
 
 [photo:preview]
-size = 12
+size    = 12
 quality = 92
 unsharp = 2
 
 [photo:thumb]
-size = 13
+size    = 13
 quality = 93
 unsharp = 3
 """
@@ -59,6 +60,7 @@ class ConfigTestCase(unittest.TestCase):
         self.assertEqual(generator.inputdirs, ['input_dir'])
         self.assertEqual(generator.outdir, 'output_dir')
 
+        # see Danlann Manual for specification of default values
         self.assertEqual(generator.convert_args['thumb'][1], '128x128>')
         self.assertEqual(generator.convert_args['thumb'][3], '90')
         self.assertEqual(generator.convert_args['thumb'][5], '3x3+0.5+0')

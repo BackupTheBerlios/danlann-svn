@@ -3,8 +3,15 @@ from danlann.bc import Gallery, Album, Photo
 class XHTMLTemplate(object):
     def __init__(self, conf):
         self.conf = conf
-        self.css = self.conf.get('template', 'css').split()
-        self.copyright = self.conf.get('template', 'copyright')
+
+        self.css = ['css/danlann.css']
+        self.copyright = ''
+
+        if conf.has_option('template', 'css'):
+            self.css = self.conf.get('template', 'css').split()
+
+        if conf.has_option('template', 'copyright'):
+            self.copyright = self.conf.get('template', 'copyright')
 
         if not hasattr(self, 'js'):
             self.js = []
@@ -170,8 +177,11 @@ class XHTMLGalleryIndexTemplate(XHTMLTemplate):
     XHTML Simple gallery template.
     """
     def __init__(self, conf):
-        self.js = conf.get('template:gallery', 'js').split()
-        self.onload = ' onload = \'%s\'' % conf.get('template:gallery', 'onload')
+        if conf.has_option('template:gallery', 'js'):
+            self.js = conf.get('template:gallery', 'js').split()
+
+        if conf.has_option('template:gallery', 'onload'):
+            self.onload = ' onload = \'%s\'' % conf.get('template:gallery', 'onload')
 
         super(XHTMLGalleryIndexTemplate, self).__init__(conf)
 
@@ -217,7 +227,8 @@ class XHTMLPhotoTemplate(XHTMLTemplate):
         'view': 'preview',
     }
     def __init__(self, conf):
-        self.js = conf.get('template:photo', 'js').split()
+        if conf.has_option('template:photo', 'js'):
+            self.js = conf.get('template:photo', 'js').split()
         super(XHTMLPhotoTemplate, self).__init__(conf)
 
 

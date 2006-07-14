@@ -21,24 +21,24 @@ class DanlannGenerator(object):
     ARG_SIZE    = 1
     ARG_QUALITY = 3
     ARG_UNSHARP = 5
-    convert_args = {
-        'thumb':   ['-resize', '128x128>',  '-quality', '90', '-unsharp', '3x3+0.5+0'],
-        'preview': ['-resize', '800x600>',  '-quality', '90', '-unsharp', '3x3+0.5+0'],
-        'view':    ['-resize', '1024x768>', '-quality', '90', '-unsharp', '3x3+0.5+0'],
-    }
 
     def __init__(self, gallery, fm):
         self.gallery = gallery
         self.inputdirs = []
         self.outdir = None
         self.exif_headers = []
+        self.convert_args = {
+            'thumb':   ['-resize', '128x128>',  '-quality', '90', '-unsharp', '3x3+0.5+0'],
+            'preview': ['-resize', '800x600>',  '-quality', '90', '-unsharp', '3x3+0.5+0'],
+            'view':    ['-resize', '1024x768>', '-quality', '90', '-unsharp', '3x3+0.5+0'],
+        }
 
         self.fm = fm
 
-        self.generator.gtmpl = None
-        self.generator.atmpl = None
-        self.generator.ptmpl = None
-        self.generator.etmpl = None
+        self.gtmpl = None
+        self.atmpl = None
+        self.ptmpl = None
+        self.etmpl = None
 
 
     def setConvertArg(self, photo_type, opt, value):
@@ -250,8 +250,9 @@ class DanlannGenerator(object):
     def convertPhoto(self, photo, photo_type):
         fn_out = '%s/%s/%s' % (self.outdir, photo.album.dir, self.getPhotoFile(photo, photo_type, 'jpg'))
         if os.path.exists(fn_out):
-            print 'skipping %s' % fn_out # fixme: use logger
+            log.info('skipping %s' % fn_out)
         else:
+            log.info('converting %s' % fn_out)
             try :
                 # get conversion parameters
                 assert photo_type in self.convert_args

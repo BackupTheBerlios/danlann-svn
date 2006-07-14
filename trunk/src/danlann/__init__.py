@@ -196,6 +196,7 @@ class Danlann(object):
         """
         # read album files
         for fn in self.albums:
+            log.debug('parsing album file %s' % fn)
             f = open(fn)
             parser.parse(self.gallery, f)
             f.close()

@@ -16,7 +16,7 @@ class WalkTestCase(unittest.TestCase):
 
     def testDirWalk(self):
         """directory walking"""
-        fm = FileManager()
+        fm = FileManager(True)
         for src, dest in fm.walk(['css'], 'tmp', self.exclude):
             self.assert_(not re.search('.svn', src))
 
@@ -33,7 +33,7 @@ class WalkTestCase(unittest.TestCase):
 
     def testFileWalk(self):
         """file walking"""
-        fm = FileManager()
+        fm = FileManager(True)
 
         walk = list(fm.walk(['css/danlann.css'], 'tmp', self.exclude))
         src, dest = walk[0]

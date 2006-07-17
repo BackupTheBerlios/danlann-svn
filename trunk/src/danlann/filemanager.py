@@ -24,7 +24,33 @@ class File(object):
 
 
 class FileManager(object):
+    """
+    File manager performs basic file and photo operations
+        - copying
+        - converting
+
+    @ivar convert: basic convert arguments for ImageMagick
+        or GraphicsMagick
+    """
+    def __init__(self, graphicsmagick):
+        """
+        Create file manager.
+
+        @param graphicsmagick: if true, then use GraphicsMagick conversion
+            basic arguments
+        """
+        if graphicsmagick:
+            self.convert = ['gm', 'gm', 'convert']
+        else:
+            self.convert = ['convert', 'convert']
+
+
     def mkdir(self, dir):
+        """
+        Create directory if it does not exist.
+
+        @param dir: directory to create
+        """
         if not os.path.exists(dir):
             os.makedirs(dir)
 
@@ -60,8 +86,8 @@ class FileManager(object):
             for dir, dir_files in walk:
                 dest = os.path.join(destdir, *dir.split(os.path.sep)[skip:])
 
-                for df in dir_files:
-                    src = '%s/%s' % (dir, df)
+                for dir_file in dir_files:
+                    src = '%s/%s' % (dir, dir_file)
                     if not re.search(exclude, src):
                         log.debug('copying %s %s' % (src, dest))
                         yield src, dest
@@ -89,12 +115,12 @@ class FileManager(object):
         return exif
 
 
-    def lookup(self, inputdirs, fn):
+    def lookup(self, indirs, fn):
         """
         Look for input file. Return full filename.
         """
         # fixme: look for a file in all input dirs
-        return '%s/%s.jpg' % (inputdirs[0], fn)
+        return '%s/%s.jpg' % (indirs[0], fn)
 
 
     def convert(self, fn_in, fn_out, args):
@@ -102,14 +128,14 @@ class FileManager(object):
         Look for input photo file and convert file saving it to specified
         filename.
 
-        @pvar photo: photo to convert
-        @pvar fn_out: output filename
-        @pvar args: conversion parameters
+        @pvar fn_in  : photo to convert
+        @pvar fn_out : output filename
+        @pvar args   : conversion arguments
         """
-        args = ['convert', fn_in] + args + [fn_out]
+        args = self.convert + [fn_in] + args + [fn_out]
 
         if not os.fork():
-            os.execlp('convert', *args)
+            os.execlp(*args)
         else:
             pid, status = os.wait()
             if os.WEXITSTATUS(status):

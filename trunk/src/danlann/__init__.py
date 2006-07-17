@@ -11,7 +11,8 @@ from danlann.bc import Gallery
 from danlann.filemanager import FileManager
 from danlann.generator import DanlannGenerator
 
-from danlann.template import XHTMLGalleryIndexTemplate, XHTMLAlbumIndexTemplate, XHTMLPhotoTemplate, XHTMLExifTemplate
+from danlann.template import XHTMLGalleryIndexTemplate, \
+    XHTMLAlbumIndexTemplate, XHTMLPhotoTemplate, XHTMLExifTemplate
 
 import logging
 log = logging.getLogger('danlann')
@@ -71,7 +72,7 @@ class Danlann(object):
 
     def setConvertArgs(self, conf, photo_type):
         section = 'photo:%s' % photo_type
-        for option in ('size', 'quality', 'unsharp'):
+        for option in ('size', 'quality', 'unsharp', 'params'):
             if conf.has_option(section, option):
                 value = conf.get(section, option) 
                 self.generator.setConvertArg(photo_type, option, value)
@@ -146,13 +147,16 @@ class Danlann(object):
         #
         # create file manager
         #
-        self.fm = FileManager()
+        gm = True
+        if conf.has_option('danlann', 'graphicsmagick'):
+            gm = conf.getboolean('danlann', 'graphicsmagick')
+        self.fm = FileManager(gm)
 
         #
         # create gallery generator
         #
-        if conf.has_option('danlann', 'inputdirs'):
-            inputdirs = conf.get('danlann', 'inputdirs').split()
+        if conf.has_option('danlann', 'indirs'):
+            indirs = conf.get('danlann', 'indirs').split()
         else:
             raise ConfigurationError('no input directory configured')
 
@@ -166,7 +170,7 @@ class Danlann(object):
             exif_headers = [exif.strip() for exif in headers]
 
         self.generator              = DanlannGenerator(self.gallery, self.fm)
-        self.generator.inputdirs    = inputdirs
+        self.generator.indirs       = indirs
         self.generator.outdir       = self.outdir
         self.generator.exif_headers = exif_headers
 

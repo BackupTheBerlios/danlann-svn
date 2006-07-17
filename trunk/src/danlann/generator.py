@@ -8,32 +8,100 @@ from danlann.filemanager import File
 import logging
 log = logging.getLogger('danlann.generator')
 
+
+
+class ConversionArguments(list):
+    """
+    Photo conversion arguments list.
+
+    Arguments list is used for photo conversion with ImageMagick
+    or GraphicsMagick.
+
+    @ivar size    : target photo size
+    @ivar quality : photo image quality
+    @ivar unsharp : sharpen parameters
+    @ivar params  : additional conversion parameters
+    """
+
+    def __init__(self, size):
+        """
+        Create photo conversion arguments list.
+
+        @param size: target photo size
+        """
+        super(ConversionArguments, self).__init__()
+        self.__dict__['size']    = size
+        self.__dict__['quality'] = '90'
+        self.__dict__['unsharp'] = '3x3+0.5+0'
+        self.__dict__['params']  = []
+
+        self.rebuild()
+
+
+    def __setattr__(self, name, value):
+        """
+        Set conversion arguments parameters.
+
+        List of arguments is rebuilt.
+
+        @param name  : argument name
+        @param value : argument value
+        """
+        if not hasattr(self, name):
+            raise AttributeError('unsupported photo conversion option "%s"' % name)
+
+        if name == 'params':
+            value = value.split()
+
+        self.__dict__[name] = value
+        self.rebuild()
+
+
+    def rebuild(self):
+        """
+        Rebuild conversion argument list.
+        """
+        del self[:]
+        self.append('-resize')
+        self.append(self.size)
+
+        if self.quality:
+            self.append('-quality')
+            self.append(self.quality)
+
+        self += self.params
+
+        if self.unsharp:
+            self.append('-unsharp')
+            self.append(self.unsharp)
+
+
+
 class DanlannGenerator(object):
     """
     Gallery generator.
 
-    @ivar inputdirs: gallery input directories
-    @ivar outdir:    gallery output dir
-    @ivar gtmpl:     gallery template
-    @ivar atmpl:     album template
-    @ivar ptmpl:     photo template
+    @ivar indirs       : gallery input directories
+    @ivar outdir       : gallery output dir
+    @ivar convert_args : photo conversion parameters
+    @ivar fm           : file manager
+
+    @ivar gtmpl        : gallery template
+    @ivar atmpl        : album template
+    @ivar ptmpl        : photo template
     """
-    ARG_SIZE    = 1
-    ARG_QUALITY = 3
-    ARG_UNSHARP = 5
-
     def __init__(self, gallery, fm):
-        self.gallery = gallery
-        self.inputdirs = []
-        self.outdir = None
+        self.indirs       = []
+        self.outdir       = None
+        self.gallery      = gallery
+        self.fm           = fm
         self.exif_headers = []
-        self.convert_args = {
-            'thumb':   ['-resize', '128x128>',  '-quality', '90', '-unsharp', '3x3+0.5+0'],
-            'preview': ['-resize', '800x600>',  '-quality', '90', '-unsharp', '3x3+0.5+0'],
-            'view':    ['-resize', '1024x768>', '-quality', '90', '-unsharp', '3x3+0.5+0'],
-        }
 
-        self.fm = fm
+        self.convert_args = {
+            'thumb'   : ConversionArguments('128x128>'),
+            'preview' : ConversionArguments('800x600>'),
+            'view'    : ConversionArguments('1024x768>'),
+        }
 
         self.gtmpl = None
         self.atmpl = None
@@ -42,12 +110,14 @@ class DanlannGenerator(object):
 
 
     def setConvertArg(self, photo_type, opt, value):
-        opt = 'ARG_%s' % opt.upper()
-        if not hasattr(self, opt):
-            raise ValueError('unsupported convert option "%s"' % opt)
-        index = getattr(self, opt)
+        """
+        Set conversion argument for given photo type.
 
-        self.convert_args[photo_type][index] = value
+        @param photo_type : photo type
+        @param opt        : conversion argument name
+        @param value      : conversion argument value
+        """
+        setattr(self.convert_args[photo_type], opt, value)
 
 
     def getDir(self, album):
@@ -226,7 +296,7 @@ class DanlannGenerator(object):
 
 
     def generateExif(self, photo):
-        fn = self.fm.lookup(self.inputdirs, photo.file)
+        fn = self.fm.lookup(self.indirs, photo.file)
         photo.exif = self.fm.getExif(fn, self.exif_headers)
 
         if photo.exif:
@@ -259,7 +329,7 @@ class DanlannGenerator(object):
                 args = self.convert_args[photo_type]
 
                 # lookup input file and convert it into gallery file
-                fn_in = self.fm.lookup(self.inputdirs, photo.file)
+                fn_in = self.fm.lookup(self.indirs, photo.file)
                 self.fm.convert(fn_in, fn_out, args)
             except OSError, msg:
                 log.warn('failed conversion %s: %s' % (fn_out, msg))

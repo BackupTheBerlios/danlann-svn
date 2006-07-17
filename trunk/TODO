@@ -1,4 +1,3 @@
-- use logger
 - for commands (see below) use optparse for bin/danlann parameters parsing
 - commands:
     - cleanup function - move not used files to trash

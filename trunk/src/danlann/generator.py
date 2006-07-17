@@ -81,7 +81,7 @@ class DanlannGenerator(object):
     """
     Gallery generator.
 
-    @ivar indirs       : gallery input directories
+    @ivar indir        : gallery input directories
     @ivar outdir       : gallery output dir
     @ivar convert_args : photo conversion parameters
     @ivar fm           : file manager
@@ -91,7 +91,7 @@ class DanlannGenerator(object):
     @ivar ptmpl        : photo template
     """
     def __init__(self, gallery, fm):
-        self.indirs       = []
+        self.indir        = []
         self.outdir       = None
         self.gallery      = gallery
         self.fm           = fm
@@ -296,7 +296,7 @@ class DanlannGenerator(object):
 
 
     def generateExif(self, photo):
-        fn = self.fm.lookup(self.indirs, photo.file)
+        fn = self.fm.lookup(self.indir, photo.file)
         photo.exif = self.fm.getExif(fn, self.exif_headers)
 
         if photo.exif:
@@ -329,7 +329,7 @@ class DanlannGenerator(object):
                 args = self.convert_args[photo_type]
 
                 # lookup input file and convert it into gallery file
-                fn_in = self.fm.lookup(self.indirs, photo.file)
+                fn_in = self.fm.lookup(self.indir, photo.file)
                 self.fm.convert(fn_in, fn_out, args)
             except OSError, msg:
                 log.warn('failed conversion %s: %s' % (fn_out, msg))

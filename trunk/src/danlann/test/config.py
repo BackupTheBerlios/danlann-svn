@@ -15,7 +15,7 @@ CONF_MIN = """
 title     = danlann title test
 
 albums    = a.txt b.txt
-indirs = input_dir
+indir     = input_dir
 outdir    = output_dir
 """
 
@@ -120,7 +120,7 @@ class ConfigTestCase(unittest.TestCase):
 
         self.assertEqual(self.processor.albums, ['a.txt', 'b.txt'])
         self.assertEqual(self.processor.gallery.title, 'danlann title test')
-        self.assertEqual(self.generator.indirs, ['input_dir'])
+        self.assertEqual(self.generator.indir, ['input_dir'])
         self.assertEqual(self.generator.outdir, 'output_dir')
 
         # see Danlann Manual for specification of default values

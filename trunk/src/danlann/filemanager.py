@@ -115,12 +115,12 @@ class FileManager(object):
         return exif
 
 
-    def lookup(self, indirs, fn):
+    def lookup(self, indir, fn):
         """
         Look for input file. Return full filename.
         """
         # fixme: look for a file in all input dirs
-        return '%s/%s.jpg' % (indirs[0], fn)
+        return '%s/%s.jpg' % (indir[0], fn)
 
 
     def convert(self, fn_in, fn_out, args):

@@ -155,8 +155,8 @@ class Danlann(object):
         #
         # create gallery generator
         #
-        if conf.has_option('danlann', 'indirs'):
-            indirs = conf.get('danlann', 'indirs').split()
+        if conf.has_option('danlann', 'indir'):
+            indir = conf.get('danlann', 'indir').split()
         else:
             raise ConfigurationError('no input directory configured')
 
@@ -170,7 +170,7 @@ class Danlann(object):
             exif_headers = [exif.strip() for exif in headers]
 
         self.generator              = DanlannGenerator(self.gallery, self.fm)
-        self.generator.indirs       = indirs
+        self.generator.indir        = indir
         self.generator.outdir       = self.outdir
         self.generator.exif_headers = exif_headers
 

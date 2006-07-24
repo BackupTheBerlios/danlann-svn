@@ -1,7 +1,12 @@
-- for commands (see below) use optparse for bin/danlann parameters parsing
-- commands:
-    - cleanup function - move not used files to trash
-    + copy - copy additional files like css, js and images
-    + generate - generate gallery 
-    + validate - validate XHTML files
-    - all - all above: copy, generate, cleanup
+- danlann commandline parameters:
+    - cleanup (c) function - move not used files to trash
+    - no-copy (nc) - do not copy additional files like css, js and images
+    - no-generate (ng) - do not generate gallery 
+    - validate/no-validate - override validating XHTML files in configuration
+
+- build system
+  - build parser module
+  - install css stuff
+  - danlann libpath system wide configuration
+
+- good XHTL/CSS on mozilla/konqueror/safar/ie

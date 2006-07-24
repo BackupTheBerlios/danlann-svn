@@ -167,7 +167,7 @@ class XHTMLTemplate(object):
         if isinstance(context, Photo) and context.exif:
             navigation.append('<span class = \'exif\'>')
             navigation.append('<a onclick = \'toggle_exif_window(); return false\'')
-            navigation.append(' title = \'exif data\' href = \'%s.exif.html\'>exif</a></span>' % context.file)
+            navigation.append(' title = \'exif data\' href = \'%s.exif.html\'>exif</a></span>' % context.name)
         navigation.append('</div>')
         return ''.join(navigation) % data, ''
 
@@ -204,7 +204,7 @@ class XHTMLAlbumIndexTemplate(XHTMLTemplate):
 
     def photo(self, photo):
         data = {
-            'url': photo.file,
+            'url': photo.name,
             'title': self.escape(photo.title),
             'alt': 'photo: %s' % self.escape(photo.title),
         }
@@ -234,7 +234,7 @@ class XHTMLPhotoTemplate(XHTMLTemplate):
 
     def photo(self, photo, photo_type):
         data = {
-            'url': photo.file,
+            'url': photo.name,
             'type': photo_type,
             'ctype': self.ctypes[photo_type],
             'title': '%s' % self.escape(photo.title),

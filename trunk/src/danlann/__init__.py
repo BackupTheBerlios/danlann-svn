@@ -4,6 +4,7 @@ Danlann processor module.
 
 import os
 import os.path
+import itertools
 from ConfigParser import ConfigParser
 
 from danlann import parser
@@ -47,6 +48,7 @@ class Danlann(object):
         - reformat and validate output files if requested
 
     @ivar validate:  validate generated files
+    @ivar libpath:   list of gallery library paths
     @ivar outdir:    output dir, all gallery files go to output directory
     @ivar albums:    list of input album files
     @ivar files:     list of additional gallery files, which should be
@@ -60,6 +62,7 @@ class Danlann(object):
     """
     def __init__(self):
         self.validate = False
+        self.libpath  = ['.']
         self.outdir   = None
         self.albums   = []
         self.files    = []
@@ -115,6 +118,9 @@ class Danlann(object):
         else:
             raise ConfigurationError('no output directory configuration')
 
+        if conf.has_option('danlann', 'libpath'):
+            self.libpath = conf.get('danlann', 'libpath').split(':')
+
         if conf.has_option('danlann', 'validate'):
             self.validate = conf.getboolean('danlann', 'validate')
 
@@ -156,7 +162,7 @@ class Danlann(object):
         # create gallery generator
         #
         if conf.has_option('danlann', 'indir'):
-            indir = conf.get('danlann', 'indir').split()
+            indir = conf.get('danlann', 'indir').split(':')
         else:
             raise ConfigurationError('no input directory configured')
 
@@ -189,9 +195,15 @@ class Danlann(object):
         """
         Copy additional gallery files to gallery output directory.
         """
-        if self.files:
-            assert self.outdir
-            self.fm.copy(self.files, self.outdir, self.exclude)
+        assert self.outdir
+        assert os.path.exists(self.outdir)
+
+        # lookup for all additional files to be copied
+        files = (self.fm.lookup(self.libpath, fn) for fn in self.files)
+
+        # copy found files
+        for fn in itertools.chain(*files):
+            self.fm.copy(fn, self.outdir, self.exclude)
 
 
     def parse(self):

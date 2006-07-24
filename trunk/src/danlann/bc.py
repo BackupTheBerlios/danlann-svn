@@ -35,12 +35,14 @@ class Photo(Item):
     """
     Gallery photo.
 
-    @ivar file: filename of photo, no extension, no directory
+    @ivar name    : filename of photo, no extension, no directory
+    @ivar filename: absolute path to a photo 
     """
     def __init__(self):
         super(Photo, self).__init__()
-        self.file = None
-        self.exif = []
+        self.name     = None
+        self.filename = None
+        self.exif     = []
 
 
 

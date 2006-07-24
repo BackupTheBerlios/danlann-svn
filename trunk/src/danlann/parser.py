@@ -96,16 +96,18 @@ def p_photo(p):
           | FILE SEMICOLON STRING
           | FILE SEMICOLON STRING SEMICOLON STRING
     """
-    photo = Photo()
-    p[0] = photo
-    photo.file = p[1]
+    photo         = Photo()
+    p[0]          = photo
+    photo.name    = p[1]
+    photo.album   = __album
+    photo.gallery = __gallery
+
     if len(p) > 2:
         photo.title = p[3]
     if len(p) > 4:
         photo.description = p[5]
+
     __album.photos.append(photo)
-    photo.album = __album
-    photo.gallery = __gallery
 
 
 

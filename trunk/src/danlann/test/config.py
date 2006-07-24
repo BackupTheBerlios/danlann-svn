@@ -57,6 +57,16 @@ CONF_FILEMANAGER = """
 graphicsmagick = False
 """
 
+CONF_PATHS = """
+[danlann]
+title     = danlann title test
+
+albums    = a.txt b.txt
+indir     = input_dir1:input_dir2
+outdir    = output_dir
+libpath   = libpath1:libpath2
+"""
+
 # configuration data for test cases
 # test case name is used as hashtable key
 CONFIG_DATA = {}
@@ -118,6 +128,7 @@ class ConfigTestCase(unittest.TestCase):
     def testMinimalConfig(self):
         """minimal and default configuration"""
 
+        self.assertEqual(self.processor.libpath, ['.'])
         self.assertEqual(self.processor.albums, ['a.txt', 'b.txt'])
         self.assertEqual(self.processor.gallery.title, 'danlann title test')
         self.assertEqual(self.generator.indir, ['input_dir'])
@@ -190,18 +201,27 @@ class ConfigTestCase(unittest.TestCase):
                 '-level', '2%', '-dither', '-unsharp', '3x3+0.5+0'])
 
 
+    @config(CONF_PATHS)
+    def testPaths(self):
+        """paths"""
+        assert self.conf.has_option('danlann', 'libpath')
+        assert self.conf.has_option('danlann', 'indir')
+        self.assertEqual(self.processor.libpath, ['libpath1', 'libpath2'])
+        self.assertEqual(self.generator.indir, ['input_dir1', 'input_dir2'])
+
+
     @config(CONF_MIN)
     def testUseGraphicsMagick(self):
         """using GraphicsMagick"""
         assert self.conf.has_option('danlann', 'graphicsmagick')
-        self.assertEqual(self.filemanager.convert, ['gm', 'gm', 'convert'])
+        self.assertEqual(self.filemanager.convert_cmd, ['gm', 'gm', 'convert'])
 
 
     @config(CONF_MIN + CONF_FILEMANAGER)
     def testUseImageMagick(self):
         """using ImageMagick"""
         assert self.conf.has_option('danlann', 'graphicsmagick')
-        self.assertEqual(self.filemanager.convert, ['convert', 'convert'])
+        self.assertEqual(self.filemanager.convert_cmd, ['convert', 'convert'])
 
 
 

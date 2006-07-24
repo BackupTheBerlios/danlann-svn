@@ -124,7 +124,7 @@ class DanlannGenerator(object):
         return os.path.normpath('%s/%s' % (self.outdir, album.dir))
 
 
-    def getFile(self, album, file):
+    def getAlbumFile(self, album, file):
         return '%s/%s' % (self.getDir(album), file)
         
 
@@ -136,7 +136,7 @@ class DanlannGenerator(object):
 
             dsc_0000.thumb.html
         """
-        return '%s.%s.%s' % (photo.file, photo_type, ext)
+        return '%s.%s.%s' % (photo.name, photo_type, ext)
 
 
     def generate(self):
@@ -250,7 +250,7 @@ class DanlannGenerator(object):
 
     def generateAlbum(self, album, parent):
         self.fm.mkdir(self.getDir(album))
-        f = File(self.getFile(album, 'index.html'))
+        f = File(self.getAlbumFile(album, 'index.html'))
 
         pre, post = self.atmpl.body(album)
         f.write(pre, post)
@@ -286,21 +286,28 @@ class DanlannGenerator(object):
 
 
     def generateAlbumPhotos(self, photo):
-        self.generateExif(photo)
-        self.convertPhoto(photo, 'thumb')
-        self.convertPhoto(photo, 'preview')
-        self.convertPhoto(photo, 'view')
+        try:
+            # lookup photo input absolute filename
+            files = self.fm.lookup(self.indir, '%s.jpg' % photo.name)
+            photo.filename = files.next()
 
-        self.generatePhoto(photo, 'preview')
-        self.generatePhoto(photo, 'view')
+            self.generateExif(photo)
+            self.convertPhoto(photo, 'thumb')
+            self.convertPhoto(photo, 'preview')
+            self.convertPhoto(photo, 'view')
+
+            self.generatePhoto(photo, 'preview')
+            self.generatePhoto(photo, 'view')
+        except StopIteration, msg:
+            log.warn('could not find photo %s file' % photo.name)
 
 
     def generateExif(self, photo):
-        fn = self.fm.lookup(self.indir, photo.file)
-        photo.exif = self.fm.getExif(fn, self.exif_headers)
+        photo.exif = self.fm.getExif(photo.filename, self.exif_headers)
 
         if photo.exif:
-            f = File(self.getFile(photo.album, '%s.exif.html' % photo.file))
+            exif_fn = self.getPhotoFile(photo, 'exif')
+            f = File(self.getAlbumFile(photo.album, exif_fn))
 
             pre, post = self.etmpl.body(photo, 'exif')
             f.write(pre, post)
@@ -318,26 +325,28 @@ class DanlannGenerator(object):
 
 
     def convertPhoto(self, photo, photo_type):
-        fn_out = '%s/%s/%s' % (self.outdir, photo.album.dir, self.getPhotoFile(photo, photo_type, 'jpg'))
+        fn_in  = None
+        fn_out = '%s/%s/%s' % (self.outdir,
+            photo.album.dir,
+            self.getPhotoFile(photo, photo_type, 'jpg'))
+
         if os.path.exists(fn_out):
             log.info('skipping %s' % fn_out)
-        else:
+        elif photo.filename:
             log.info('converting %s' % fn_out)
             try :
                 # get conversion parameters
                 assert photo_type in self.convert_args
                 args = self.convert_args[photo_type]
 
-                # lookup input file and convert it into gallery file
-                fn_in = self.fm.lookup(self.indir, photo.file)
-                self.fm.convert(fn_in, fn_out, args)
+                self.fm.convert(photo.filename, fn_out, args)
             except OSError, msg:
                 log.warn('failed conversion %s: %s' % (fn_out, msg))
 
 
     def generatePhoto(self, photo, photo_type):
 
-        f = File(self.getFile(photo.album, self.getPhotoFile(photo, photo_type)))
+        f = File(self.getAlbumFile(photo.album, self.getPhotoFile(photo, photo_type)))
 
         pre, post = self.ptmpl.body(photo, photo_type)
         f.write(pre, post)

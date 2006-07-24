@@ -28,8 +28,9 @@ class FileManager(object):
     File manager performs basic file and photo operations
         - copying
         - converting
+        - looking for files
 
-    @ivar convert: basic convert arguments for ImageMagick
+    @ivar convert_cmd: basic convert arguments for ImageMagick
         or GraphicsMagick
     """
     def __init__(self, graphicsmagick):
@@ -40,9 +41,9 @@ class FileManager(object):
             basic arguments
         """
         if graphicsmagick:
-            self.convert = ['gm', 'gm', 'convert']
+            self.convert_cmd = ['gm', 'gm', 'convert']
         else:
-            self.convert = ['convert', 'convert']
+            self.convert_cmd = ['convert', 'convert']
 
 
     def mkdir(self, dir):
@@ -55,51 +56,63 @@ class FileManager(object):
             os.makedirs(dir)
 
 
-    def walk(self, files, destdir, exclude):
+    def walk(self, fn, destdir, exclude):
         """
         Return iterator of files to be copied.
         
         Tuple (src, dest) is returned, where src is path to file and dest
         is destination directory.
 
-        @param files:   list of source files
+        @param fn:      file or directory to be copied
         @param destdir: destination directory
         @param exclude: exclude regular expression
         """
-        if not hasattr(files, '__iter__') and isinstance(files, basestring):
-            raise ValueError('files should be iterable and not string')
+        fn = os.path.normpath(fn)
 
-        for fn in files:
-            fn = os.path.normpath(fn)
+        # amount of path elements to skip for destination
+        # as copy css/danlann.css to tmp should result
+        # in tmp/danlann.css instead of tmp/css/danlann.css
+        skip = len(fn.split(os.path.sep)[:-1])
 
-            # amount of path elements to skip for destination
-            # as copy css/danlann.css to tmp should result
-            # in tmp/danlann.css instead of tmp/css/danlann.css
-            skip = len(fn.split(os.path.sep)[:-1])
+        walk = []
+        if os.path.isdir(fn):
+            walk = ((tree[0], tree[2]) for tree in os.walk(fn))
+        elif os.path.isfile(fn):
+            walk = [[os.path.dirname(fn), [os.path.basename(fn)]]]
 
-            walk = []
-            if os.path.isdir(fn):
-                walk = ((tree[0], tree[2]) for tree in os.walk(fn))
-            elif os.path.isfile(fn):
-                walk = [[os.path.dirname(fn), [os.path.basename(fn)]]]
+        for dir, dir_files in walk:
+            dest = os.path.join(destdir, *dir.split(os.path.sep)[skip:])
 
-            for dir, dir_files in walk:
-                dest = os.path.join(destdir, *dir.split(os.path.sep)[skip:])
-
-                for dir_file in dir_files:
-                    src = '%s/%s' % (dir, dir_file)
-                    if not re.search(exclude, src):
-                        log.debug('copying %s %s' % (src, dest))
-                        yield src, dest
+            for dir_file in dir_files:
+                src = '%s/%s' % (dir, dir_file)
+                if not re.search(exclude, src):
+                    yield src, dest
 
 
-    def copy(self, files, destdir, exclude):
-        for src, dest in self.walk(files, destdir, exclude):
+    def copy(self, fn, destdir, exclude):
+        """
+        Copy file or directory to destination directory excluding files
+        using regular expression.
+
+        @param fn     : file or directory to be copied
+        @param destdir: destination directory
+        @param exclude: files to exclude
+        """
+        for src, dest in self.walk(fn, destdir, exclude):
             self.mkdir(dest)
             shutil.copy2(src, dest)
+            log.debug('%s copied into %s' % (src, dest))
 
 
     def getExif(self, fn, headers):
+        """
+        Get EXIF data from file.
+
+        Hashtable with EXIF data is returned.
+
+        @param fn:      input file
+        @param headers: EXIF headers to be returned
+        """
         f = os.popen('exiv2 \'%s\'' % fn)
         exif = []
         for line in f:
@@ -115,24 +128,29 @@ class FileManager(object):
         return exif
 
 
-    def lookup(self, indir, fn):
+    def lookup(self, path, fn):
         """
-        Look for input file. Return full filename.
+        Look for a file. Returned string is absolute path to a file
+        or directory.
+
+        @param path: list of directories to look for a file in
+        @param fn:   a file looked for
         """
-        # fixme: look for a file in all input dirs
-        return '%s/%s.jpg' % (indir[0], fn)
+        for dir in path:
+            name = '%s/%s' % (os.path.abspath(dir), fn) 
+            if os.path.exists(name):
+                yield name
 
 
     def convert(self, fn_in, fn_out, args):
         """
-        Look for input photo file and convert file saving it to specified
-        filename.
+        Convert file saving it to specified filename.
 
-        @pvar fn_in  : photo to convert
+        @pvar fn_in  : input filename
         @pvar fn_out : output filename
         @pvar args   : conversion arguments
         """
-        args = self.convert + [fn_in] + args + [fn_out]
+        args = self.convert_cmd + [fn_in] + args + [fn_out]
 
         if not os.fork():
             os.execlp(*args)

@@ -1,3 +1,23 @@
+#
+# Danlann - Memory Jail - an easy to use photo gallery generator.
+#
+# Copyright (C) 2006 by Artur Wroblewski <wrobell@pld-linux.org>
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
+
 """
 Configuration tests.
 """
@@ -213,7 +233,7 @@ class ConfigTestCase(unittest.TestCase):
     @config(CONF_MIN)
     def testUseGraphicsMagick(self):
         """using GraphicsMagick"""
-        assert self.conf.has_option('danlann', 'graphicsmagick')
+        assert not self.conf.has_option('danlann', 'graphicsmagick')
         self.assertEqual(self.filemanager.convert_cmd, ['gm', 'gm', 'convert'])
 
 
@@ -223,6 +243,44 @@ class ConfigTestCase(unittest.TestCase):
         assert self.conf.has_option('danlann', 'graphicsmagick')
         self.assertEqual(self.filemanager.convert_cmd, ['convert', 'convert'])
 
+
+
+class ValidationConfigTestCase(unittest.TestCase):
+    """
+    Test validation configuration option overriding.
+    """
+    def testDefaultValidationConfig(self):
+        """default validation configuration"""
+        conf = ConfigParser()
+        conf.readfp(StringIO(CONF_MIN))
+        assert not conf.has_option('danlann', 'validate')
+
+        processor = Danlann()
+        processor.initialize(conf, False)
+        self.assert_(not processor.validate)
+
+
+    def testValidationConfigOverrideTrue(self):
+        """override validation configuration to true"""
+        conf = ConfigParser()
+        conf.readfp(StringIO(CONF_MIN + '\nvalidate = False'))
+        assert not conf.getboolean('danlann', 'validate')
+
+        processor = Danlann()
+        processor.initialize(conf, True)
+        self.assert_(processor.validate)
+
+
+    def testValidationConfigOverrideFalse(self):
+        """override validation configuration to false"""
+        conf = ConfigParser()
+        conf.readfp(StringIO(CONF_MIN + '\nvalidate = True'))
+
+        assert conf.getboolean('danlann', 'validate')
+
+        processor = Danlann()
+        processor.initialize(conf, False)
+        self.assert_(not processor.validate)
 
 
 if __name__ == '__main__':

@@ -1,3 +1,23 @@
+#
+# Danlann - Memory Jail - an easy to use photo gallery generator.
+#
+# Copyright (C) 2006 by Artur Wroblewski <wrobell@pld-linux.org>
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
+
 """
 Danlann processor module.
 """
@@ -97,7 +117,7 @@ class Danlann(object):
         return conf
 
 
-    def initialize(self, conf):
+    def initialize(self, conf, validate = None):
         """
         Initialize and configure all required instances like
             - generator
@@ -108,7 +128,8 @@ class Danlann(object):
         processor. Therefore processor configuration is set in
         initialization method, too.
 
-        @param conf: configuration object
+        @param conf:     configuration object
+        @param validate: override validation configuration option
         """
         #
         # configure processor
@@ -121,8 +142,10 @@ class Danlann(object):
         if conf.has_option('danlann', 'libpath'):
             self.libpath = conf.get('danlann', 'libpath').split(':')
 
-        if conf.has_option('danlann', 'validate'):
+        if validate is None and conf.has_option('danlann', 'validate'):
             self.validate = conf.getboolean('danlann', 'validate')
+        else:
+            self.validate = validate 
 
         if conf.has_option('danlann', 'albums'):
             self.albums = conf.get('danlann', 'albums').split()
@@ -246,6 +269,6 @@ class Danlann(object):
             self.fm.formatXML(fn)
 
             if self.validate:
-                log.debug('validating file: %s' % fn)
+                log.info('validating file: %s' % fn)
                 if not self.fm.validate(fn):
-                    log.debug('validating failed: %s' % fn)
+                    log.error('validating failed: %s' % fn)

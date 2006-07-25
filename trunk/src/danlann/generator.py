@@ -1,3 +1,23 @@
+#
+# Danlann - Memory Jail - an easy to use photo gallery generator.
+#
+# Copyright (C) 2006 by Artur Wroblewski <wrobell@pld-linux.org>
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
+
 import sys
 import os
 import os.path
@@ -165,6 +185,8 @@ class DanlannGenerator(object):
 
         f.close()
 
+        log.info('generated index page')
+
         for album in self.gallery.subalbums:
             self.generateAlbum(album, self.gallery)
 
@@ -250,7 +272,8 @@ class DanlannGenerator(object):
 
     def generateAlbum(self, album, parent):
         self.fm.mkdir(self.getDir(album))
-        f = File(self.getAlbumFile(album, 'index.html'))
+        fn = self.getAlbumFile(album, 'index.html')
+        f = File(fn)
 
         pre, post = self.atmpl.body(album)
         f.write(pre, post)
@@ -283,6 +306,7 @@ class DanlannGenerator(object):
 
         for photo in album.photos:
             self.generateAlbumPhotos(photo)
+        log.info('generated album %s' % album.dir)
 
 
     def generateAlbumPhotos(self, photo):
@@ -299,7 +323,7 @@ class DanlannGenerator(object):
             self.generatePhoto(photo, 'preview')
             self.generatePhoto(photo, 'view')
         except StopIteration, msg:
-            log.warn('could not find photo %s file' % photo.name)
+            log.error('could not find photo %s file' % photo.name)
 
 
     def generateExif(self, photo):
@@ -321,6 +345,9 @@ class DanlannGenerator(object):
             f.write(post)
 
             f.close()
+            log.info('generated exif page for photo %s' % photo.name)
+        else:
+            log.error('photo %s does not contain exif' % photo.name)
 
 
 
@@ -331,9 +358,9 @@ class DanlannGenerator(object):
             self.getPhotoFile(photo, photo_type, 'jpg'))
 
         if os.path.exists(fn_out):
-            log.info('skipping %s' % fn_out)
+            log.info('leaving intact %s' % fn_out)
         elif photo.filename:
-            log.info('converting %s' % fn_out)
+            log.info('converting to %s' % fn_out)
             try :
                 # get conversion parameters
                 assert photo_type in self.convert_args
@@ -341,12 +368,14 @@ class DanlannGenerator(object):
 
                 self.fm.convert(photo.filename, fn_out, args)
             except OSError, msg:
-                log.warn('failed conversion %s: %s' % (fn_out, msg))
+                log.error('failed conversion %s: %s' % (fn_out, msg))
 
 
     def generatePhoto(self, photo, photo_type):
 
-        f = File(self.getAlbumFile(photo.album, self.getPhotoFile(photo, photo_type)))
+        fn = self.getAlbumFile(photo.album,
+            self.getPhotoFile(photo, photo_type))
+        f = File(fn)
 
         pre, post = self.ptmpl.body(photo, photo_type)
         f.write(pre, post)
@@ -366,4 +395,5 @@ class DanlannGenerator(object):
         f.write(post)
 
         f.close()
+        log.info('generated photo page %s.%s' % (photo.name, photo_type))
 

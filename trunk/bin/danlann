@@ -1,22 +1,90 @@
 #!/usr/bin/python
+#
+# Danlann - Memory Jail - an easy to use photo gallery generator.
+#
+# Copyright (C) 2006 by Artur Wroblewski <wrobell@pld-linux.org>
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
 
 import sys
-
+import optparse
 import logging
-logging.basicConfig(level = logging.DEBUG)
+
+opt_parser = optparse.OptionParser('%prog [options] gallery.ini')
+
+opt_parser.add_option('-v', dest = 'verbose', action = 'store_true',
+    help = 'explain what is being done')
+
+opt_parser.add_option('--nc', dest = 'copy',
+    action = 'store_false',
+    default = True,
+    help = 'do not copy additional gallery files')
+
+opt_parser.add_option('--ng', dest = 'generate',
+    action = 'store_false',
+    default = True,
+    help = 'do not generate gallery files')
+
+opt_parser.add_option('--validate', dest = 'validate',
+    action = 'store_true',
+    help = 'validate generated XHTML files (overrides configuration')
+
+opt_parser.add_option('--no-validate', dest = 'validate',
+    action = 'store_false',
+    help = 'do not validate generated XHTML files (overrides configuration')
+
+#opt_parser.add_option('--cleanup', dest = 'cleanup',
+#    action = 'store_true',
+#    default = False,
+#    help = 'delete unused files from gallery directory')
+
+opt_parser.add_option('--debug', dest = 'debug', action = 'store_true',
+    help = 'turn on debug messages')
+
+(options, args) = opt_parser.parse_args()
+
+if len(args) != 1:
+    opt_parser.error("incorrect number of arguments")
+
+level = logging.ERROR
+if options.debug:
+    level = logging.DEBUG
+elif options.verbose:
+    level = logging.INFO
+
+logging.basicConfig(level = level)
+log = logging.getLogger('danlann')
 
 from danlann import Danlann
 
-if len(sys.argv) != 2:
-    print >> sys.stderr, 'usage:\n  %s conf_file.ini' % sys.argv[0]
-    sys.exit(1)
-
-fn = sys.argv[1] # only one parameter is accepted - danlann configuration file
+fn = args[0] # get gallery configuration file
 
 processor = Danlann()
 conf = processor.readConf(fn)
-processor.initialize(conf)
+processor.initialize(conf, options.validate)
 processor.parse()
-processor.copy()
-processor.generateGallery()
+
+if options.copy:
+    log.info('copying additional files')
+    processor.copy()
+
+if options.generate:
+    log.info('generating gallery files')
+    processor.generateGallery()
+
+if options.validate:
+    log.info('validating XHTML files')
 processor.postprocess()

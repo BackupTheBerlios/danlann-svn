@@ -1,3 +1,23 @@
+#
+# Danlann - Memory Jail - an easy to use photo gallery generator.
+#
+# Copyright (C) 2006 by Artur Wroblewski <wrobell@pld-linux.org>
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
+
 import os.path
 import re
 import shutil
@@ -101,7 +121,7 @@ class FileManager(object):
         for src, dest in self.walk(fn, destdir, exclude):
             self.mkdir(dest)
             shutil.copy2(src, dest)
-            log.debug('%s copied into %s' % (src, dest))
+            log.info('%s copied into %s' % (src, dest))
 
 
     def getExif(self, fn, headers):
@@ -113,7 +133,7 @@ class FileManager(object):
         @param fn:      input file
         @param headers: EXIF headers to be returned
         """
-        f = os.popen('exiv2 \'%s\'' % fn)
+        stdin, f, stderr = os.popen3('exiv2 \'%s\'' % fn)
         exif = []
         for line in f:
             if not line:
@@ -125,6 +145,10 @@ class FileManager(object):
                 exif.append((field.strip(), value.strip()))
 
         exif.sort(key = lambda item: headers.index(item[0]))
+
+        # report exif problems
+        for line in stderr:
+            log.warn('exif problem (%s): %s' % (fn, line))
         return exif
 
 
@@ -158,7 +182,7 @@ class FileManager(object):
             pid, status = os.wait()
             if os.WEXITSTATUS(status):
                 raise OSError, 'cannot convert file %s' % fn_in
-        log.debug('converted %s -> %s' % (fn_in, fn_out))
+        log.info('converted %s -> %s' % (fn_in, fn_out))
 
 
     def validate(self, fn):

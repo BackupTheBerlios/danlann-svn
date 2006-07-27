@@ -233,15 +233,17 @@ class Danlann(object):
         """
         Parse gallery data.
         """
+        interpreter = parser.interpreter(self.gallery)
+
         # read album files
         for fn in self.albums:
             log.debug('parsing album file %s' % fn)
             f = open(fn)
-            parser.parse(self.gallery, f)
+            parser.load(f, interpreter)
             f.close()
 
         # check gallery data instance
-        parser.check(self.gallery)
+        parser.check(interpreter, self.gallery)
 
 
     def generateGallery(self):

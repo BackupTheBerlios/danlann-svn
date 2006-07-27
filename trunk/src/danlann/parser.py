@@ -19,208 +19,323 @@
 #
 
 """
-Danlann gallery parser functions.
+Danlann gallery parser classes.
 """
 import sys
 import os
+from spark import GenericScanner, GenericParser, GenericASTTraversal
 
-#
-# lex tokens definitions
-#
-
-tokens = 'FILE', 'DIR', 'STRING', 'SEMICOLON', 'COMMENT'
-
-t_FILE      = r'^[A-Za-z0-9_\-]+'
-t_DIR       = r'^/[A-Za-z0-9_\-/]+'
-t_SEMICOLON = r';'
-t_STRING    = r'[^;]+'
-t_COMMENT   = r'^\#.*$'
-
-
-def t_error(t):
-    raise ParseError('%s:%d: illegal character "%s"' \
-        % (__filename, __lineno, t.value[0]))
-
-import lex
-lex.lex()
-
-
-
-#
-# yacc parser definitions
-#
-
-def p_error(error):
-    raise ParseError('%s:%d: syntax error' % (__filename, __lineno))
-
-
-def p_statement(p):
-    """
-    statement : album
-              | subalbum
-              | photo
-              | COMMENT
-    """
-    p[0] = p[1]
-
-
-def p_subalbum(p):
-    """
-    subalbum : DIR
-    """
-    subalbum = get_album(p[1])
-    p[0] = subalbum
-
-    # if album is not stored then save it in references hashtable;
-    # function p_album removes it from the references hashtable as it
-    # creates the album
-    if subalbum.dir not in __store:
-        __references[subalbum.dir] = subalbum
-    __album.subalbums.append(subalbum)
-
-    # subalbum cannot be root album
-    if subalbum in __gallery.subalbums:
-        __gallery.subalbums.remove(subalbum)
-
-
-def p_album(p):
-    """
-    album : DIR SEMICOLON STRING
-          | DIR SEMICOLON STRING SEMICOLON STRING
-    """
-    global __album
-
-    album = get_album(p[1])
-
-    if album.dir in __store:
-        raise ParseError('album "%s" already defined' % album.dir)
-
-    album.title = p[3]
-    if len(p) == 6:
-        album.description = p[5]
-    p[0] = album
-
-    # remove album from references as it is defined now;
-    # see p_subalbum function 
-    if album.dir in __references:
-        del __references[album.dir]
-
-    # store new album and set current one
-    __store[album.dir] = album
-    __album = album
-
-
-def p_photo(p):
-    """
-    photo : FILE
-          | FILE SEMICOLON STRING
-          | FILE SEMICOLON STRING SEMICOLON STRING
-    """
-    photo         = Photo()
-    p[0]          = photo
-    photo.name    = p[1]
-    photo.album   = __album
-    photo.gallery = __gallery
-
-    if len(p) > 2:
-        photo.title = p[3]
-    if len(p) > 4:
-        photo.description = p[5]
-
-    __album.photos.append(photo)
-
-
-
-import yacc
-yacc.yacc()
-
-
-
-#
-# parser utility functions and variables
-#
 from danlann.bc import Gallery, Album, Photo
 
-# hashtable of albums (dir: album)
-__store = {}
 
-# hashtable of albums, which are referenced but not yet defined
-# (dir: album)
-__references = {}
+FILE, DIR, STRING, COMMENT, SLASH, SEMICOLON, EMPTY= \
+        'FILE', 'DIR', 'STRING', 'COMMENT', 'SLASH', 'SEMICOLON', 'EMPTY'
 
-def get_album(dir):
+class Token(object):
     """
-    Return an album object for specified directory.
+    Token class with type and value.
 
-    If album is not found in reference hashtable nor in store, then new
-    album is created.
+    @ivar type:  token type
+    @ivar value: token value
     """
-    dir = os.path.normpath(dir)[1:]
-    if dir in __references:
-        album = __references[dir]
-    elif dir in __store:
-        album = __store[dir]
-    else:
-        album = Album()
-        album.dir = dir
-        album.gallery = __gallery
+    def __init__(self, type, value):
+        self.type  = type
+        self.value = value
 
-        # add every album to root albums by default;
-        # p_subalbum functions removes an album from __root_albums
-        # set if an album becomes subalbum
-        __gallery.subalbums.append(album)
 
-    return album
+    def __cmp__(self, o):
+        return cmp(self.type, o)
+
+
+    def __str__(self):
+        return self.value
 
 
 
-#
-# parser interface and exceptions
-#
+class Node(list):
+    """
+    Parsed album file data.
+
+    @ivar type: node type
+    @ivar data: node data, i.e. photo name, title, description
+    """
+    def __init__(self, type, data = []):
+        self.type = type
+        self.data = data
+
+
+
+class DanlannScanner(GenericScanner):
+    """
+    Danlann album file scanner.
+    """
+    def tokenize(self, line):
+        self.rv = []
+        GenericScanner.tokenize(self, line)
+        return self.rv
+
+
+    def t_SLASH(self, value):
+        r'/'
+        t = Token(SLASH, value)
+        self.rv.append(t)
+
+
+    def t_SEMICOLON(self, value):
+        r'; '
+        t = Token(SEMICOLON, value)
+        self.rv.append(t)
+
+
+    def t_FILE(self, value):
+        r'(?<=^)[A-Za-z0-9_]+'
+        t = Token(FILE, value)
+        self.rv.append(t)
+
+
+    def t_DIR(self, value):
+        r'(?<=^/)[A-Za-z0-9_/]+'
+        t = Token(DIR, value)
+        self.rv.append(t)
+
+
+    def t_STRING(self, value):
+        r'(?<=; )[^;]+'
+        t = Token(STRING, value.strip())
+        self.rv.append(t)
+
+
+    def t_COMMENT(self, value):
+        r'^\#.*'
+        t = Token(COMMENT, value)
+        self.rv.append(t)
+
+
+    def t_EMPTY(self, value):
+        r'^\s*$'
+        t = Token(EMPTY, value)
+        self.rv.append(t)
+
+
+    def error(self, value, pos):
+        global filename, lineno
+        raise ParseError('%s:%d: syntax error at"' % (filename, lineno))
+
+
+
+
+class DanlannParser(GenericParser):
+    """
+    Danlann album file parser.
+    """
+    def __init__(self):
+        GenericParser.__init__(self, 'expr')
+
+
+    def error(self, token):
+        global filename, lineno
+        raise ParseError('%s:%d: syntax error' % (filename, lineno))
+
+
+    def parse(self, tokens):
+        ast = GenericParser.parse(self, tokens)
+        return ast
+
+    def p_expr(self, args):
+        """
+        expr ::= album
+        expr ::= subalbum
+        expr ::= photo
+        expr ::= comment
+        expr ::= empty
+        """
+        return args[0]
+
+
+    def p_subalbum(self, args):
+        """
+        subalbum ::= SLASH DIR
+        """
+        data = [args[1].value]
+        return Node('subalbum', data)
+
+
+    def p_album(self, args):
+        """
+        album ::= SLASH DIR SEMICOLON STRING
+        album ::= SLASH DIR SEMICOLON STRING SEMICOLON STRING
+        """
+        data = [args[1].value, args[3].value, '']
+        if len(args) > 4:
+            data[2] = args[5].value
+        return Node('album', data)
+
+
+    def p_photo(self, args):
+        """
+        photo ::= FILE
+        photo ::= FILE SEMICOLON STRING
+        photo ::= FILE SEMICOLON STRING SEMICOLON STRING
+        """
+        data = [args[0].value, '', '']
+        if len(args) > 2:
+            data[1] = args[2].value
+        if len(args) > 4:
+            data[2] = args[4].value
+        return Node('photo', data)
+
+
+    def p_comment(self, args):
+        """
+        comment ::= COMMENT
+        """
+        return Node('comment')
+
+
+    def p_empty(self, args):
+        """
+        empty ::= EMPTY
+        """
+        return Node('empty')
+
+
+
+class DanlannInterpret(GenericASTTraversal):
+    """
+    Danlann album file interpreter. Create gallery albums and photos objects.
+    """
+    def __init__(self, gallery):
+        self.gallery    = gallery
+
+        self.album      = None
+        self.references = {}
+        self.store      = {}
+
+        GenericASTTraversal.__init__(self, None)
+
+
+    def generate(self, ast):
+        """
+        Traverse parsed data and create gallery objects.
+        """
+        self.postorder(ast)
+
+
+    def n_album(self, node):
+        """
+        Create album. Set current album.
+        """
+        album = self.get_album(node)
+        self.album = album
+
+        if album.dir in self.store:
+            raise ParseError('album "%s" already defined' % album.dir)
+
+        album.title = node.data[1]
+        album.description = node.data[2]
+
+        # remove album from references as it is defined now;
+        # see n_subalbum method 
+        if album.dir in self.references:
+            del self.references[album.dir]
+
+        # store new album
+        self.store[album.dir] = album
+
+
+    def n_subalbum(self, node):
+        """
+        Add subalbum to current album.
+        """
+        subalbum = self.get_album(node)
+
+        # if album is not stored then save it in references hashtable;
+        # method n_album removes it from the references hashtable as it
+        # creates the album
+        if subalbum.dir not in self.store:
+            self.references[subalbum.dir] = subalbum
+        self.album.subalbums.append(subalbum)
+
+        # subalbum cannot be root album
+        if subalbum in self.gallery.subalbums:
+            self.gallery.subalbums.remove(subalbum)
+        return subalbum
+
+
+    def n_photo(self, node):
+        """
+        Add photo to current album.
+        """
+        photo             = Photo()
+        photo.name        = node.data[0]
+        photo.title       = node.data[1]
+        photo.description = node.data[2]
+
+        photo.album       = self.album
+        photo.gallery     = self.gallery
+
+        self.album.photos.append(photo)
+
+
+    def n_comment(self, node):
+        """
+        Process comment node, which is ignored.
+        """
+        pass
+
+
+    def n_empty(self, node):
+        """
+        Process empty node, which is ignored.
+        """
+        pass
+
+
+    def get_album(self, node):
+        """
+        Create an album object for specified directory.
+
+        If album is not found in reference hashtable nor in store, then new
+        album is created.
+        """
+        dir = os.path.normpath(node.data[0])
+        if dir in self.references:
+            album = self.references[dir]
+        elif dir in self.store:
+            album = self.store[dir]
+        else:
+            album = Album()
+            album.dir = dir
+            album.gallery = self.gallery
+
+            # add every album to root albums by default;
+            # n_subalbum method removes an album from gallery subalbums
+            # if an album becomes subalbum
+            self.gallery.subalbums.append(album)
+        return album
+
+
 
 class ParseError(Exception):
     """
-    Parsing exception.
+    Parsing exception. Raised when input data cannot be parse or when
+    created gallery data model is inconsistent.
     """
     pass
 
 
 
-def parse(gallery, f):
+def interpreter(gallery):
     """
-    Parse album file.
-
-    @param gallery: gallery object
-    @param f: album file
+    Get Danlann album file interpreter.
     """
-    global __album, __gallery, __lineno, __filename
-
-    __gallery = gallery   # gallery object
-    __album = None        # current album
-    __lineno = 0
-    __filename = f.name
-
-    for line in f:
-        line = line.strip()
-        __lineno += 1
-        if line:
-            yacc.parse(line)
+    interpreter = DanlannInterpret(gallery)
+    interpreter.scanner = DanlannScanner()
+    interpreter.parser = DanlannParser()
+    return interpreter
 
 
-def reset():
-    """
-    Reset parser. Should be used to parse multiple galleries.
-    """
-    global __store, __references, __album, __gallery, __lineno, __filename
-    __gallery = None
-    __album = None
-    __lineno = 0
-    __filename = None
-    __store = {}
-    __references = {}
-
-
-def check(gallery):
+def check(interpreter, gallery):
     """
     Check if gallery is build in appropriate way:
       - there should be at least on root album
@@ -232,9 +347,9 @@ def check(gallery):
             raise ParseError('album "%s" contains no subalbums nor photos'
                 % album.dir)
 
-    if len(__references) > 0:
+    if len(interpreter.references) > 0:
         raise ParseError('unresolved album references found: %s'
-            % ''.join(dir for dir in __references))
+            % ''.join(dir for dir in interpreter.references))
 
     if len(gallery.subalbums) == 0:
         raise ParseError('no root albums in gallery')
@@ -243,5 +358,20 @@ def check(gallery):
         check_album(album)
 
 
+def load(f, interpreter):
+    """
+    Load album file.
 
-__all__ = [parse, reset, ParseError]
+    @param f:           album file
+    @param interpreter: Danlann album file interpreter
+    """
+    global lineno, filename
+    lineno = 0
+    filename = f.name
+    for line in f:
+        line = line.strip()
+        lineno += 1
+        if line:
+            tokens = interpreter.scanner.tokenize(line)
+            ast = interpreter.parser.parse(tokens)
+            interpreter.generate(ast)

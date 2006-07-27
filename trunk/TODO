@@ -1,12 +1,10 @@
 = danlann 1.0.0 plan =
 
 - build system
-  - build parser module
   - install css stuff
   - danlann libpath system wide configuration
 
 - good XHTL/CSS on mozilla/konqueror/safar/ie
-- add license header
 
 = danlann 1.1.0 plan =
 

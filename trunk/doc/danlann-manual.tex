@@ -249,17 +249,17 @@ Grammar of input file is defined on listing~\ref{grammar}.
 
 \begin{listing}
 \begin{lstlisting}
-line      := album | albumref | photo | comment
-album     := slash dir ':' title [';' desc]
+line      := album | subalbum | photo | comment
+album     := slash dir '; ' title ['; ' desc]
 subalbum  := slash dir
-photo     := file [';' title [';' desc]]
+photo     := file ['; ' title ['; ' desc]]
 title     := string
 desc      := string
-comment   := ^\#.*
-file      := ^[A-Za-z_]+
-dir       := [A-Za-z_/]+
+dir       := [A-Za-z0-9_/]+
+file      := [A-Za-z0-9_]+
 string    := [^;]+
-slash     := ^/
+slash     := '/'
+comment   := ^\#.*
 \end{lstlisting}
 \caption{Grammar of input files}\label{grammar}
 \end{listing}

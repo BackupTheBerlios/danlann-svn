@@ -22,8 +22,8 @@
 Danlann gallery parser classes.
 
 Use interpreter function to get Danlann album file interpreter. Then load
-function should be used for parsing album files and check function should
-be used to check consistency of data model.
+function should be used to parse album files and check function should be
+used to check consistency of data model.
 
 DanlannScanner is used to create list of tokens. DanlannParser creates list
 of nodes using token information. Danlann interpreter uses list of nodes

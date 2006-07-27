@@ -17,6 +17,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #
+"""
+Test Danlann parser aspects:
+    - scanning lines and converting them to tokens
+    - converting tokens to nodes
+    - creating album and photo objects
+
+@see danlann.bc
+@see danlann.parser
+"""
 
 import StringIO
 import unittest
@@ -27,15 +36,35 @@ from danlann.bc import Gallery
 
 
 class ScannerTestCase(unittest.TestCase):
+    """
+    Test tokens created by Danlann scanner.
+
+    @ivar scanner: Danlann scanner instance
+    """
     def setUp(self):
+        """
+        Create Danlann scanner instance.
+        """
         self.scanner = DanlannScanner()
 
 
     def tokenTypes(self, line):
+        """
+        Tokenize a string using Danlann scanner and return list of token
+        types.
+
+        @param line: string to parse
+        """
         return [t.type for t in self.scanner.tokenize(line)]
 
 
     def tokenValues(self, line):
+        """
+        Tokenize a string using Danlann scanner and return list of token
+        values.
+
+        @param line: string to parse
+        """
         return [t.value for t in self.scanner.tokenize(line)]
 
 
@@ -97,16 +126,27 @@ class ScannerTestCase(unittest.TestCase):
                 ['abc01', ';', 'title', ';', 'desc'])
 
 
+
 class ParseNodeTestCase(unittest.TestCase):
     """
     Test Node creation by parser.
     """
     def setUp(self):
+        """
+        Create Danlann scanner and parser for album files.
+        """
         self.scanner = DanlannScanner()
         self.parser = DanlannParser()
 
 
     def parse(self, line):
+        """
+        Parse string with Danlann parser and return node.
+
+        @param line: string to parse
+
+        @see danlann.parser.Node
+        """
         return self.parser.parse(self.scanner.tokenize(line))
 
 
@@ -144,20 +184,35 @@ class ParseNodeTestCase(unittest.TestCase):
 
 
 
-class GenerateTestCase(unittest.TestCase):
+class ParseTestCaseBase(unittest.TestCase):
     """
-    Test object generation.
+    Basic class for Danlann parser tests.
+
+    @ivar gallery:     gallery instance
+    @ivar interpreter: album file interpreter
     """
     def setUp(self):
+        """
+        Create gallery instance and Danlann album file interpreter.
+        """
         self.gallery = Gallery('title', 'desc')
         self.interpreter = interpreter(self.gallery)
 
 
-    def tearDown(self):
-        self.gallery = None
-        
+
+class GenerateTestCase(ParseTestCaseBase):
+    """
+    Test album and photo object generation using one line album and photo
+    definitions.
+    """
 
     def generate(self, line):
+        """
+        Parse string and generate album and photo objects associated with
+        a gallery.
+
+        @param line: string to parse
+        """
         tokens = self.interpreter.scanner.tokenize(line)
         ast = self.interpreter.parser.parse(tokens)
         self.interpreter.generate(ast)
@@ -214,17 +269,17 @@ class GenerateTestCase(unittest.TestCase):
 
 
 
-class ParserTestCase(unittest.TestCase):
-    def setUp(self):
-        self.gallery = Gallery('title', 'desc')
-        self.interpreter = interpreter(self.gallery)
-
-
-    def tearDown(self):
-        self.gallery = None
-
-
+class ParserTestCase(ParseTestCaseBase):
+    """
+    Test parsing album files.
+    """
     def load(self, f):
+        """
+        Load album file data using Danlann parser. Gallery album and photo
+        objects are created in @C{self.gallery} gallery object.
+
+        @param f: album file
+        """
         load(f, self.interpreter)
 
 

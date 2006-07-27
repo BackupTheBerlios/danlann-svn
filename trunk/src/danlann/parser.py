@@ -20,15 +20,24 @@
 
 """
 Danlann gallery parser classes.
+
+Use interpreter function to get Danlann album file interpreter. Then load
+function should be used for parsing album files and check function should
+be used to check consistency of data model.
+
+DanlannScanner is used to create list of tokens. DanlannParser creates list
+of nodes using token information. Danlann interpreter uses list of nodes
+to create gallery data model.
+
+@see danlann.bc
 """
-import sys
 import os
 from spark import GenericScanner, GenericParser, GenericASTTraversal
 
 from danlann.bc import Gallery, Album, Photo
 
 
-FILE, DIR, STRING, COMMENT, SLASH, SEMICOLON, EMPTY= \
+FILE, DIR, STRING, COMMENT, SLASH, SEMICOLON, EMPTY = \
         'FILE', 'DIR', 'STRING', 'COMMENT', 'SLASH', 'SEMICOLON', 'EMPTY'
 
 class Token(object):
@@ -56,8 +65,14 @@ class Node(list):
     """
     Parsed album file data.
 
+    Node data attribute contains information about album, photos, etc, for
+    example:
+        - photo name
+        - photo title
+        - photo description
+
     @ivar type: node type
-    @ivar data: node data, i.e. photo name, title, description
+    @ivar data: node data
     """
     def __init__(self, type, data = []):
         self.type = type
@@ -70,6 +85,11 @@ class DanlannScanner(GenericScanner):
     Danlann album file scanner.
     """
     def tokenize(self, line):
+        """
+        Create tokens from string.
+
+        @param line: string to scan
+        """
         self.rv = []
         GenericScanner.tokenize(self, line)
         return self.rv
@@ -137,10 +157,6 @@ class DanlannParser(GenericParser):
         raise ParseError('%s:%d: syntax error' % (filename, lineno))
 
 
-    def parse(self, tokens):
-        ast = GenericParser.parse(self, tokens)
-        return ast
-
     def p_expr(self, args):
         """
         expr ::= album
@@ -203,6 +219,11 @@ class DanlannParser(GenericParser):
 class DanlannInterpret(GenericASTTraversal):
     """
     Danlann album file interpreter. Create gallery albums and photos objects.
+
+    @ivar gallery:    gallery object
+    @ivar album:      current album
+    @ivar references: album references
+    @ivar store:      gallery albums
     """
     def __init__(self, gallery):
         self.gallery    = gallery

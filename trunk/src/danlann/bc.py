@@ -19,8 +19,8 @@
 #
 
 """
-Danlann data model. Module contain definitions of gallery, album and photo
-classes.
+Danlann gallery data model. Module contain definitions of gallery, album
+and photo classes.
 """
 
 import os.path

@@ -30,6 +30,7 @@ of nodes using token information. Danlann interpreter uses list of nodes
 to create gallery data model.
 
 @see danlann.bc
+@see danlann.test.parser
 """
 import os
 from spark import GenericScanner, GenericParser, GenericASTTraversal

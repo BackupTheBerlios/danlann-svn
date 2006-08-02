@@ -17,4 +17,6 @@ Installation and usage instructions for impatient
     3. Run Danlann
 
         export PYTHONPATH=$HOME/opt/share/python2.4/site-packages
+        export PATH=$PATH:$HOME/opt/bin
+
         danlann gallery.ini

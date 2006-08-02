@@ -7,6 +7,7 @@ AC_OUTPUT([
     Makefile
     bin/Makefile
     css/Makefile
+    doc/Makefile
     src/Makefile
     src/danlann/Makefile
     src/danlann/test/Makefile

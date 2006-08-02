@@ -1,1 +1,1 @@
-SUBDIRS = bin css src
+SUBDIRS = bin css doc src

@@ -1,3 +1,19 @@
-Install.
-Run.
-Danlann manual.
+Danlann is command line gallery generator. Refer to Danlann manual
+for detailed usage information, examples and customization possibilites.
+
+See INSTALL file for installation details.
+
+Installation and usage instructions for impatient
+
+    1. Install
+
+        ./configure --prefix=$HOME/opt
+        make install
+
+    2. Create configuration file and album files (see examples directory
+       or Danlann manual).
+
+    3. Run Danlann
+
+        export PYTHONPATH=$HOME/opt/share/python2.4/site-packages
+        danlann gallery.ini

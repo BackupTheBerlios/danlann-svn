@@ -1,8 +1,7 @@
 = danlann 1.0.0 plan =
 
 - build system
-  - install css stuff
-  - danlann libpath system wide configuration
+  - build documentation during make dist
 
 - good XHTL/CSS on mozilla/konqueror/safar/ie
 

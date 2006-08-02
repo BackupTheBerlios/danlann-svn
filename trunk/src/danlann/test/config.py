@@ -26,6 +26,7 @@ from ConfigParser import ConfigParser
 from StringIO import StringIO
 import unittest
 
+import danlann.config
 from danlann import Danlann
 
 # minimal configuration required by danlann
@@ -85,6 +86,16 @@ albums    = a.txt b.txt
 indir     = input_dir1:input_dir2
 outdir    = output_dir
 libpath   = libpath1:libpath2
+"""
+
+CONF_LIBPATH_OVERRIDE = """
+[danlann]
+title     = danlann title test
+
+albums    = a.txt b.txt
+indir     = input_dir1:input_dir2
+outdir    = output_dir
+libpath   = libpath1:$libpath:libpath2
 """
 
 # configuration data for test cases
@@ -148,7 +159,7 @@ class ConfigTestCase(unittest.TestCase):
     def testMinimalConfig(self):
         """minimal and default configuration"""
 
-        self.assertEqual(self.processor.libpath, ['.'])
+        self.assertEqual(self.processor.libpath, [danlann.config.libpath])
         self.assertEqual(self.processor.albums, ['a.txt', 'b.txt'])
         self.assertEqual(self.processor.gallery.title, 'danlann title test')
         self.assertEqual(self.generator.indir, ['input_dir'])
@@ -228,6 +239,14 @@ class ConfigTestCase(unittest.TestCase):
         assert self.conf.has_option('danlann', 'indir')
         self.assertEqual(self.processor.libpath, ['libpath1', 'libpath2'])
         self.assertEqual(self.generator.indir, ['input_dir1', 'input_dir2'])
+
+
+    @config(CONF_LIBPATH_OVERRIDE)
+    def testLibPath(self):
+        """libpath override"""
+        assert self.conf.has_option('danlann', 'libpath')
+        self.assertEqual(self.processor.libpath,
+                ['libpath1', danlann.config.libpath, 'libpath2'])
 
 
     @config(CONF_MIN)

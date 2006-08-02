@@ -27,6 +27,7 @@ import os.path
 import itertools
 from ConfigParser import ConfigParser
 
+import danlann.config
 from danlann import parser
 from danlann.bc import Gallery
 from danlann.filemanager import FileManager
@@ -82,7 +83,7 @@ class Danlann(object):
     """
     def __init__(self):
         self.validate = False
-        self.libpath  = ['.']
+        self.libpath  = [danlann.config.libpath]
         self.outdir   = None
         self.albums   = []
         self.files    = []
@@ -140,7 +141,12 @@ class Danlann(object):
             raise ConfigurationError('no output directory configuration')
 
         if conf.has_option('danlann', 'libpath'):
-            self.libpath = conf.get('danlann', 'libpath').split(':')
+            libpath = conf.get('danlann', 'libpath')
+
+            # resolve $libpath variable
+            libpath = libpath.replace('$libpath', danlann.config.libpath)
+
+            self.libpath = libpath.split(':')
 
         if validate is None and conf.has_option('danlann', 'validate'):
             self.validate = conf.getboolean('danlann', 'validate')

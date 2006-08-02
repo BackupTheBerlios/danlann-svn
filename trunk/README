@@ -2,6 +2,25 @@ Danlann is easy to use and powerful command line gallery generator. Refer
 to Danlann manual for detailed usage information, examples and
 customization possibilites.
 
+Requirements:
+- Python 2.4 or later
+
+    http://www.python.org/
+
+- ImageMagick or GraphicsMagick
+
+    http://www.imagemagick.org/script/index.php
+    http://www.graphicsmagick.org/
+
+- spark python module
+    
+    http://pages.cpsc.ucalgary.ca/~aycock/spark/
+
+- libxml 2.6.x Python bindings
+
+    http://xmlsoft.org/python.html
+
+
 See INSTALL file for installation details.
 
 Installation and usage instructions for impatient

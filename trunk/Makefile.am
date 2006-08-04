@@ -1,4 +1,4 @@
-SUBDIRS = bin css doc src
+SUBDIRS = bin css doc examples js src
 
 tests:
 	PYTHONPATH=src python src/danlann/test/__init__.py -v

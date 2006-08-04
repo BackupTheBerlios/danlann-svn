@@ -1,0 +1,10 @@
+/dublin; Dublin
+/dublin/dalkey
+dsc_0004; Joyce Museum
+dsc_0005; Yeats Monument
+dsc_0006; Spire
+
+/dublin/dalkey; Dalkey
+dsc_0001; Dalkey Castle
+dsc_0002; Dalkey Island
+dsc_0003; Dalkey Port

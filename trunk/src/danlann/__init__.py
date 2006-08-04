@@ -225,7 +225,6 @@ class Danlann(object):
         Copy additional gallery files to gallery output directory.
         """
         assert self.outdir
-        assert os.path.exists(self.outdir)
 
         # lookup for all additional files to be copied
         files = (self.fm.lookup(self.libpath, fn) for fn in self.files)

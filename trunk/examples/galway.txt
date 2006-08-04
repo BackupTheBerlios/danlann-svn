@@ -1,0 +1,8 @@
+/galway; Galway
+/galway/musicians
+dsc_0009; Main Street
+dsc_0010; Bay
+
+/galway/musicians; Musicians
+dsc_0007; Guitar Master
+dsc_0008; Beautiful Singers

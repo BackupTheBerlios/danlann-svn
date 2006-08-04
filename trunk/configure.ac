@@ -8,6 +8,9 @@ AC_OUTPUT([
     bin/Makefile
     css/Makefile
     doc/Makefile
+    examples/Makefile
+    examples/in/Makefile
+    js/Makefile
     src/Makefile
     src/danlann/Makefile
     src/danlann/test/Makefile

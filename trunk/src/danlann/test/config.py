@@ -98,6 +98,16 @@ outdir    = output_dir
 libpath   = libpath1:$libpath:libpath2
 """
 
+CONF_FILES_OVERRIDE = """
+[danlann]
+title     = danlann title test
+
+albums    = a.txt b.txt
+indir     = input_dir1:input_dir2
+outdir    = output_dir
+files     = xx $files ee
+"""
+
 # configuration data for test cases
 # test case name is used as hashtable key
 CONFIG_DATA = {}
@@ -247,6 +257,14 @@ class ConfigTestCase(unittest.TestCase):
         assert self.conf.has_option('danlann', 'libpath')
         self.assertEqual(self.processor.libpath,
                 ['libpath1', danlann.config.libpath, 'libpath2'])
+
+
+    @config(CONF_FILES_OVERRIDE)
+    def testFiles(self):
+        """files override"""
+        assert self.conf.has_option('danlann', 'files')
+        self.assertEqual(self.processor.files,
+                ['xx', 'css', 'js', 'ee'])
 
 
     @config(CONF_MIN)

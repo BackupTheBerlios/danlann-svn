@@ -86,7 +86,7 @@ class Danlann(object):
         self.libpath  = [danlann.config.libpath]
         self.outdir   = None
         self.albums   = []
-        self.files    = []
+        self.files    = ['css', 'js']
         self.exclude  = '.svn|CVS|~$|\.swp$'
 
         self.fm        = None
@@ -159,7 +159,12 @@ class Danlann(object):
             raise ConfigurationError('no input album files configuration')
 
         if conf.has_option('danlann', 'files'):
-            self.files = conf.get('danlann', 'files').split()
+            files = conf.get('danlann', 'files')
+
+            # resolve $files variable
+            files = files.replace('$files', ' '.join(self.files))
+
+            self.files = files.split()
 
         if conf.has_option('danlann', 'exclude'):
             self.exclude = conf.get('danlann', 'exclude')

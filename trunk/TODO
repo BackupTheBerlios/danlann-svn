@@ -5,10 +5,10 @@
 = danlann 1.1.0 plan =
 
 - cleanup function
-- dry run function (no changes made to any files, show what would be done)
+- dry run option for cleanup and generating (no changes made to any files,
+  show what would be done)
   
   for above stuff we need a python generator, which will yield files to be
   created; there should be consumers of this generator like:
   - cleanup
   - generate
-  - dry run? <- maybe this should an option for generate?

@@ -34,7 +34,7 @@ class XHTMLTemplate(object):
             self.copyright = self.conf.get('template', 'copyright')
 
         if not hasattr(self, 'js'):
-            self.js = []
+            self.js = ['js/danlann.js']
         if not hasattr(self, 'onload'):
             self.onload = ''
 

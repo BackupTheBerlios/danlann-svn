@@ -24,19 +24,22 @@ class XHTMLTemplate(object):
     def __init__(self, conf):
         self.conf = conf
 
-        self.css = ['css/danlann.css']
         self.copyright = ''
 
+        self.css = ['css/danlann.css']
         if conf.has_option('template', 'css'):
-            self.css = self.conf.get('template', 'css').split()
+            self.css += self.conf.get('template', 'css').split()
 
         if conf.has_option('template', 'copyright'):
             self.copyright = self.conf.get('template', 'copyright')
 
-        if not hasattr(self, 'js'):
-            self.js = ['js/danlann.js']
-        if not hasattr(self, 'onload'):
-            self.onload = ''
+        self.js = ['js/danlann.js']
+        if conf.has_option(self.__conf__, 'js'):
+            self.js += conf.get(self.__conf__, 'js').split()
+
+        self.onload = ''
+        if conf.has_option(self.__conf__, 'onload'):
+            self.onload = ' onload = \'%s\'' % conf.get(self.__conf__, 'onload')
 
         fmt = '<link rel = \'stylesheet\' href = \'%%s/%s\' type = \'text/css\'></link>'
         cssfiles = ''.join([fmt % f for f in self.css])
@@ -196,15 +199,7 @@ class XHTMLGalleryIndexTemplate(XHTMLTemplate):
     """
     XHTML Simple gallery template.
     """
-    def __init__(self, conf):
-        if conf.has_option('template:gallery', 'js'):
-            self.js = conf.get('template:gallery', 'js').split()
-
-        if conf.has_option('template:gallery', 'onload'):
-            self.onload = ' onload = \'%s\'' % conf.get('template:gallery', 'onload')
-
-        super(XHTMLGalleryIndexTemplate, self).__init__(conf)
-
+    __conf__ = 'template:gallery'
 
     def album(self, album):
         title = self.escape(album.title)
@@ -216,6 +211,8 @@ class XHTMLGalleryIndexTemplate(XHTMLTemplate):
 
 
 class XHTMLAlbumIndexTemplate(XHTMLTemplate):
+    __conf__ = 'template:album'
+
     def album(self, album):
         title = self.escape(album.title)
         return "<div class = 'album'><a title = \'%s\' href = '%s/index.html'>%s</a></div>" \
@@ -242,21 +239,18 @@ class XHTMLAlbumIndexTemplate(XHTMLTemplate):
 
 
 class XHTMLPhotoTemplate(XHTMLTemplate):
-    ctypes = {
+    __conf__ = 'template:photo'
+
+    CTYPES = {
         'preview': 'view',
         'view': 'preview',
     }
-    def __init__(self, conf):
-        if conf.has_option('template:photo', 'js'):
-            self.js = conf.get('template:photo', 'js').split()
-        super(XHTMLPhotoTemplate, self).__init__(conf)
-
 
     def photo(self, photo, photo_type):
         data = {
             'url': photo.name,
             'type': photo_type,
-            'ctype': self.ctypes[photo_type],
+            'ctype': self.CTYPES[photo_type],
             'title': '%s' % self.escape(photo.title),
             'alt': 'photo: %s' % self.escape(photo.title),
         }
@@ -282,5 +276,7 @@ class XHTMLPhotoTemplate(XHTMLTemplate):
 
 
 class XHTMLExifTemplate(XHTMLPhotoTemplate):
+    __conf__ = 'template:exif'
+
     def photo(self, photo, photo_type = None):
         return self.photoExif(photo), ''

@@ -20,8 +20,12 @@ Requirements:
 
     http://xmlsoft.org/python.html
 
+- exiv2 software
 
-See INSTALL file for installation details.
+    http://www.exiv2.org/
+
+
+See INSTALL file for installation details (standard ac/am stuff).
 
 Installation and usage instructions for impatient
 

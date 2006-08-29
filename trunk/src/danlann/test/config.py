@@ -155,7 +155,10 @@ class ConfigTestCase(unittest.TestCase):
         self.conf = ConfigParser()
 
         # get test case configuration data and read configuration
-        test_name = getattr(self, '_TestCase__testMethodName')
+        try:
+            test_name = getattr(self, '_TestCase__testMethodName') # python 2.4
+        except AttributeError:
+            test_name = getattr(self, '_testMethodName')           # python 2.5
         self.conf.readfp(StringIO(CONFIG_DATA[test_name]))
 
         # initialize processor

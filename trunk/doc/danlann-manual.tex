@@ -236,6 +236,33 @@ listing~\ref{conf:photo:example:thumb} for configuration changes)
 \item apply Floyd/Steinberg error diffusion to thumbnail image
 \end{itemize}
 
+\subsection{Additional Gallery Files}
+Gallery customization often involves copying of additional files like
+styles, scripts or images into output directory. By default, Danlann copies
+\texttt{css} and \texttt{js} directories from Danlann library path. This
+can be changed by setting \texttt{files} and \texttt{libpath} configuration
+options, see listing~\ref{conf:copy} for examples.
+
+\begin{listing}
+\begin{lstlisting}
+[danlann]
+; copy standard directories (css and js) and images
+; from default Danlann directory and from current directory
+files   = $files images
+libpath = $libpath:.
+\end{lstlisting}
+
+\begin{lstlisting}
+[danlann]
+; copy standard directories, images and readme file
+; from default Danlann directory, /usr/local/share/galleries
+; and from current directory
+files   = $files images doc/README
+libpath = $libpath:/usr/share/local/galleries/:.
+\end{lstlisting}
+\caption{Configuration examples used to copy additional gallery files}\label{conf:copy}
+\end{listing}
+
 \subsection{CSS Styles}
 
 \subsection{JavaScript Effects}

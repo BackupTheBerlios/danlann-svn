@@ -230,6 +230,8 @@ class FileManager(object):
                 os.execlp(*args)
             except OSError, ex:
                 sys.exit(ex.errno) # exit with errno
+            except:
+                sys.exit(4) # otherwise EINTR
         else:
             pid, status = os.wait()
             errno = os.WEXITSTATUS(status)

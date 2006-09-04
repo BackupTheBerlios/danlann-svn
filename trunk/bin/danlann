@@ -68,23 +68,27 @@ elif options.verbose:
 logging.basicConfig(level = level)
 log = logging.getLogger('danlann')
 
-from danlann import Danlann
+from danlann import Danlann, ConfigurationError
 
 fn = args[0] # get gallery configuration file
 
-processor = Danlann()
-conf = processor.readConf(fn)
-processor.initialize(conf, options.validate)
-processor.parse()
+try:
+    processor = Danlann()
+    conf = processor.readConf(fn)
+    processor.initialize(conf, options.validate)
+    processor.parse()
 
-if options.copy:
-    log.info('copying additional files')
-    processor.copy()
+    if options.copy:
+        log.info('copying additional files')
+        processor.copy()
 
-if options.generate:
-    log.info('generating gallery files')
-    processor.generateGallery()
+    if options.generate:
+        log.info('generating gallery files')
+        processor.generateGallery()
 
-if options.validate:
-    log.info('validating XHTML files')
-processor.postprocess()
+    if options.validate:
+        log.info('validating XHTML files')
+    processor.postprocess()
+except ConfigurationError, ex:
+    print 'danlann: configuration error: %s' % ex
+    sys.exit(1)

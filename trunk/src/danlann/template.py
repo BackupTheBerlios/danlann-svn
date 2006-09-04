@@ -24,7 +24,7 @@ class XHTMLTemplate(object):
     def __init__(self, conf):
         self.conf = conf
 
-        self.copyright = ''
+        self.copyright = '&nbsp;'
 
         self.css = ['css/danlann.css']
         if conf.has_option('template', 'css'):

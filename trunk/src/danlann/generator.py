@@ -322,7 +322,7 @@ class DanlannGenerator(object):
 
             self.generatePhoto(photo, 'preview')
             self.generatePhoto(photo, 'view')
-        except StopIteration, msg:
+        except StopIteration, ex:
             log.error('could not find photo %s file' % photo.name)
 
 
@@ -367,8 +367,8 @@ class DanlannGenerator(object):
                 args = self.convert_args[photo_type]
 
                 self.fm.convert(photo.filename, fn_out, args)
-            except OSError, msg:
-                log.error('failed conversion %s: %s' % (fn_out, msg))
+            except OSError, ex:
+                log.error('failed conversion %s: %s' % (fn_out, ex))
 
 
     def generatePhoto(self, photo, photo_type):

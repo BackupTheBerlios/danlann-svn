@@ -21,6 +21,7 @@
 import os.path
 import re
 import shutil
+import sys
 import libxml2
 
 import logging
@@ -174,14 +175,7 @@ class FileManager(object):
         @pvar fn_out : output filename
         @pvar args   : conversion arguments
         """
-        args = self.convert_cmd + [fn_in] + args + [fn_out]
-
-        if not os.fork():
-            os.execlp(*args)
-        else:
-            pid, status = os.wait()
-            if os.WEXITSTATUS(status):
-                raise OSError, 'cannot convert file %s' % fn_in
+        self.execl(self.convert_cmd + [fn_in] + args + [fn_out])
         log.info('converted %s -> %s' % (fn_in, fn_out))
 
 
@@ -221,3 +215,38 @@ class FileManager(object):
 
         doc.freeDoc()
         del ctxt
+
+
+    def execl(self, args):
+        """
+        Execute command using @C{os.exec*}.
+
+        @param args: list with command and command arguments to execute
+        """
+        if not os.fork():
+            try:
+                os.close(1)
+                os.close(2)
+                os.execlp(*args)
+            except OSError, ex:
+                sys.exit(ex.errno) # exit with errno
+        else:
+            pid, status = os.wait()
+            errno = os.WEXITSTATUS(status)
+
+            # raise exception using errno from child
+            if errno:
+                raise OSError(errno, os.strerror(errno))
+
+
+    def checkCommand(self, cmd):
+        """
+        Check if it is possible to execute @C{cmd} command by calling:
+
+            cmd -help
+
+        This way it is possible to check for command existence.
+
+        @param cmd: command to check
+        """
+        self.execl([cmd, cmd, '-help'])

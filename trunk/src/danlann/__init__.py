@@ -223,6 +223,15 @@ class Danlann(object):
         self.generator.ptmpl = XHTMLPhotoTemplate(conf)
         self.generator.etmpl = XHTMLExifTemplate(conf)
 
+        #
+        # check exiv2/GraphicsMagick/ImageMagick existence
+        #
+        if gm:
+            self.checkCommand('gm', 'GraphicsMagick (gm command)')
+        else:
+            self.checkCommand('convert', 'ImageMagick (convert command)')
+        self.checkCommand('exiv2', 'Exiv2 (exiv2 command)')
+
 
 
     def copy(self):
@@ -284,3 +293,19 @@ class Danlann(object):
                 log.info('validating file: %s' % fn)
                 if not self.fm.validate(fn):
                     log.error('validating failed: %s' % fn)
+
+
+    def checkCommand(self, cmd, name):
+        """
+        Check if given command exist. If it does not exist then
+        @C{ConfigurationError} exception is raised.
+
+        @param cmd:  command to check, i.e. convert, gm
+        @param name: software identyfing the command, i.e. ImageMagick,
+                     GraphicsMagick
+        """
+        try:
+            self.fm.checkCommand(cmd)
+        except OSError, ex:
+            raise ConfigurationError('%s is not installed, error: %s' \
+                    % (name, ex.strerror))

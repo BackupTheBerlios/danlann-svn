@@ -140,7 +140,7 @@ class DanlannScanner(GenericScanner):
 
     def error(self, value, pos):
         global filename, lineno
-        raise ParseError('%s:%d: syntax error at"' % (filename, lineno))
+        raise ParseError('%s:%d: syntax error', filename, lineno)
 
 
 
@@ -155,7 +155,7 @@ class DanlannParser(GenericParser):
 
     def error(self, token):
         global filename, lineno
-        raise ParseError('%s:%d: syntax error' % (filename, lineno))
+        raise ParseError('%s:%d: syntax error', filename, lineno)
 
 
     def p_expr(self, args):
@@ -247,11 +247,14 @@ class DanlannInterpret(GenericASTTraversal):
         """
         Create album. Set current album.
         """
+        global filename, lineno
+
         album = self.get_album(node)
         self.album = album
 
         if album.dir in self.store:
-            raise ParseError('album "%s" already defined' % album.dir)
+            raise ParseError('album "%s" already defined' % album.dir, \
+                    filename, lineno)
 
         album.title = node.data[1]
         album.description = node.data[2]
@@ -296,6 +299,10 @@ class DanlannInterpret(GenericASTTraversal):
         photo.album       = self.album
         photo.gallery     = self.gallery
 
+        if not self.album:
+            global filename, lineno
+            raise ParseError('photo %s cannot exist' \
+                    ' without album' % photo.name, filename, lineno)
         self.album.photos.append(photo)
 
 
@@ -343,7 +350,17 @@ class ParseError(Exception):
     Parsing exception. Raised when input data cannot be parse or when
     created gallery data model is inconsistent.
     """
-    pass
+    def __init__(self, message, filename = None, lineno = None):
+        super(ParseError, self).__init__(message)
+        self.filename = filename
+        self.lineno = lineno
+
+
+    def __str__(self):
+        if self.filename and self.lineno:
+            return '%s:%d:%s' % (self.filename, self.lineno, self.message)
+        else:
+            super(ParseError, self).__str__()
 
 
 

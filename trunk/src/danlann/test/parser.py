@@ -412,6 +412,20 @@ photo_a2; title; desc http://www.danlann.org
         self.failUnlessRaises(ParseError, self.load, f)
 
 
+    def testNoGalleryAlbum(self):
+        """no album in gallery error"""
+
+        f = self.getFile("""\
+# comment
+photo_a1; title; desc ###
+photo_a2; title; desc http://www.danlann.org
+photo_a3; title
+photo_a4
+
+""")
+        self.failUnlessRaises(ParseError, self.load, f)
+
+
 
 if __name__ == '__main__':
     unittest.main()

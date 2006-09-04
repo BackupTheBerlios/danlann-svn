@@ -69,6 +69,7 @@ logging.basicConfig(level = level)
 log = logging.getLogger('danlann')
 
 from danlann import Danlann, ConfigurationError
+from danlann.parser import ParseError
 
 fn = args[0] # get gallery configuration file
 
@@ -89,6 +90,11 @@ try:
     if options.validate:
         log.info('validating XHTML files')
     processor.postprocess()
+
+except ParseError, ex:
+    print 'danlann: parser error: %s' % ex
+    sys.exit(1)
+
 except ConfigurationError, ex:
     print 'danlann: configuration error: %s' % ex
     sys.exit(1)

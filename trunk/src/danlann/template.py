@@ -190,7 +190,7 @@ class XHTMLTemplate(object):
         if isinstance(context, Photo) and context.exif:
             navigation.append('<span class = \'exif\'>')
             navigation.append('<a onclick = \'toggle_exif_window(); return false\'')
-            navigation.append(' title = \'exif data\' href = \'%s.exif.html\'>exif</a></span>' % context.name)
+            navigation.append(' title = \'exif data\' href = \'%s.exif.xhtml\'>exif</a></span>' % context.name)
         navigation.append('</div>')
         return ''.join(navigation) % data, ''
 
@@ -203,7 +203,7 @@ class XHTMLGalleryIndexTemplate(XHTMLTemplate):
 
     def album(self, album):
         title = self.escape(album.title)
-        pre = '<div class = \'album\'><a title = \'%s\' href = \'%s/index.html\'>%s</a>' \
+        pre = '<div class = \'album\'><a title = \'%s\' href = \'%s/index.xhtml\'>%s</a>' \
             % ('album: %s' % title, album.dir, title)
         post = '</div>'
         return pre, post
@@ -215,7 +215,7 @@ class XHTMLAlbumIndexTemplate(XHTMLTemplate):
 
     def album(self, album):
         title = self.escape(album.title)
-        return "<div class = 'album'><a title = \'%s\' href = '%s/index.html'>%s</a></div>" \
+        return "<div class = 'album'><a title = \'%s\' href = '%s/index.xhtml'>%s</a></div>" \
             % ('album: %s' % title, album.gallery.reldir(album.dir), title), ''
 
 
@@ -233,7 +233,7 @@ class XHTMLAlbumIndexTemplate(XHTMLTemplate):
             row_post = '</tr>'    # close row every 5th photo or after last one photo
         self.column_counter += 1
         
-        return (row_pre + '<td class = \'photo\'><a title = \'%(title)s\' href = \'%(url)s.preview.html\'>' \
+        return (row_pre + '<td class = \'photo\'><a title = \'%(title)s\' href = \'%(url)s.preview.xhtml\'>' \
             '<img alt = \'%(alt)s\' src = \'%(url)s.thumb.jpg\'/></a><div>%(title)s</div>' \
             '</td>' + row_post) % data, ''
 
@@ -262,7 +262,7 @@ class XHTMLPhotoTemplate(XHTMLTemplate):
 
         return ('<div class = \'photo %(type)s\'>' \
                 +  exif \
-                + '<a title = \'%(title)s\' href = \'%(url)s.%(ctype)s.html\'>' \
+                + '<a title = \'%(title)s\' href = \'%(url)s.%(ctype)s.xhtml\'>' \
                 '<img alt = \'%(alt)s\' src = \'%(url)s.%(type)s.jpg\'/>' \
                 '</a></div>') % data, ''
 

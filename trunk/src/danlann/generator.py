@@ -148,13 +148,13 @@ class DanlannGenerator(object):
         return '%s/%s' % (self.getDir(album), file)
         
 
-    def getPhotoFile(self, photo, photo_type, ext = 'html'):
+    def getPhotoFile(self, photo, photo_type, ext = 'xhtml'):
         """
         Return photo filename for given type of photo.
 
         For example for dsc_0000 thumbnail we return
 
-            dsc_0000.thumb.html
+            dsc_0000.thumb.xhtml
         """
         return '%s.%s.%s' % (photo.name, photo_type, ext)
 
@@ -163,7 +163,7 @@ class DanlannGenerator(object):
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
-        f = File('%s/index.html' % self.outdir)
+        f = File('%s/index.xhtml' % self.outdir)
 
         pre, post = self.gtmpl.body(self.gallery)
         f.write(pre, post)
@@ -234,7 +234,7 @@ class DanlannGenerator(object):
 
     def processAlbumNavigation(self, f, album, parent):
         def get_fn(album):
-            return '%s/%s/index.html' % (album.gallery.rootdir(album), album.dir)
+            return '%s/%s/index.xhtml' % (album.gallery.rootdir(album), album.dir)
 
         subalbums = parent.subalbums
         if isinstance(parent, Gallery):
@@ -243,14 +243,14 @@ class DanlannGenerator(object):
             ptitle = 'album: %s' % parent.title
 
         data = self.getPrevAndNext(subalbums, album, get_fn)
-        data['parent'] = '../index.html'
+        data['parent'] = '../index.xhtml'
         data['parent_title'] = ptitle
         self.generateNavigation(f, self.atmpl, album, data)
 
 
     def processPhotoNavigation(self, f, photo, photo_type):
         data = self.getPrevAndNext(photo.album.photos, photo, self.getPhotoFile, photo_type)
-        data['parent'] = 'index.html'
+        data['parent'] = 'index.xhtml'
         data['parent_title'] = 'album: %s' % photo.album.title
         self.generateNavigation(f, self.ptmpl, photo, data, photo_type)
 
@@ -272,7 +272,7 @@ class DanlannGenerator(object):
 
     def generateAlbum(self, album, parent):
         self.fm.mkdir(self.getDir(album))
-        fn = self.getAlbumFile(album, 'index.html')
+        fn = self.getAlbumFile(album, 'index.xhtml')
         f = File(fn)
 
         pre, post = self.atmpl.body(album)

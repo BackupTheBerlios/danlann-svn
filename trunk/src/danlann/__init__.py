@@ -282,7 +282,7 @@ class Danlann(object):
             """
             for dir, subdirs, files in os.walk(self.outdir):
                 for fn in files:
-                    if fn.endswith('.html'):
+                    if fn.endswith('.xhtml'):
                         yield os.path.join(dir, fn)
 
 

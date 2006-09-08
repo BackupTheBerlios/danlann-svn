@@ -189,7 +189,7 @@ class XHTMLTemplate(object):
 
         if isinstance(context, Photo) and context.exif:
             navigation.append('<span class = \'exif\'>')
-            navigation.append('<a onclick = \'toggle_exif_window(); return false\'')
+            navigation.append('<a onclick = \'toggle_exif_window("%s.exif.xhtml"); return false\'' % context.name)
             navigation.append(' title = \'exif data\' href = \'%s.exif.xhtml\'>exif</a></span>' % context.name)
         navigation.append('</div>')
         return ''.join(navigation) % data, ''
@@ -255,14 +255,8 @@ class XHTMLPhotoTemplate(XHTMLTemplate):
             'alt': 'photo: %s' % self.escape(photo.title),
         }
 
-        if photo.exif:
-            exif = '<div id = \'exif\' class = \'exif\'>' + self.photoExif(photo) + '</div>'
-        else:
-            exif = ''
-
         return ('<div class = \'photo %(type)s\'>' \
-                +  exif \
-                + '<a title = \'%(title)s\' href = \'%(url)s.%(ctype)s.xhtml\'>' \
+                '<a title = \'%(title)s\' href = \'%(url)s.%(ctype)s.xhtml\'>' \
                 '<img alt = \'%(alt)s\' src = \'%(url)s.%(type)s.jpg\'/>' \
                 '</a></div>') % data, ''
 

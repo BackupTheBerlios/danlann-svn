@@ -88,9 +88,9 @@ body.photo {
 body.photo div.exif {
     visibility: hidden;
     position: absolute;
-    top: 45px;
+    top: 55px;
     left: 30px;
-    background-color: black;
+    background-color: #111111;
     padding: 10px;
 }
 

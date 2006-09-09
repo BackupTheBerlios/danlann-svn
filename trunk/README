@@ -1,6 +1,15 @@
 Danlann is easy to use and powerful command line gallery generator. Refer
-to Danlann manual for detailed usage information, examples and
-customization possibilites.
+to Danlann manual for detailed usage information, examples and customization
+possibilites.
+
+Current Danlann implementation generates XHTML files, which conform to W3C
+standards as much as possible. If you find a bug... please report it. It is
+really appreciated.
+
+On other side, Danlann developers do not have enough time to deal with
+quirks of different web browsers. If you your preferred web browser have
+problems with displaying generated pages, then report bug to team
+developing this web browser, please.
 
 Requirements:
 - Python 2.4 or later

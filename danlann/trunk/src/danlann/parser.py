@@ -140,7 +140,7 @@ class DanlannScanner(GenericScanner):
 
     def error(self, value, pos):
         global filename, lineno
-        raise ParseError('%s:%d: syntax error', filename, lineno)
+        raise ParseError('syntax error', filename, lineno)
 
 
 
@@ -155,7 +155,7 @@ class DanlannParser(GenericParser):
 
     def error(self, token):
         global filename, lineno
-        raise ParseError('%s:%d: syntax error', filename, lineno)
+        raise ParseError('syntax error', filename, lineno)
 
 
     def p_expr(self, args):
@@ -360,7 +360,7 @@ class ParseError(Exception):
         if self.filename and self.lineno:
             return '%s:%d:%s' % (self.filename, self.lineno, self.message)
         else:
-            super(ParseError, self).__str__()
+            return super(ParseError, self).__str__()
 
 
 

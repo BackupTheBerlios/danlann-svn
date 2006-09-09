@@ -1,6 +1,6 @@
-Danlann is easy to use and powerful command line web photo gallery generator. Refer
-to Danlann manual for detailed usage information, examples and customization
-possibilites.
+Danlann is easy to use and powerful command line web photo gallery
+generator. Refer to Danlann manual for detailed usage information, examples
+and customization possibilites.
 
 Current Danlann implementation generates XHTML files, which conform to W3C
 standards as much as possible. If you find a bug... please report it. It is

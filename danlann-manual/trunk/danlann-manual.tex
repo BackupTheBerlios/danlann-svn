@@ -4,6 +4,7 @@
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{float}
+\usepackage{longtable}
 
 \newfloat{listing}{th}{lst}
 \floatname{listing}{Listing}
@@ -196,7 +197,6 @@ in gallery output directory
 Gallery can be customized to fit gallery creator needs and taste.
 % fixme: read about files, which are created
 % fixme: additional files: styles and javascript files
-% fixme: libpath info for additional files
 
 \subsection{Photo Conversion Parameters}
 \begin{listing}
@@ -272,9 +272,40 @@ libpath = $libpath:/usr/share/local/galleries/:.
 \caption{Configuration examples used to copy additional gallery files}\label{conf:copy}
 \end{listing}
 
-\subsection{CSS Styles}
+\subsection{Displaying Exif Data}\label{exif}
+Danlann supports displaying Exif data on photo gallery pages.
 
-\subsection{JavaScript Effects}
+By default, Danlann displays following Exif data
+\begin{itemize}
+\item Image timestamp
+\item Exposure time
+\item Aperture
+\item Exposure bias
+\item Flash
+\item Flash bias
+\item Focal length
+\item ISO speed
+\item Exposure mode
+\item Metering mode
+\item White balance
+\end{itemize}
+
+\begin{listing}
+\begin{lstlisting}
+[danlann]
+exif = Image timestamp, Exposure time, Aperture
+\end{lstlisting}
+\caption{Exif configuration example}\label{conf:exif}
+\end{listing}
+
+Listing~\ref{conf:exif} contains example of configuration, which displays
+only Exif data like timestamp, exposure time and aperture.
+
+Exif header names can be determined using \texttt{exiv2} command, which is
+used by Danlann to get photo data.
+
+%\subsection{CSS Styles}
+%\subsection{JavaScript Effects}
 
 \section{Input Files}\label{albums}
 Danlann input file defines albums and their content like subalbums and
@@ -311,6 +342,43 @@ in configuration file (see section~\ref{conf:all}).
 
 
 \section{Configuration Files}\label{conf:all}
+% danlann
 % while describing albums: albums gives some info about order of
 % subalbums and photos
+\begin{longtable}{|l|p{3cm}|p{6cm}|p{3cm}|}
+\hline
+Option & Default Value & Description & Remarks \\
+\hline
+\hline
+albums         &  & list of gallery album files separated by space, album files determine also order of subalbums and photos & see section~\ref{example} \\
+\hline
+description    &  & gallery description shown on gallery index page & see also gallery title option \\
+\hline
+exclude        & {\small \verb+.svn|CVS|~$|\.swp$+} & files to be excluded while copying gallery additional files (it is regular expression) & see files option \\
+\hline
+exif           & & list of exif headers separated by coma & see section~\ref{exif} to check default value \\
+\hline
+files          & \verb+css js+ & list of files separated by space to be copied from library paths to gallery output directory  & \\
+\hline
+graphicsmagick & \texttt{True} & use GraphicsMagick if \texttt{True}, ImageMagick otherwise & \\
+\hline
+indir          &  & gallery input directory, which contains photo files & see section~\ref{example} \\
+\hline
+libpath        &  & list of directories separated by colon, directories contain additional gallery files  & \\
+\hline
+outdir         &  & gallery output directory  & see section~\ref{example} \\
+\hline
+title          &  & gallery title & \\
+\hline
+validate       & \texttt{False} & validate generated XHTML files if set to \texttt{True} & \\
+\hline
+\end{longtable}
+%%conf.get('template', 'css')
+%%conf.get('template', 'copyright')
+%%
+%%conf.get(section, option) 
+%%conf.get(self.__conf__, 'js')
+%%conf.get(self.__conf__, 'onload')
+
+
 \end{document}

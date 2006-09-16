@@ -199,7 +199,7 @@ Gallery can be customized to fit gallery creator needs and taste.
 % fixme: read about files, which are created
 % fixme: additional files: styles and javascript files
 
-\subsection{Photo Conversion Parameters}
+\subsection{Photo Conversion Parameters}\label{conversion}
 \begin{listing}
 \begin{lstlisting}
 [photo:view]
@@ -246,7 +246,7 @@ listing~\ref{conf:photo:example:thumb} for configuration changes)
 \item apply Floyd/Steinberg error diffusion to thumbnail image
 \end{itemize}
 
-\subsection{Additional Gallery Files}
+\subsection{Additional Gallery Files}\label{files}
 Gallery customization often involves copying of additional files like
 styles, scripts or images into output directory. By default, Danlann copies
 \texttt{css} and \texttt{js} directories from Danlann library path. This
@@ -348,14 +348,26 @@ change order of photos or subalbums listed for an album in an input file.
 This also applies to whole set of albums if order of input files is changed
 in configuration file (see section~\ref{conf:all}).
 
-
 \section{Configuration Files}\label{conf:all}
-% danlann
-% while describing albums: albums gives some info about order of
-% subalbums and photos
+Danlann can read configuration file in \texttt{.ini} format. Danlann
+recognizes several sections
+\begin{description}
+\item[danlann] main gallery and Danlann configuration
+\item[photo:thumb] photo thumbnail configuration
+\item[photo:preview] photo preview configuration
+\item[photo:view] photo view configuration
+\item[template] template configuration
+\end{description}
+
+Table below describes all the configuration options giving references to
+parts of manual containing more valuable information.
+
 \begin{longtable}{|l|p{3cm}|p{6cm}|p{3cm}|}
 \hline
 Option & Default Value & Description & Remarks \\
+\hline
+\hline
+\multicolumn{4}{|c|}{\texttt{[danlann]} section}\\
 \hline
 \hline
 albums         &  & list of gallery album files separated by space, album files determine also order of subalbums and photos & see section~\ref{example} \\
@@ -366,25 +378,44 @@ exclude        & {\small \verb+.svn|CVS|~$|\.swp$+} & files to be excluded while
 \hline
 exif           & & list of exif headers separated by coma & see section~\ref{exif} to check default value \\
 \hline
-files          & \verb+css js+ & list of files separated by space to be copied from library paths to gallery output directory  & \\
+files          & \verb+css js+ & list of files separated by space to be copied from library paths to gallery output directory  &  see section~\ref{files} \\
 \hline
 graphicsmagick & \texttt{True} & use GraphicsMagick if \texttt{True}, ImageMagick otherwise & \\
 \hline
 indir          &  & gallery input directory, which contains photo files & see section~\ref{example} \\
 \hline
-libpath        &  & list of directories separated by colon, directories contain additional gallery files  & \\
+libpath        &  & list of directories separated by colon, directories contain additional gallery files  & see section~\ref{files} \\
 \hline
 outdir         &  & gallery output directory  & see section~\ref{example} \\
 \hline
-title          &  & gallery title & \\
+title          &  & gallery title & see section~\ref{example} \\
 \hline
 validate       & \texttt{False} & validate generated XHTML files if set to \texttt{True} & \\
 \hline
+\hline
+\multicolumn{4}{|c|}{\texttt{[photo:*]} sections} \\
+\hline
+\hline
+size & \verb+128x128>+\newline or \verb+800x600>+\newline or \verb+1024x768>+ 
+    & photo (thumbnail, preview, view) size geometry as accepted by GraphicsMagick/ImageMagick
+    & see section~\ref{conversion} \\
+\hline
+quality & \verb+90+ & output image JPEG quality ($0-100$) &  \\
+\hline
+unsharp & \verb-3x3+0.5+0- & image sharpening parameters as accepted by GraphicsMagick/ImageMagick &  \\
+\hline
+params & & additional photo conversion parameters (accepted by GraphicsMagick/ImageMagick) &  \\
+\hline
+\hline
+\multicolumn{4}{|c|}{\texttt{[template]} section} \\
+\hline
+\hline
+css & \verb+css/danlann.css+ & additional CSS styles to be included by generated XHTML pages & see also \texttt{files} option above\\
+\hline
+copyright & & copyright statement, i.e. \texttt{(cc) by john smith}, can contain XHTML tags & \\
+\hline
 \end{longtable}
-%%conf.get('template', 'css')
-%%conf.get('template', 'copyright')
 %%
-%%conf.get(section, option) 
 %%conf.get(self.__conf__, 'js')
 %%conf.get(self.__conf__, 'onload')
 

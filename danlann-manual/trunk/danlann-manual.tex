@@ -186,6 +186,7 @@ in gallery output directory
     \item thumbnail image, i.e. \texttt{dsc\_0001.thumb.jpg}
     \item preview photo XHTML file, i.e. \texttt{dsc\_0001.preview.xhtml}
     \item view photo XHTML file, i.e. \texttt{dsc\_0001.view.xhtml}
+    \item Exif data XHTML file, i.e. \texttt{dsc\_0001.exif.xhtm}
     \item preview photo (size 800x600 by default),
         i.e. \texttt{dsc\_0001.preview.jpg}
     \item view photo (size 1024x768 by default),
@@ -273,9 +274,27 @@ libpath = $libpath:/usr/share/local/galleries/:.
 \end{listing}
 
 \subsection{Displaying Exif Data}\label{exif}
-Danlann supports displaying Exif data on photo gallery pages.
+While generating gallery, Danlann reads photo Exif data and creates
+XHTML file containing photo information like aperture,
+exposure time, focal length, etc. Displaying Exif data can be disabled
+or changed using \texttt{exif} option (see listing~\ref{conf:exif}).
 
-By default, Danlann displays following Exif data
+\begin{listing}
+\begin{lstlisting}
+[danlann]
+...
+
+# disable displaying Exif data
+exif =
+
+...
+# display only Exif data like timestamp, exposure time and aperture
+exif = Image timestamp, Exposure time, Aperture
+\end{lstlisting}
+\caption{Exif configuration example}\label{conf:exif}
+\end{listing}
+
+By default, gallery visitors can see photo parameters information like
 \begin{itemize}
 \item Image timestamp
 \item Exposure time
@@ -290,19 +309,8 @@ By default, Danlann displays following Exif data
 \item White balance
 \end{itemize}
 
-\begin{listing}
-\begin{lstlisting}
-[danlann]
-exif = Image timestamp, Exposure time, Aperture
-\end{lstlisting}
-\caption{Exif configuration example}\label{conf:exif}
-\end{listing}
-
-Listing~\ref{conf:exif} contains example of configuration, which displays
-only Exif data like timestamp, exposure time and aperture.
-
 Exif header names can be determined using \texttt{exiv2} command, which is
-used by Danlann to get photo data.
+used by Danlann to get photo information.
 
 %\subsection{CSS Styles}
 %\subsection{JavaScript Effects}

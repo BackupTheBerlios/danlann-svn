@@ -1,0 +1,115 @@
+scope
+\item image view: thumbnail, preview, image 
+      image view created from original files
+\item exif
+\item rss
+\item navigation
+  \item album/photo parent
+  \item prev album/photo
+  \item next album/photo
+
+\item static xhtml valid
+\item one text file as input file
+\item do not overwrite files
+
+titles:
+- gallery title, i.e. bird from hell
+- album title contains gallery title, i.e. bird from hell - wicklow
+- photo title contains album title, i.e. bird from hell - wicklow - power plant
+
+input files
+- albums file
+    dir1; thumbnail; title; description     # definition of album
+    dir2; thumbnail; title; description     # definition of album
+    dir3; thumbnail; title; description     # definition of album
+
+- photos file
+    dir1:                                   # album specification start
+    =dir2                                   # album reference
+    file1; title; description               # file definition and reference
+    file2; title; description
+- another photos file
+    dir2:                                   # album specification start
+    =dir3
+    file1; title; description
+    file3; title; description
+
+example of input file
+    ireland; ireland/dsc_0001.jpg; irish steps; voice from green island
+    ireland/dsc_0001.jpg; wicklow; the highest mountain in wicklow
+
+
+configuration file
+
+[gallery]
+inputdirs = $HOME/Desktop/Images/Photos/out
+validate = True
+exif = Image timestamp, Exposure time, Aperture, Focal length, Flash, ISO speed
+
+# title of gallery
+# i.e. title = bird from hell
+title =
+
+# copyright notice to be shown in the footer
+# i.e. copyright = (cc) by wrobell
+copyright =
+
+# full size image parameters
+[view]
+params = -size 1024x768
+
+# preview image parameters
+[preview]
+params = -size 800x600
+
+# thumbnail image parameters
+[thumb]
+params = -size 128x128
+
+
+html file:
+- gallery index file
+    body.gallery
+        h1.title
+        div.albums
+            div.album 1..*
+                div.album 1..*
+        p.description
+
+- album index file
+    body.album
+        h1.title
+        p.description
+        div.albums
+            div.album 0..*
+        div.photos
+            div.photo 0..*
+
+- photo file
+    body.photo view|preview
+        h1.title
+        p.description
+        div.photo view|preview
+
+
+Template parts:
++ body
++ title
++ description
++ albums
++ album
++ photos
++ photo
+- navigation
+
+There are three template classes:
+- gallery index
+- album index
+- photo
+
+Every template part has one method. Method has parameters:
+- context - gallery object or current album or current photo
+- type - only photos, contains photo type: preview, view
+
+Method returns two strings - begining of template and end of template.
+Both can be empty strings, usefule in case of i.e. title or photo classes.

@@ -52,19 +52,21 @@ Danlann features
     \itemsep0pt
     \item custom CSS styles can be added to override default template
     \item custom JavaScript files can be added to add bells and whistles
-    \item own templates in Python language can be developed
+    %\item own templates in Python language can be developed
     \end{itemize}
 \item photo and album navigation --- previous photo, next photo, previous
     album, next album, parent album
-\item customizable EXIF
+\item customizable Exif
+\item photo conversion parameters can be easily and freely changed,
+    Danlann supports all GraphicsMagick/ImageMagick parameters
 \item gallery files consist of XHTML strict static files
 \end{itemize}
 
 \section{First Gallery}\label{example}
-To create new gallery with Danlann we need two set of files
+To create new gallery using Danlann two set of files are needed
 \begin{description}
 \item[photos] photos used in gallery, they are organized in one or more
-folders in a way, which is most convenient for us
+folders in a way, which is most convenient for photos author
 \item[albums] text files, which describe albums, photos included in albums
     and subalbums
 \end{description}
@@ -175,8 +177,7 @@ Please, read section~\ref{customization} how to change gallery feel and look.
 Danlann creates and generates different directories and files
 in gallery output directory
 \begin{itemize}
-\item gallery index \texttt{index.html} file is generated in gallery main
-    directory
+\item gallery index \texttt{index.xhtml} file is generated
 \item directory per album is created
 \item every album directory contains \texttt{index.xhtml} file
     with album's subalbum and photo index
@@ -195,8 +196,9 @@ in gallery output directory
 \end{itemize}
 
 \section{Basic Customization}\label{customization}
-Gallery can be customized to fit gallery creator needs and taste.
-% fixme: read about files, which are created
+Gallery can be customized to fit gallery creator needs and taste. This can
+be achieved on several levels described in following subsections.
+
 % fixme: additional files: styles and javascript files
 
 \subsection{Photo Conversion Parameters}\label{conversion}
@@ -329,11 +331,11 @@ Grammar of input file is defined on listing~\ref{grammar}.
 line      := album | subalbum | photo | comment
 album     := slash dir '; ' title ['; ' desc]
 subalbum  := slash dir
-photo     := file ['; ' title ['; ' desc]]
+photo     := file ';' [' ' title ['; ' desc]]
 title     := string
 desc      := string
-dir       := [A-Za-z0-9_/]+
-file      := [A-Za-z0-9_]+
+dir       := [A-Za-z0-9_\-/]+
+file      := [A-Za-z0-9_\-]+
 string    := [^;]+
 slash     := '/'
 comment   := ^\#.*
@@ -341,7 +343,7 @@ comment   := ^\#.*
 \caption{Grammar of input files}\label{grammar}
 \end{listing}
 
-Input file defines aslo order of subalbums and photos. 
+Input file defines also order of subalbums and photos. 
 Therefore, if you want to change order of photos presented in your gallery, then
 change order of photos or subalbums listed for an album in an input file.
 
@@ -360,7 +362,7 @@ recognizes several sections
 \end{description}
 
 Table below describes all the configuration options giving references to
-parts of manual containing more valuable information.
+parts of this manual containing more valuable information.
 
 \begin{longtable}{|l|p{3cm}|p{6cm}|p{3cm}|}
 \hline
@@ -371,19 +373,19 @@ parts of manual containing more valuable information.
 \multicolumn{4}{|c|}{\texttt{[danlann]} section}\\
 \hline
 \hline
-albums         &  & list of gallery album files separated by space, album files determine also order of subalbums and photos & see section~\ref{example} \\
+albums         &  & list of gallery input files separated by space, files determine also order of subalbums and photos & see section~\ref{example} \\
 \hline
 description    &  & gallery description shown on gallery index page & see also gallery title option \\
 \hline
 exclude        & {\small \verb+.svn|CVS|~$|\.swp$+} & files to be excluded while copying gallery additional files (it is regular expression) & see files option \\
 \hline
-exif           & & list of exif headers separated by coma & see section~\ref{exif} to check default value \\
+exif           & & list of Exif headers separated by coma & see section~\ref{exif} to check default value \\
 \hline
-files          & \verb+css js+ & list of files separated by space to be copied from library paths to gallery output directory  &  see section~\ref{files} \\
+files          & \verb+css js+ & list of files separated by space to be copied from library directories to gallery output directory  &  see section~\ref{files} \\
 \hline
 graphicsmagick & \texttt{True} & use GraphicsMagick if \texttt{True}, ImageMagick otherwise & \\
 \hline
-indir          &  & gallery input directory, which contains photo files & see section~\ref{example} \\
+indir          &  & list of directories separated by colon, directories contain photo files to be converted into web gallery photos & see section~\ref{example} \\
 \hline
 libpath        &  & list of directories separated by colon, directories contain additional gallery files  & see section~\ref{files} \\
 \hline

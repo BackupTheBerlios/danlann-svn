@@ -1,0 +1,54 @@
+Danlann is easy to use and powerful command line web photo gallery
+generator. Refer to Danlann manual for detailed usage information, examples
+and customization possibilites.
+
+Current Danlann implementation generates XHTML files, which conform to W3C
+standards as much as possible. If you find a bug... please report it. It is
+really appreciated.
+
+On other side, Danlann developers do not have enough time to deal with
+quirks of different web browsers. If you your preferred web browser has
+problems with displaying generated pages, then report bug to team
+developing this web browser, please.
+
+Requirements:
+- Python 2.4 or later
+
+    http://www.python.org/
+
+- ImageMagick or GraphicsMagick
+
+    http://www.imagemagick.org/script/index.php
+    http://www.graphicsmagick.org/
+
+- spark python module
+    
+    http://pages.cpsc.ucalgary.ca/~aycock/spark/
+
+- libxml 2.6.x Python bindings
+
+    http://xmlsoft.org/python.html
+
+- exiv2 software
+
+    http://www.exiv2.org/
+
+
+See INSTALL file for installation details (standard ac/am stuff).
+
+Installation and usage instructions for impatient
+
+    1. Install
+
+        ./configure --prefix=$HOME/opt
+        make install
+
+    2. Create gallery configuration file and album files (see examples
+       directory or Danlann manual).
+
+    3. Run Danlann
+
+        export PYTHONPATH=$HOME/opt/share/python2.4/site-packages
+        export PATH=$PATH:$HOME/opt/bin
+
+        danlann gallery.ini

@@ -109,13 +109,13 @@ class DanlannScanner(GenericScanner):
 
 
     def t_FILE(self, value):
-        r'(?<=^)[A-Za-z0-9_]+'
+        r'(?<=^)[A-Za-z0-9_\-]+'
         t = Token(FILE, value)
         self.rv.append(t)
 
 
     def t_DIR(self, value):
-        r'(?<=^/)[A-Za-z0-9_/]+'
+        r'(?<=^/)[A-Za-z0-9_\-/]+'
         t = Token(DIR, value)
         self.rv.append(t)
 
@@ -136,6 +136,15 @@ class DanlannScanner(GenericScanner):
         r'^\s*$'
         t = Token(EMPTY, value)
         self.rv.append(t)
+
+
+    def t_default(self, value):
+        r'(.|\n)+'
+        global filename, lineno
+        if 'filename' in globals() and 'lineno' in globals():
+            raise ParseError('syntax error', filename, lineno)
+        else:
+            raise ParseError('syntax error, invalid token %s' % value)
 
 
     def error(self, value, pos):

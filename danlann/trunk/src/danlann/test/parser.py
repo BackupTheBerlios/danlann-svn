@@ -267,6 +267,9 @@ class GenerateTestCase(ParseTestCaseBase):
         self.assertEquals(photos[2].title, 'title3 4')
         self.assertEquals(photos[2].description, 'desc desc')
 
+        # '!' character is not allowed in photo filename, it should fail
+        self.failUnlessRaises(ParseError, self.generate, 'abc3!; title5; desc5')
+
 
 
 class ParserTestCase(ParseTestCaseBase):

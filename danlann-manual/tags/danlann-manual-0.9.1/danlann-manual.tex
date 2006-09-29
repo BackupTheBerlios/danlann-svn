@@ -1,0 +1,426 @@
+\documentclass{article}
+
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{longtable}
+
+\newfloat{listing}{th}{lst}
+\floatname{listing}{Listing}
+
+\geometry{papername=a4paper, margin = 2cm}
+
+\title{Danlann Manual}
+\author{\url{wrobell@pld-linux.org}}
+\begin{document}
+\maketitle
+
+\tableofcontents
+\listof{listing}{Listings}
+
+\section{Introduction}
+Internet and digital cameras save a~lot of time
+if one wants to publish his photos to the masses. Waiting for film
+development, scanning or finding a~publisher are not necessary currently to show
+own little art pieces to other people than family and friends. Just choose
+photos to be published, change size and sharpness and
+upload to a~hosting server on the Internet.
+
+Gallery creation process can be automated in many areas and do not require
+software with sophisticated user interface --- just specify photos and run
+software to perform repeatable tasks... This way Danlann idea was born.
+
+Danlann is a~command line photo web gallery generator.
+It takes text gallery description files and photos as an input and produces 
+nice looking web gallery of photos. Generated web gallery can be
+efficiently uploaded to hosting server using rsync or FTP client with
+mirror capability.
+
+Danlann features
+\begin{itemize}
+\itemsep0pt
+\item gallery can be edited with any text editor as format of input files
+    is easy to understand
+\item supports multiple input files to allow easy maintenance of gallery
+    description files
+\item supports albums and subalbums, a subalbum can be added to many albums
+\item off--line mode (obviously), there is no need to be connected to Internet while
+    editing gallery
+\item easy personalization of a gallery
+    \begin{itemize}
+    \itemsep0pt
+    \item custom CSS styles can be added to override default template
+    \item custom JavaScript files can be added to add bells and whistles
+    %\item own templates in Python language can be developed
+    \end{itemize}
+\item photo and album navigation --- previous photo, next photo, previous
+    album, next album, parent album
+\item customizable Exif
+\item photo conversion parameters can be easily and freely changed,
+    Danlann supports all GraphicsMagick/ImageMagick parameters
+\item gallery files consist of XHTML strict static files
+\end{itemize}
+
+\section{First Gallery}\label{example}
+To create new gallery using Danlann two set of files are needed
+\begin{description}
+\item[photos] photos used in gallery, they are organized in one or more
+folders in a way, which is most convenient for photos author
+\item[albums] text files, which describe albums, photos included in albums
+    and subalbums
+\end{description}
+Danlann processes these two set of files and creates a~gallery in output
+directory.
+
+Let's assume that we want to create a~gallery, which contains photos from
+our holidays spent in two Irish cities --- Dublin and Galway. We would like
+to title it ``Holidays in Ireland 2006''. Gallery structure can look like
+\begin{itemize}
+\item album \textit{Dublin}
+    \begin{itemize}
+    \item album \textit{Dalkey}
+        \begin{itemize}
+        \item photo \texttt{dsc\_0001} \textit{Dalkey Castle}
+        \item photo \texttt{dsc\_0002} \textit{Dalkey Island}
+        \item photo \texttt{dsc\_0003} \textit{Dalkey Port}
+        \end{itemize}
+    \item photo \texttt{dsc\_0004} \textit{Joyce Museum}
+    \item photo \texttt{dsc\_0005} \textit{Yeats Monument}
+    \item photo \texttt{dsc\_0006} \textit{Spire}
+    \end{itemize}
+\item album \textit{Galway}
+    \begin{itemize}
+    \item album \textit{Musicians}
+        \begin{itemize}
+        \item photo \texttt{dsc\_0007} \textit{Guitar Master}
+        \item photo \texttt{dsc\_0008} \textit{Beautiful Singers}
+        \end{itemize}
+    \item photo \texttt{dsc\_0009} \textit{Main Street}
+    \item photo dsc\_0010 \textit{Bay}
+    \end{itemize}
+\end{itemize}
+
+Above gallery can be defined in two album files \texttt{dublin.txt} and
+\texttt{galway.txt}, see listings~\ref{example:album:dublin}
+and~\ref{example:album:galway}.
+
+\begin{listing}
+\begin{lstlisting}
+/dublin; Dublin
+/dublin/dalkey
+dsc_0004; Joyce Museum
+dsc_0005; Yeats Monument
+dsc_0006; Spire
+
+/dublin/dalkey; Dalkey
+dsc_0001; Dalkey Castle
+dsc_0002; Dalkey Island
+dsc_0003; Dalkey Port
+\end{lstlisting}
+\caption{First gallery example --- \texttt{dublin.txt}}\label{example:album:dublin}
+\end{listing}
+
+First album file defines \textit{Dublin} and \textit{Dalkey} albums.
+\textit{Dublin} album contains three photos \textit{Joyce Museum},
+\textit{Yeats Monument} and \textit{Spire}. \textit{Dublin} album
+also references \textit{Dalkey} album as its subalbum.
+
+\begin{listing}
+\begin{lstlisting}
+/galway; Galway
+/galway/musicians
+dsc_0009; Main Street
+dsc_0010; Bay
+
+/galway/musicians; Musicians
+dsc_0007; Guitar Master
+dsc_0008; Beautiful Singers
+\end{lstlisting}
+\caption{First gallery example --- \texttt{galway.txt}}\label{example:album:galway}
+\end{listing}
+
+Second album is defined in similar way. There are two albums, \textit{Galway} album references
+\textit{Musicians} album as its subalbum.
+
+\begin{listing}
+\begin{lstlisting}
+[danlann]
+title  = Holidays in Ireland 2006
+
+indir  = in
+albums = dublin.txt galway.txt
+
+outdir = irish-holidays-06
+\end{lstlisting}
+\caption{First gallery example --- configuration file}\label{example:conf}
+\end{listing}
+
+Listing~\ref{example:conf} contains configuration file for our gallery.
+Danlann looks for photos in \texttt{/home/users/me/Photos} directory.
+Gallery will be created in \texttt{irish-holidays-06} directory, which
+can be uploaded to hosting server.
+
+Run Dalnann with configuration file name as first parameter to generate
+gallery, i.e.
+\begin{verbatim}
+$ danlann irish-holidays.ini
+\end{verbatim}
+Now, it should be possible to open gallery index file
+\verb$irish-holidays-06/index.xhtml$ with your web standards compliant web
+browser. Section~\ref{generated} contains information about files being 
+generated by Danlann.
+
+Please, read section~\ref{customization} how to change gallery feel and look.
+
+\section{Generated Files}\label{generated}
+Danlann creates and generates different directories and files
+in gallery output directory
+\begin{itemize}
+\item gallery index \texttt{index.xhtml} file is generated
+\item directory per album is created
+\item every album directory contains \texttt{index.xhtml} file
+    with album's subalbum and photo index
+\item set of files is generated for every photo in album directory
+    \begin{itemize}
+    \item photo page, it is XHTML file, i.e. \texttt{dsc\_0001.xhtml}
+    \item thumbnail image, i.e. \texttt{dsc\_0001.thumb.jpg}
+    \item preview photo XHTML file, i.e. \texttt{dsc\_0001.preview.xhtml}
+    \item view photo XHTML file, i.e. \texttt{dsc\_0001.view.xhtml}
+    \item Exif data XHTML file, i.e. \texttt{dsc\_0001.exif.xhtm}
+    \item preview photo (size 800x600 by default),
+        i.e. \texttt{dsc\_0001.preview.jpg}
+    \item view photo (size 1024x768 by default),
+        i.e. \texttt{dsc\_0001.view.jpg}
+    \end{itemize}
+\end{itemize}
+
+\section{Basic Customization}\label{customization}
+Gallery can be customized to fit gallery creator needs and taste. This can
+be achieved on several levels described in following subsections.
+
+% fixme: additional files: styles and javascript files
+
+\subsection{Photo Conversion Parameters}\label{conversion}
+\begin{listing}
+\begin{lstlisting}
+[photo:view]
+size    = 1024x768>
+quality = 90
+unsharp = 3x3+0.5+0
+
+[photo:preview]
+size    = 800x600>
+quality = 90
+unsharp = 3x3+0.5+0
+
+[photo:thumb]
+size    = 128x128>
+quality = 90
+unsharp = 3x3+0.5+0
+\end{lstlisting}
+\caption{Default photo conversion parameters}\label{conf:photo:default}
+\end{listing}
+Listing~\ref{conf:photo:default} presents default photo conversion
+parameters. These parameters are passed as arguments to ImageMagick or GraphicsMagick
+command line utilities during photo conversion.
+
+\begin{listing}
+\begin{lstlisting}
+[photo:thumb]
+size    = 100x100>
+quality = 85
+unsharp =
+params  = -blur 2 -dither
+\end{lstlisting}
+\caption{Example of custom photo conversion parameters}\label{conf:photo:example:thumb}
+\end{listing}
+
+It is possible to change and extend conversion parameters. For example, we
+can change thumbnail generation in following way (see
+listing~\ref{conf:photo:example:thumb} for configuration changes)
+% fixme: use more sophisticated example, i.e. border instead of dithering
+\begin{itemize}
+\item size of thumbnail should be 100x100
+\item use quality 85
+\item do not perform sharpening operation
+\item blur thumbnail 
+\item apply Floyd/Steinberg error diffusion to thumbnail image
+\end{itemize}
+
+\subsection{Additional Gallery Files}\label{files}
+Gallery customization often involves copying of additional files like
+styles, scripts or images into output directory. By default, Danlann copies
+\texttt{css} and \texttt{js} directories from Danlann library path. This
+can be changed by setting \texttt{files} and \texttt{libpath} configuration
+options, see listing~\ref{conf:copy} for examples.
+
+\begin{listing}
+\begin{lstlisting}
+[danlann]
+; copy standard directories (css and js) and images
+; from default Danlann directory and from current directory
+files   = $files images
+libpath = $libpath:.
+\end{lstlisting}
+
+\begin{lstlisting}
+[danlann]
+; copy standard directories, images and readme file
+; from default Danlann directory, /usr/local/share/galleries
+; and from current directory
+files   = $files images doc/README
+libpath = $libpath:/usr/share/local/galleries/:.
+\end{lstlisting}
+\caption{Configuration examples used to copy additional gallery files}\label{conf:copy}
+\end{listing}
+
+\subsection{Displaying Exif Data}\label{exif}
+While generating gallery, Danlann reads photo Exif data and creates
+XHTML file containing photo information like aperture,
+exposure time, focal length, etc. Displaying Exif data can be disabled
+or changed using \texttt{exif} option (see listing~\ref{conf:exif}).
+
+\begin{listing}
+\begin{lstlisting}
+[danlann]
+...
+
+# disable displaying Exif data
+exif =
+
+...
+# display only Exif data like timestamp, exposure time and aperture
+exif = Image timestamp, Exposure time, Aperture
+\end{lstlisting}
+\caption{Exif configuration example}\label{conf:exif}
+\end{listing}
+
+By default, gallery visitors can see photo parameters information like
+\begin{itemize}
+\item Image timestamp
+\item Exposure time
+\item Aperture
+\item Exposure bias
+\item Flash
+\item Flash bias
+\item Focal length
+\item ISO speed
+\item Exposure mode
+\item Metering mode
+\item White balance
+\end{itemize}
+
+Exif header names can be determined using \texttt{exiv2} command, which is
+used by Danlann to get photo information.
+
+%\subsection{CSS Styles}
+%\subsection{JavaScript Effects}
+
+\section{Input Files}\label{albums}
+Danlann input file defines albums and their content like subalbums and
+photos. Multiple files are accepted for easy maintenance of gallery.
+
+Input file consists of lines. Every line can contain album definition,
+subalbum or photo. A~line can be also a~comment or it can be empty.
+
+Grammar of input file is defined on listing~\ref{grammar}.
+
+\begin{listing}
+\begin{lstlisting}
+line      := album | subalbum | photo | comment
+album     := slash dir '; ' title ['; ' desc]
+subalbum  := slash dir
+photo     := file ';' [' ' title ['; ' desc]]
+title     := string
+desc      := string
+dir       := [A-Za-z0-9_\-/]+
+file      := [A-Za-z0-9_\-]+
+string    := [^;]+
+slash     := '/'
+comment   := ^\#.*
+\end{lstlisting}
+\caption{Grammar of input files}\label{grammar}
+\end{listing}
+
+Input file defines also order of subalbums and photos. 
+Therefore, if you want to change order of photos presented in your gallery, then
+change order of photos or subalbums listed for an album in an input file.
+
+This also applies to whole set of albums if order of input files is changed
+in configuration file (see section~\ref{conf:all}).
+
+\section{Configuration Files}\label{conf:all}
+Danlann can read configuration file in \texttt{.ini} format. Danlann
+recognizes several sections
+\begin{description}
+\item[danlann] main gallery and Danlann configuration
+\item[photo:thumb] photo thumbnail configuration
+\item[photo:preview] photo preview configuration
+\item[photo:view] photo view configuration
+\item[template] template configuration
+\end{description}
+
+Table below describes all the configuration options giving references to
+parts of this manual containing more valuable information.
+
+\begin{longtable}{|l|p{3cm}|p{6cm}|p{3cm}|}
+\hline
+\textbf{Option} & \textbf{Default} \textbf{Value} & \textbf{Description} &
+\textbf{Remarks} \\
+\hline
+\hline
+\multicolumn{4}{|c|}{\texttt{[danlann]} section}\\
+\hline
+\hline
+albums         &  & list of gallery input files separated by space, files determine also order of subalbums and photos & see section~\ref{example} \\
+\hline
+description    &  & gallery description shown on gallery index page & see also gallery title option \\
+\hline
+exclude        & {\small \verb+.svn|CVS|~$|\.swp$+} & files to be excluded while copying gallery additional files (it is regular expression) & see files option \\
+\hline
+exif           & & list of Exif headers separated by coma & see section~\ref{exif} to check default value \\
+\hline
+files          & \verb+css js+ & list of files separated by space to be copied from library directories to gallery output directory  &  see section~\ref{files} \\
+\hline
+graphicsmagick & \texttt{True} & use GraphicsMagick if \texttt{True}, ImageMagick otherwise & \\
+\hline
+indir          &  & list of directories separated by colon, directories contain photo files to be converted into web gallery photos & see section~\ref{example} \\
+\hline
+libpath        &  & list of directories separated by colon, directories contain additional gallery files  & see section~\ref{files} \\
+\hline
+outdir         &  & gallery output directory  & see section~\ref{example} \\
+\hline
+title          &  & gallery title & see section~\ref{example} \\
+\hline
+validate       & \texttt{False} & validate generated XHTML files if set to \texttt{True} & \\
+\hline
+\hline
+\multicolumn{4}{|c|}{\texttt{[photo:*]} sections} \\
+\hline
+\hline
+size & \verb+128x128>+\newline or \verb+800x600>+\newline or \verb+1024x768>+ 
+    & photo (thumbnail, preview, view) size geometry as accepted by GraphicsMagick/ImageMagick
+    & see section~\ref{conversion} \\
+\hline
+quality & \verb+90+ & output image JPEG quality ($0-100$) &  \\
+\hline
+unsharp & \verb-3x3+0.5+0- & image sharpening parameters as accepted by GraphicsMagick/ImageMagick &  \\
+\hline
+params & & additional photo conversion parameters (accepted by GraphicsMagick/ImageMagick) &  \\
+\hline
+\hline
+\multicolumn{4}{|c|}{\texttt{[template]} section} \\
+\hline
+\hline
+css & \verb+css/danlann.css+ & additional CSS styles to be included by generated XHTML pages & see also \texttt{files} option above\\
+\hline
+copyright & & copyright statement, i.e. \texttt{(cc) by john smith}, can contain XHTML tags & \\
+\hline
+\end{longtable}
+%%
+%%conf.get(self.__conf__, 'js')
+%%conf.get(self.__conf__, 'onload')
+
+
+\end{document}

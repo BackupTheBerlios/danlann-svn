@@ -1,0 +1,232 @@
+/*
+ * general classes
+ */
+.title {
+    text-align: right;
+    width: auto;
+    font-weight: bold;
+    font-size: 120%;
+    margin-bottom: 10px;
+}
+
+.description {
+    text-align: right;
+    font-style: italic;
+}
+
+/*
+ * gallery index settings
+ */
+body.gallery .album {
+    margin-top: 5px;
+}
+
+body.gallery .album {
+    margin-left: 10px;
+}
+
+body.gallery .album:before {
+    content: '[';
+}
+
+body.gallery .album:after {
+    content: ']';
+}
+
+body.gallery .album .album {
+    margin-left: 15px;
+}
+
+body.gallery > .body > .albums > .album {
+    /* display: inline-block; */
+    float: left;
+}
+
+
+/* album index settings */
+.albums {
+    color: gray;
+}
+
+body.album .albums {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+body.album .album:before {
+    content: '[';
+}
+
+body.album .album:after {
+    content: ']';
+}
+
+body.album .albums .album {
+    display: inline;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+body.album .photos .photo {
+    text-align: center;
+    display: inline-block;
+    width: 148px;
+    margin: 10px;
+    padding: 7px;
+}
+
+
+/* photo settings */
+body.photo {
+    text-align: center;
+}
+
+
+/* exif settings */
+body.photo div.exif {
+    visibility: hidden;
+    position: absolute;
+    top: 55px;
+    left: 30px;
+    background-color: #111111;
+    padding: 10px;
+}
+
+body.exif table {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+}
+
+.exif table {
+    margin: 5px;
+    border: solid 1px gray;
+}
+
+.exif table th {
+    text-align: left;
+    padding: 3px;
+}
+
+.exif table td {
+    text-align: left;
+    padding: 3px;
+}
+
+
+/* page */
+/* it would be nice to automate everything here... but there are no
+ * browsers which support css nicely... so fuck this - using appropriate
+ * words for appropriate situation :/ */
+div.body {
+    width: 840px;        /* 800 + 40 */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 30px;
+    padding-right: 30px;
+    border: solid 1px gray;
+}
+
+
+body.gallery div.body {
+    height: 590px;
+}
+
+body.gallery div.footer {
+    position: absolute;
+    top: 540px;
+}
+
+div.footer {
+    width: 840px;      /* set to div.body width */
+    margin-top: 40px;
+    text-align: center;
+}
+
+div.footer span {
+    position: relative;
+    padding-bottom: 15px;
+    color: #dddddd;
+}
+
+div.footer span.danlann {
+    top: 25px;
+    font-size: 80%;
+}
+
+div.footer span.copyright {
+    top: -25px;
+    float: right;
+}
+
+/* modifications for 1024x768 view */
+body.view div.body {
+    width: 1064px;        /* 1024 + 40 */
+}
+
+body.view div.footer {
+    width: 1064px;      /* set to div.body width */
+}
+
+/* xhtml tag modifications */
+html {
+    color: #dddddd;
+    background-color: black;
+    font-size: 10pt;
+}
+
+a {
+    color: #dddddd;
+}
+
+img {
+    border: 0px;
+    margin: 10px;
+}
+
+/* navigation */
+.navigation {
+    position: absolute;
+    font-size: 120%;
+    top: 20px;
+    width: 9em;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid gray;
+}
+
+.navigation span {
+    font-weight: bold;
+}
+
+.navigation span.disabled {
+    color: #aaaaaa;
+}
+
+.navigation span.prev:before {
+    content: '<<';
+}
+
+.navigation span.next:before {
+    content: '>>';
+}
+
+.navigation span.parent:before {
+    content: ' ^ ';
+}
+
+.navigation span.exif:before {
+    content: '[';
+}
+
+.navigation span.exif:after {
+    content: ']';
+}
+
+.navigation span.exif {
+    font-size: 80%;
+    font-weight: normal;
+    margin-left: 10px;
+}

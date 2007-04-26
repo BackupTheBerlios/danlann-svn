@@ -1,0 +1,12 @@
+1.0.2
+-----
+- fixed execution of third party programs (i.e. ImageMagick/GraphicsMagick)
+
+1.0.1
+-----
+- allow '-' character in photo and album/subalbum names
+- minor bugfixes
+
+1.0.0
+-----
+- first public release

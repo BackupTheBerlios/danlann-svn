@@ -223,7 +223,15 @@ class FileManager(object):
 
         @param args: list with command and command arguments to execute
         """
-        if not os.fork():
+        pid = os.fork()
+        if pid:
+            pid, status = os.waitpid(pid, 0)
+            errno = os.WEXITSTATUS(status)
+
+            # raise exception using errno from child
+            if errno:
+                raise OSError(errno, os.strerror(errno))
+        else:
             try:
                 os.close(1)
                 os.close(2)
@@ -232,13 +240,6 @@ class FileManager(object):
                 sys.exit(ex.errno) # exit with errno
             except:
                 sys.exit(4) # otherwise EINTR
-        else:
-            pid, status = os.wait()
-            errno = os.WEXITSTATUS(status)
-
-            # raise exception using errno from child
-            if errno:
-                raise OSError(errno, os.strerror(errno))
 
 
     def checkCommand(self, cmd):

@@ -47,7 +47,7 @@ class Item(Element):
     """
     def __init__(self):
         super(Item, self).__init__()
-        self.gallery     = None
+        self.gallery  = None
 
 
 
@@ -56,7 +56,7 @@ class Photo(Item):
     Gallery photo.
 
     @ivar name    : filename of photo, no extension, no directory
-    @ivar filename: absolute path to a photo 
+    @ivar filename:    path from root dir to the item
     """
     def __init__(self):
         super(Photo, self).__init__()

@@ -92,6 +92,22 @@ html file:
         div.photo view|preview
 
 
+Templates
+---------
+Based on StringTemplate library.
+
+There are templates for pages
+- main page containing album index
+- album page containing photo index
+- photo page containing photo
+
+Page template should receive:
+- gallery object
+- album object in case of album page
+- album object and photo object in case of photo page
+- rootdir reference
+- user variables defined in configuration file [template:variables]
+
 Template parts:
 + body
 + title

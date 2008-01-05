@@ -106,9 +106,7 @@ class DanlannGenerator(object):
     @ivar convert_args : photo conversion parameters
     @ivar fm           : file manager
 
-    @ivar gtmpl        : gallery template
-    @ivar atmpl        : album template
-    @ivar ptmpl        : photo template
+    @ivar tmpl         : gallery template
     """
     def __init__(self, gallery, fm):
         self.indir        = []
@@ -123,9 +121,7 @@ class DanlannGenerator(object):
             'view'    : ConversionArguments('1024x768>'),
         }
 
-        self.gtmpl = None
-        self.atmpl = None
-        self.ptmpl = None
+        self.tmpl = None
         self.etmpl = None
 
 
@@ -163,32 +159,16 @@ class DanlannGenerator(object):
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
-        f = File('%s/index.xhtml' % self.outdir)
+        self.tmpl.gallery = self.gallery
 
-        pre, post = self.gtmpl.body(self.gallery)
-        f.write(pre, post)
-
-        pre, post = self.gtmpl.title(self.gallery)
-        f.write(pre)
-        f.write(post)
-
-        pre, post = self.gtmpl.albums(self.gallery)
-        f.write(pre, post)
-
-        def gen_index(context):
-            for album in context.subalbums:
-                pre, post = self.gtmpl.album(album)
-                f.write(pre)
-                gen_index(album)
-                f.write(post)
-        gen_index(self.gallery)
-
+        f = open('%s/index.xhtml' % self.outdir, 'w')
+        self.tmpl.galleryIndex(f)
         f.close()
-
-        log.info('generated index page')
 
         for album in self.gallery.subalbums:
             self.generateAlbum(album, self.gallery)
+
+        log.info('generated index page')
 
 
     def generateNavigation(self, f, tmpl, item, data, *tmpl_args):
@@ -255,50 +235,13 @@ class DanlannGenerator(object):
         self.generateNavigation(f, self.ptmpl, photo, data, photo_type)
 
 
-    def generateSubalbums(self, f, album):
-        """
-        Write list of album subalbums.
-        """
-        if album.subalbums:
-            apre, apost = self.atmpl.albums(album)
-            f.write(apre)
-
-            for subalbum in album.subalbums:
-                pre, post = self.atmpl.album(subalbum)
-                f.write(pre)
-                f.write(post)
-            f.write(apost)
-
 
     def generateAlbum(self, album, parent):
         self.fm.mkdir(self.getDir(album))
         fn = self.getAlbumFile(album, 'index.xhtml')
-        f = File(fn)
 
-        pre, post = self.atmpl.body(album)
-        f.write(pre, post)
-
-        pre, post = self.atmpl.title(album)
-        f.write(pre)
-        f.write(post)
-
-        if album.description:
-            pre, post = self.atmpl.description(album)
-            f.write(pre)
-            f.write(post)
-
-        self.processAlbumNavigation(f, album, parent)
-        self.generateSubalbums(f, album)
-
-        if album.photos:
-            pre, post = self.atmpl.photos(album)
-            f.write(pre, post)
-
-            for photo in album.photos:
-                pre, post = self.atmpl.photo(photo)
-                f.write(pre)
-                f.write(post)
-
+        f = open(fn, 'w')
+        self.tmpl.albumIndex(album, parent, f)
         f.close()
 
         for subalbum in album.subalbums:
@@ -306,6 +249,8 @@ class DanlannGenerator(object):
 
         for photo in album.photos:
             self.generateAlbumPhotos(photo)
+
+        #self.processAlbumNavigation(f, album, parent)
         log.info('generated album %s' % album.dir)
 
 
@@ -315,13 +260,13 @@ class DanlannGenerator(object):
             files = self.fm.lookup(self.indir, '%s.jpg' % photo.name)
             photo.filename = files.next()
 
-            self.generateExif(photo)
+            #self.generateExif(photo)
             self.convertPhoto(photo, 'thumb')
             self.convertPhoto(photo, 'preview')
-            self.convertPhoto(photo, 'view')
+            #self.convertPhoto(photo, 'view')
 
             self.generatePhoto(photo, 'preview')
-            self.generatePhoto(photo, 'view')
+            #self.generatePhoto(photo, 'view')
         except StopIteration, ex:
             log.error('could not find photo %s file' % photo.name)
 
@@ -372,28 +317,17 @@ class DanlannGenerator(object):
 
 
     def generatePhoto(self, photo, photo_type):
-
+        """
+        Generate photo page.
+        """
         fn = self.getAlbumFile(photo.album,
             self.getPhotoFile(photo, photo_type))
-        f = File(fn)
 
-        pre, post = self.ptmpl.body(photo, photo_type)
-        f.write(pre, post)
-
-        pre, post = self.ptmpl.title(photo, photo_type)
-        f.write(pre)
-        f.write(post)
-
-        pre, post = self.ptmpl.description(photo, photo_type)
-        f.write(pre)
-        f.write(post)
-
-        self.processPhotoNavigation(f, photo, photo_type)
-        
-        pre, post = self.ptmpl.photo(photo, photo_type)
-        f.write(pre)
-        f.write(post)
-
+        f = open(fn, 'w')
+        self.tmpl.photo(photo, f)
         f.close()
+
+        #self.processPhotoNavigation(f, photo, photo_type)
+        
         log.info('generated photo page %s.%s' % (photo.name, photo_type))
 

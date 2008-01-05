@@ -33,8 +33,7 @@ from danlann.bc import Gallery
 from danlann.filemanager import FileManager
 from danlann.generator import DanlannGenerator
 
-from danlann.template import XHTMLGalleryIndexTemplate, \
-    XHTMLAlbumIndexTemplate, XHTMLPhotoTemplate, XHTMLExifTemplate
+from danlann.template import Template
 
 import logging
 log = logging.getLogger('danlann')
@@ -218,10 +217,7 @@ class Danlann(object):
         self.setConvertArgs(conf, 'preview')
         self.setConvertArgs(conf, 'view')
 
-        self.generator.gtmpl = XHTMLGalleryIndexTemplate(conf)
-        self.generator.atmpl = XHTMLAlbumIndexTemplate(conf)
-        self.generator.ptmpl = XHTMLPhotoTemplate(conf)
-        self.generator.etmpl = XHTMLExifTemplate(conf)
+        self.generator.tmpl = Template(None)
 
         #
         # check exiv2/GraphicsMagick/ImageMagick existence

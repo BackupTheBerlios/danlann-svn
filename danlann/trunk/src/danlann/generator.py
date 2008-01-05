@@ -52,7 +52,7 @@ class ConversionArguments(list):
         super(ConversionArguments, self).__init__()
         self.__dict__['size']    = size
         self.__dict__['quality'] = '90'
-        self.__dict__['unsharp'] = '3x3+0.5+0'
+        self.__dict__['unsharp'] = '0.1x0.1+2.0+0'
         self.__dict__['params']  = []
 
         self.rebuild()

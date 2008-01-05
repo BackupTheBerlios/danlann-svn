@@ -112,6 +112,19 @@ class Gallery(Element):
 
 
     def rootdir(self, album):
+        """
+        Get relative path from album to gallery root directory.
+
+        For example if album's path is::
+
+            /ireland/wexford/ravenpoint
+
+        then its relative path to root directory is::
+
+            ../..
+
+        @param album: album, which should reference root directory
+        """
         dirs = album.dir.split('/')
         return '/'.join(('..', ) * len(dirs))
 

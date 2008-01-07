@@ -25,6 +25,9 @@ from danlann.bc import Gallery, Album, Photo
 class Template(object):
     """
     A template.
+
+    @ivar gallery: gallery reference
+    @ivar st_group: StringTemplate reference
     """
     def __init__(self, gallery):
         """
@@ -35,43 +38,54 @@ class Template(object):
         self.st_group = stringtemplate.StringTemplateGroup('basic', '/home/users/wrobell/projects/danlann/danlann/trunk/tmpl')
 
 
-    def getPage(self, body, rootdir, cls):
+    def getPage(self, tmpl, rootdir, cls):
+        """
+        Get page template for gallery page, album page or photo page. 
+
+        @param tmpl: page template name
+        @param rootdir: relative path to gallery directory
+        @param cls: page class
+        """
         page = self.st_group.getInstanceOf('basic/page')
 
         page['gallery'] = self.gallery
         page['class'] = cls
-        page['body'] = str(body)
+        page['tmpl'] = tmpl
         page['rootdir'] = rootdir
 
-        return str(page)
-
-    def galleryIndex(self, f):
-        body = self.st_group.getInstanceOf('basic/gallery')
-
-        body['gallery'] = self.gallery
-        print >> f, self.getPage(body, '.', 'gallery')
+        return page
 
 
-    def albumIndex(self, album, parent, f):
+    def write(self, f, page):
+        """
+        Write page template to file.
+
+        @param f: page output file
+        @param page: page to be saved
+        """
+        print >> f, str(page)
+
+
+    def galleryPage(self, f):
+        # rootdir is current directory
+        page = self.getPage('basic/gallery', '.', 'gallery')
+        self.write(f, page)
+
+
+    def albumPage(self, album, parent, f):
         rootdir = self.gallery.rootdir(album)
-        body = self.st_group.getInstanceOf('basic/album')
-        body['rootdir'] = rootdir
-        body['gallery'] = self.gallery
-        body['album'] = album
-        body['parent'] = parent
-
-        print >> f, self.getPage(body, rootdir, 'album')
+        page = self.getPage('basic/album', rootdir, 'album')
+        page['album'] = album
+        page['parent'] = parent
+        self.write(f, page)
 
 
-    def photo(self, photo, f):
+    def photoPage(self, photo, f):
         rootdir = self.gallery.rootdir(photo.album)
-        body = self.st_group.getInstanceOf('basic/photo')
-        body['rootdir'] = rootdir
-        body['gallery'] = self.gallery
-        body['album'] = photo.album
-        body['photo'] = photo
-
-        print >> f, self.getPage(body, rootdir, 'photo preview')
+        page = self.getPage('basic/photo', rootdir, 'photo preview')
+        page['album'] = photo.album
+        page['photo'] = photo
+        self.write(f, page)
 
 
 def escape(self, val):

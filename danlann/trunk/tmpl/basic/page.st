@@ -8,7 +8,7 @@
 
     <body class = "$class$">
         <div id = "body" class = "body">
-        $body$
+        $(tmpl)()$
         </div>
     </body>
 </html>

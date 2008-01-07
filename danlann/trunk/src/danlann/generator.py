@@ -162,7 +162,7 @@ class DanlannGenerator(object):
         self.tmpl.gallery = self.gallery
 
         f = open('%s/index.xhtml' % self.outdir, 'w')
-        self.tmpl.galleryIndex(f)
+        self.tmpl.galleryPage(f)
         f.close()
 
         for album in self.gallery.subalbums:
@@ -241,7 +241,7 @@ class DanlannGenerator(object):
         fn = self.getAlbumFile(album, 'index.xhtml')
 
         f = open(fn, 'w')
-        self.tmpl.albumIndex(album, parent, f)
+        self.tmpl.albumPage(album, parent, f)
         f.close()
 
         for subalbum in album.subalbums:
@@ -324,7 +324,7 @@ class DanlannGenerator(object):
             self.getPhotoFile(photo, photo_type))
 
         f = open(fn, 'w')
-        self.tmpl.photo(photo, f)
+        self.tmpl.photoPage(photo, f)
         f.close()
 
         #self.processPhotoNavigation(f, photo, photo_type)

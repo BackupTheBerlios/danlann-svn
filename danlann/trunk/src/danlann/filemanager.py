@@ -24,24 +24,10 @@ import shutil
 import sys
 import libxml2
 
+from danlann.bc import Exif
+
 import logging
 log = logging.getLogger('danlann.filemanager')
-
-class File(object):
-    def __init__(self, fn):
-        self.f = open(fn, 'w')
-        self.stack = []
-
-    def write(self, start, end = None):
-        self.f.write(start)
-        if end:
-            self.stack.append(end)
-
-    def close(self):
-        while self.stack:
-            self.f.write(self.stack.pop())
-        self.f.close()
-
 
 
 class FileManager(object):
@@ -129,7 +115,7 @@ class FileManager(object):
         """
         Get EXIF data from file.
 
-        Hashtable with EXIF data is returned.
+        List of EXIF objects.
 
         @param fn:      input file
         @param headers: EXIF headers to be returned
@@ -143,9 +129,9 @@ class FileManager(object):
             field = data[0].strip()
             value = ':'.join(data[1:]).strip()
             if field in headers:
-                exif.append((field.strip(), value.strip()))
+                exif.append(Exif(field.strip(), value.strip()))
 
-        exif.sort(key = lambda item: headers.index(item[0]))
+        exif.sort(key = lambda item: headers.index(item.name))
 
         # report exif problems
         for line in stderr:

@@ -108,6 +108,22 @@ class Template(object):
         self.write(f, page)
 
 
+    def exifPage(self, f, photo):
+        """
+        Generate photo exif page.
+        """
+        album = photo.album
+        rootdir = self.gallery.rootdir(photo.album)
+
+        page = self.getPage('basic/exif', rootdir, 'photo exif')
+        page['photo'] = photo
+        page['album'] = album
+        page['prev'] = album.prev(photo)
+        page['next'] = album.next(photo)
+
+        self.write(f, page)
+
+
 
 class XMLRenderer(stringtemplate.AttributeRenderer):
     """

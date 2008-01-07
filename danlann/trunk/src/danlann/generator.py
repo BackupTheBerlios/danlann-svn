@@ -23,7 +23,6 @@ import os
 import os.path
 
 from danlann.bc import Gallery, Album, Photo
-from danlann.filemanager import File
 
 import logging
 log = logging.getLogger('danlann.generator')
@@ -194,7 +193,7 @@ class DanlannGenerator(object):
             files = self.fm.lookup(self.indir, '%s.jpg' % photo.name)
             photo.filename = files.next()
 
-            #self.generateExif(photo)
+            self.generateExif(photo)
             self.convertPhoto(photo, 'thumb')
             self.convertPhoto(photo, 'preview')
             #self.convertPhoto(photo, 'view')
@@ -210,19 +209,8 @@ class DanlannGenerator(object):
 
         if photo.exif:
             exif_fn = self.getPhotoFile(photo, 'exif')
-            f = File(self.getAlbumFile(photo.album, exif_fn))
-
-            pre, post = self.etmpl.body(photo, 'exif')
-            f.write(pre, post)
-
-            pre, post = self.etmpl.title(photo, 'exif')
-            f.write(pre)
-            f.write(post)
-
-            pre, post = self.etmpl.photo(photo, 'exif')
-            f.write(pre)
-            f.write(post)
-
+            f = open(self.getAlbumFile(photo.album, exif_fn), 'w')
+            self.tmpl.exifPage(f, photo)
             f.close()
             log.info('generated exif page for photo %s' % photo.name)
         else:

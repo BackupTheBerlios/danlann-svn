@@ -154,4 +154,19 @@ class Gallery(Element):
             return data[i + 1]
 
 
+
+class Exif(object):
+    """
+    EXIF header item.
+
+    @ivar name: EXIF field name
+    @ivar value: EXIF field value
+    """
+    def __init__(self, name, value):
+        super(Exif, self).__init__()
+        self.name = name
+        self.value = value
+
+
+
 __all__ = [Gallery, Album, Photo]

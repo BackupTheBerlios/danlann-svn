@@ -185,7 +185,6 @@ class DanlannGenerator(object):
         for photo in album.photos:
             self.generateAlbumPhotos(photo)
 
-        #self.processAlbumNavigation(f, album, parent)
         log.info('generated album %s' % album.dir)
 
 

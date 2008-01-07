@@ -171,77 +171,12 @@ class DanlannGenerator(object):
         log.info('generated index page')
 
 
-    def generateNavigation(self, f, tmpl, item, data, *tmpl_args):
-        pre, post = tmpl.navigation(item, data, *tmpl_args)
-        f.write(pre)
-        f.write(post)
-
-
-    def getPrevAndNext(self, items, item, f, *args):
-        prev_item = next_item = None
-        prev_url = next_url = None
-        prev_title = next_title = None
-
-        index = items.index(item)
-        if index > 0:
-            prev_item = items[index - 1]
-        if index < len(items) - 1:
-            next_item = items[index + 1]
-
-        if prev_item:
-            prev_url = f(prev_item, *args)
-            prev_title = prev_item.title
-        if next_item:
-            next_url = f(next_item, *args)
-            next_title = next_item.title
-
-        if isinstance(item, Album):
-            next_title = 'next album: %s' % next_title
-            prev_title = 'previous album: %s' % prev_title
-        elif isinstance(item, Photo):
-            next_title = 'next photo: %s' % next_title
-            prev_title = 'previous photo: %s' % prev_title
-        else:
-            assert False, 'only Albums and Photos are supported'
-
-        return {
-            'prev_title': prev_title,
-            'prev_item': prev_url,
-            'next_title': next_title,
-            'next_item': next_url,
-        }
-
-
-    def processAlbumNavigation(self, f, album, parent):
-        def get_fn(album):
-            return '%s/%s/index.xhtml' % (album.gallery.rootdir(album), album.dir)
-
-        subalbums = parent.subalbums
-        if isinstance(parent, Gallery):
-            ptitle = 'gallery: %s' % parent.title
-        else:
-            ptitle = 'album: %s' % parent.title
-
-        data = self.getPrevAndNext(subalbums, album, get_fn)
-        data['parent'] = '../index.xhtml'
-        data['parent_title'] = ptitle
-        self.generateNavigation(f, self.atmpl, album, data)
-
-
-    def processPhotoNavigation(self, f, photo, photo_type):
-        data = self.getPrevAndNext(photo.album.photos, photo, self.getPhotoFile, photo_type)
-        data['parent'] = 'index.xhtml'
-        data['parent_title'] = 'album: %s' % photo.album.title
-        self.generateNavigation(f, self.ptmpl, photo, data, photo_type)
-
-
-
     def generateAlbum(self, album, parent):
         self.fm.mkdir(self.getDir(album))
         fn = self.getAlbumFile(album, 'index.xhtml')
 
         f = open(fn, 'w')
-        self.tmpl.albumPage(album, parent, f)
+        self.tmpl.albumPage(f, album, parent)
         f.close()
 
         for subalbum in album.subalbums:
@@ -324,10 +259,8 @@ class DanlannGenerator(object):
             self.getPhotoFile(photo, photo_type))
 
         f = open(fn, 'w')
-        self.tmpl.photoPage(photo, f)
+        self.tmpl.photoPage(f, photo)
         f.close()
 
-        #self.processPhotoNavigation(f, photo, photo_type)
-        
         log.info('generated photo page %s.%s' % (photo.name, photo_type))
 

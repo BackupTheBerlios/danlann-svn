@@ -2,6 +2,29 @@ $!
 create photo page
 !$
 
+<div class='navigation'>
+$if(prev)$
+    <a title='prev photo: $prev.title$' href='$prev.name$.preview.xhtml'>
+        <span class='prev'></span>
+    </a>
+$else$
+    <span class='prev disabled'></span>
+$endif$
+    <a title='album: $album.title$' href='index.xhtml'>
+        <span class='parent'></span>
+    </a>
+$if(next)$
+    <a title='next photo: $next.title$' href='$next.name$.preview.xhtml'>
+        <span class='next'></span>
+    </a>
+$else$
+    <span class='next disabled'></span>
+$endif$
+    <span class='exif'>
+        <a onclick='toggle_exif_window(&quot;dsd_0999-bw.exif.xhtml&quot;); return false' title='exif data' href='dsd_0999-bw.exif.xhtml'>exif</a>
+    </span>
+</div>
+
 $if(photo.title)$
 <h1 class = 'title'>$album.title$: $photo.title$</h1>
 $else$

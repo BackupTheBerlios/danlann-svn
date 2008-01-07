@@ -83,13 +83,24 @@ class Album(Item):
         self.photos = [] 
 
 
-    def isFirstPhoto(self, item): # fixme:
-        return self.photos[0] == item
+    def prev(self, item):
+        data = self.photos
+        if isinstance(item, Album):
+            data = self.subalbums
+
+        i = data.index(item)
+        if i > 0:
+            return data[i - 1]
 
 
-    def isLastPhoto(self, item):  # fixme: do we need it?
-        return self.photos[-1] == item
+    def next(self, item):
+        data = self.photos
+        if isinstance(item, Album):
+            data = self.subalbums
 
+        i = data.index(item)
+        if i < len(data) - 1:
+            return data[i + 1]
 
 
 class Gallery(Element):
@@ -127,6 +138,20 @@ class Gallery(Element):
         """
         dirs = album.dir.split('/')
         return '/'.join(('..', ) * len(dirs))
+
+
+    def prev(self, album):
+        data = self.subalbums
+        i = data.index(album)
+        if i > 0:
+            return data[i - 1]
+
+
+    def next(self, album):
+        data = self.subalbums
+        i = data.index(album)
+        if i < len(data) - 1:
+            return data[i + 1]
 
 
 __all__ = [Gallery, Album, Photo]

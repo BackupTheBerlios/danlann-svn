@@ -69,24 +69,42 @@ class Template(object):
 
 
     def galleryPage(self, f):
+        """
+        Generate gallery page.
+        """
         # rootdir is current directory
         page = self.getPage('basic/gallery', '.', 'gallery')
         self.write(f, page)
 
 
-    def albumPage(self, album, parent, f):
+    def albumPage(self, f, album, parent):
+        """
+        Generate album page.
+        """
         rootdir = self.gallery.rootdir(album)
+
         page = self.getPage('basic/album', rootdir, 'album')
-        page['album'] = album
         page['parent'] = parent
+        page['album'] = album
+        page['prev'] = parent.prev(album)
+        page['next'] = parent.next(album)
+
         self.write(f, page)
 
 
-    def photoPage(self, photo, f):
+    def photoPage(self, f, photo):
+        """
+        Generate photo page.
+        """
+        album = photo.album
         rootdir = self.gallery.rootdir(photo.album)
+
         page = self.getPage('basic/photo', rootdir, 'photo preview')
-        page['album'] = photo.album
         page['photo'] = photo
+        page['album'] = album
+        page['prev'] = album.prev(photo)
+        page['next'] = album.next(photo)
+
         self.write(f, page)
 
 

@@ -36,6 +36,8 @@ class Template(object):
         super(Template, self).__init__()
         self.gallery = gallery
         self.st_group = stringtemplate.StringTemplateGroup('basic', '/home/users/wrobell/projects/danlann/danlann/trunk/tmpl')
+        self.st_group.registerRenderer(str, XMLRenderer());
+        self.st_group.registerRenderer(unicode, XMLRenderer());
 
 
     def getPage(self, tmpl, rootdir, cls):
@@ -88,16 +90,17 @@ class Template(object):
         self.write(f, page)
 
 
-def escape(self, val):
-    if val is None:
+
+class XMLRenderer(stringtemplate.AttributeRenderer):
+    """
+    XML renderer for StringTemplate library to convert special characters
+    into XML entities.
+    """
+    def str(self, val):
+        assert val is not None
+        val = val.replace('&', '&amp;')
+        val = val.replace('\'', '&apos;')
+        val = val.replace('"', '&quot;')
+        val = val.replace('<', '&lt;')
+        val = val.replace('>', '&gt;')
         return val
-    val = val.replace('&', '&amp;')
-    val = val.replace('\'', '&apos;')
-    val = val.replace('"', '&quot;')
-    val = val.replace('<', '&lt;')
-    val = val.replace('>', '&gt;')
-
-    val = val.replace('\\n', '<br/>')
-    return val
-
-

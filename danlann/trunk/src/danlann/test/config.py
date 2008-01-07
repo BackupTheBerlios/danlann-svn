@@ -181,15 +181,15 @@ class ConfigTestCase(unittest.TestCase):
         # see Danlann Manual for specification of default values
         args = self.generator.convert_args['thumb']
         self.assertEqual(args,
-            ['-resize', '128x128>', '-quality', '90', '-unsharp', '3x3+0.5+0'])
+            ['-resize', '128x128>', '-quality', '90', '-unsharp', '0.1x0.1+2.0+0'])
 
         args = self.generator.convert_args['preview']
         self.assertEqual(args,
-            ['-resize', '800x600>', '-quality', '90', '-unsharp', '3x3+0.5+0'])
+            ['-resize', '800x600>', '-quality', '90', '-unsharp', '0.1x0.1+2.0+0'])
 
         args = self.generator.convert_args['view']
         self.assertEqual(args,
-            ['-resize', '1024x768>', '-quality', '90', '-unsharp', '3x3+0.5+0'])
+            ['-resize', '1024x768>', '-quality', '90', '-unsharp', '0.1x0.1+2.0+0'])
 
 
     @config(CONF_MIN + CONF_PHOTO)
@@ -232,17 +232,17 @@ class ConfigTestCase(unittest.TestCase):
         args = self.generator.convert_args['thumb']
         self.assertEqual(args,
             ['-resize', '128x128>', '-quality', '90',
-                '-blur', '15', '-dither', '-unsharp', '3x3+0.5+0'])
+                '-blur', '15', '-dither', '-unsharp', '0.1x0.1+2.0+0'])
 
         args = self.generator.convert_args['preview']
         self.assertEqual(args,
             ['-resize', '800x600>', '-quality', '90',
-                '-dither', '-blur', '10', '-unsharp', '3x3+0.5+0'])
+                '-dither', '-blur', '10', '-unsharp', '0.1x0.1+2.0+0'])
 
         args = self.generator.convert_args['view']
         self.assertEqual(args,
             ['-resize', '1024x768>', '-quality', '90',
-                '-level', '2%', '-dither', '-unsharp', '3x3+0.5+0'])
+                '-level', '2%', '-dither', '-unsharp', '0.1x0.1+2.0+0'])
 
 
     @config(CONF_PATHS)

@@ -1,4 +1,4 @@
-SUBDIRS = bin css doc examples js src
+SUBDIRS = bin css doc examples js src tmpl
 
 tests:
 	PYTHONPATH=src nosetests src/danlann/test/

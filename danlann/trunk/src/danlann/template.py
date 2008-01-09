@@ -21,6 +21,7 @@
 import stringtemplate
 
 from danlann.bc import Gallery, Album, Photo
+import danlann.config
 
 class Template(object):
     """
@@ -35,7 +36,8 @@ class Template(object):
         """
         super(Template, self).__init__()
         self.gallery = gallery
-        self.st_group = stringtemplate.StringTemplateGroup('basic', '/home/users/wrobell/projects/danlann/danlann/trunk/tmpl')
+        self.st_group = stringtemplate.StringTemplateGroup('basic',
+                '%s/tmpl' % danlann.config.libpath)
         self.st_group.registerRenderer(str, XMLRenderer());
         self.st_group.registerRenderer(unicode, XMLRenderer());
 

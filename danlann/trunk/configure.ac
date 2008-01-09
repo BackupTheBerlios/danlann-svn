@@ -11,6 +11,7 @@ AC_OUTPUT([
     examples/Makefile
     examples/in/Makefile
     js/Makefile
+    tmpl/Makefile
     src/Makefile
     src/danlann/Makefile
     src/danlann/test/Makefile

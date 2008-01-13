@@ -29,12 +29,14 @@ class Template(object):
 
     @ivar gallery: gallery reference
     @ivar copyright: copyright text
-    @ivar override: template override directory
     @ivar st_group: StringTemplate reference
     """
     def __init__(self, gallery, override=None):
         """
         Create new instance of a template with gallery instance reference.
+
+        @param gallery: gallery reference
+        @param override: directory overriding template 
         """
         super(Template, self).__init__()
         self.copyright = None

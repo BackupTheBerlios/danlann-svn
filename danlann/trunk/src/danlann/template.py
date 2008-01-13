@@ -41,6 +41,12 @@ class Template(object):
         self.st_group.registerRenderer(str, XMLRenderer());
         self.st_group.registerRenderer(unicode, XMLRenderer());
 
+        self.tmpl_gallery = 'basic/gallery'
+        self.tmpl_page = 'basic/page'
+        self.tmpl_album = 'basic/album'
+        self.tmpl_photo = 'basic/photo'
+        self.tmpl_exif = 'basic/exif'
+
 
     def getPage(self, tmpl, rootdir, cls):
         """
@@ -50,7 +56,7 @@ class Template(object):
         @param rootdir: relative path to gallery directory
         @param cls: page class
         """
-        page = self.st_group.getInstanceOf('basic/page')
+        page = self.st_group.getInstanceOf(self.tmpl_page)
 
         page['gallery'] = self.gallery
         page['class'] = cls
@@ -75,7 +81,7 @@ class Template(object):
         Generate gallery page.
         """
         # rootdir is current directory
-        page = self.getPage('basic/gallery', '.', 'gallery')
+        page = self.getPage(self.tmpl_gallery, '.', 'gallery')
         self.write(f, page)
 
 
@@ -85,7 +91,7 @@ class Template(object):
         """
         rootdir = self.gallery.rootdir(album)
 
-        page = self.getPage('basic/album', rootdir, 'album')
+        page = self.getPage(self.tmpl_album, rootdir, 'album')
         page['parent'] = parent
         page['album'] = album
         page['prev'] = parent.prev(album)
@@ -101,7 +107,7 @@ class Template(object):
         album = photo.album
         rootdir = self.gallery.rootdir(photo.album)
 
-        page = self.getPage('basic/photo', rootdir, 'photo preview')
+        page = self.getPage(self.tmpl_photo, rootdir, 'photo preview')
         page['photo'] = photo
         page['album'] = album
         page['prev'] = album.prev(photo)
@@ -117,7 +123,7 @@ class Template(object):
         album = photo.album
         rootdir = self.gallery.rootdir(photo.album)
 
-        page = self.getPage('basic/exif', rootdir, 'photo exif')
+        page = self.getPage(self.tmpl_exif, rootdir, 'photo exif')
         page['photo'] = photo
         page['album'] = album
         page['prev'] = album.prev(photo)

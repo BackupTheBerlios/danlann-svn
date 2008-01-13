@@ -172,7 +172,7 @@ class TemplateVariablesTestCase(unittest.TestCase):
 
         expected = '\'danlann title test\'' \
                 ' css/danlann.css' \
-                ' photo preview' \
+                ' photo' \
                 ' basic/photo' \
                 ' ../../..' \
                 ' (cc)' \
@@ -224,7 +224,7 @@ class TemplateVariablesTestCase(unittest.TestCase):
 
         expected = '\'danlann title test\'' \
                 ' css/danlann.css' \
-                ' photo preview' \
+                ' photo' \
                 ' basic/photo' \
                 ' ../../..' \
                 ' (cc)' \

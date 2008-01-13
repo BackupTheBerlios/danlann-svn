@@ -116,8 +116,7 @@ class DanlannGenerator(object):
 
         self.convert_args = {
             'thumb'   : ConversionArguments('128x128>'),
-            'preview' : ConversionArguments('800x600>'),
-            'view'    : ConversionArguments('1024x768>'),
+            'image' : ConversionArguments('800x600>'),
         }
 
         self.tmpl = None
@@ -151,7 +150,10 @@ class DanlannGenerator(object):
 
             dsc_0000.thumb.xhtml
         """
-        return '%s.%s.%s' % (photo.name, photo_type, ext)
+        if photo_type is None:
+            return '%s.%s' % (photo.name, ext)
+        else:
+            return '%s.%s.%s' % (photo.name, photo_type, ext)
 
 
     def generate(self):
@@ -193,11 +195,9 @@ class DanlannGenerator(object):
 
             self.generateExif(photo)
             self.convertPhoto(photo, 'thumb')
-            self.convertPhoto(photo, 'preview')
-            #self.convertPhoto(photo, 'view')
+            self.convertPhoto(photo)
 
-            self.generatePhoto(photo, 'preview')
-            #self.generatePhoto(photo, 'view')
+            self.generatePhoto(photo)
         except StopIteration, ex:
             log.error('could not find photo %s file' % photo.name)
 
@@ -216,7 +216,7 @@ class DanlannGenerator(object):
 
 
 
-    def convertPhoto(self, photo, photo_type):
+    def convertPhoto(self, photo, photo_type=None):
         fn_in  = None
         fn_out = '%s/%s/%s' % (self.outdir,
             photo.album.dir,
@@ -236,7 +236,7 @@ class DanlannGenerator(object):
                 log.error('failed conversion %s: %s' % (fn_out, ex))
 
 
-    def generatePhoto(self, photo, photo_type):
+    def generatePhoto(self, photo, photo_type=None):
         """
         Generate photo page.
         """

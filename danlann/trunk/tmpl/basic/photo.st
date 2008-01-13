@@ -4,7 +4,7 @@ create photo page
 
 <div class='navigation'>
 $if(prev)$
-    <a title='prev photo: $prev.title$' href='$prev.name$.preview.xhtml'>
+    <a title='prev photo: $prev.title$' href='$prev.name$.xhtml'>
         <span class='prev'></span>
     </a>
 $else$
@@ -14,7 +14,7 @@ $endif$
         <span class='parent'></span>
     </a>
 $if(next)$
-    <a title='next photo: $next.title$' href='$next.name$.preview.xhtml'>
+    <a title='next photo: $next.title$' href='$next.name$.xhtml'>
         <span class='next'></span>
     </a>
 $else$
@@ -34,8 +34,8 @@ $if(photo.description)$
 <p class = 'description'>$photo.description$</p>
 $endif$
 
-<div class = 'photo preview'>
-    <img alt = 'photo: $photo.title$' src = '$photo.name$.preview.jpg'/>
+<div class = 'photo'>
+    <img alt = 'photo: $photo.title$' src = '$photo.name$.jpg'/>
 </div>
 
 $! vim:syntax=html

@@ -214,8 +214,7 @@ class Danlann(object):
         self.generator.exif_headers = exif_headers
 
         self.setConvertArgs(conf, 'thumb')
-        self.setConvertArgs(conf, 'preview')
-        self.setConvertArgs(conf, 'view')
+        self.setConvertArgs(conf, 'image')
 
         #
         # create template object

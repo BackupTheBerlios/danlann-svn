@@ -1,6 +1,5 @@
 scope
-\item image view: thumbnail, preview, image 
-      image view created from original files
+\item photo: thumbnail, image itself
 \item exif
 \item rss
 \item navigation
@@ -55,12 +54,8 @@ title =
 copyright =
 
 # full size image parameters
-[view]
+[image]
 params = -size 1024x768
-
-# preview image parameters
-[preview]
-params = -size 800x600
 
 # thumbnail image parameters
 [thumb]
@@ -86,10 +81,10 @@ html file:
             div.photo 0..*
 
 - photo file
-    body.photo view|preview
+    body.photo
         h1.title
         p.description
-        div.photo view|preview
+        div.photo
 
 
 Templates
@@ -117,15 +112,3 @@ Template parts:
 + photos
 + photo
 - navigation
-
-There are three template classes:
-- gallery index
-- album index
-- photo
-
-Every template part has one method. Method has parameters:
-- context - gallery object or current album or current photo
-- type - only photos, contains photo type: preview, view
-
-Method returns two strings - begining of template and end of template.
-Both can be empty strings, usefule in case of i.e. title or photo classes.

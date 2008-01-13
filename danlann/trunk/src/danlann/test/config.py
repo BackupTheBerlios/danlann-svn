@@ -42,12 +42,7 @@ outdir    = output_dir
 
 # photo configuration changes
 CONF_PHOTO = """
-[photo:view]
-size    = 11
-quality = 91
-unsharp = 1
-
-[photo:preview]
+[photo:image]
 size    = 12
 quality = 92
 unsharp = 2
@@ -59,15 +54,12 @@ unsharp = 3
 """
 
 CONF_PHOTO_CLEAR_ARG = """
-[photo:view]
+[photo:image]
 unsharp =
 """
 
 CONF_PHOTO_PARAMS = """
-[photo:view]
-params = -level 2% -dither
-
-[photo:preview]
+[photo:image]
 params = -dither -blur 10
 
 [photo:thumb]
@@ -183,40 +175,32 @@ class ConfigTestCase(unittest.TestCase):
         self.assertEqual(args,
             ['-resize', '128x128>', '-quality', '90', '-unsharp', '0.1x0.1+2.0+0'])
 
-        args = self.generator.convert_args['preview']
+        args = self.generator.convert_args['image']
         self.assertEqual(args,
             ['-resize', '800x600>', '-quality', '90', '-unsharp', '0.1x0.1+2.0+0'])
-
-        args = self.generator.convert_args['view']
-        self.assertEqual(args,
-            ['-resize', '1024x768>', '-quality', '90', '-unsharp', '0.1x0.1+2.0+0'])
 
 
     @config(CONF_MIN + CONF_PHOTO)
     def testConversionArguments(self):
         """photo conversion arguments"""
-        assert self.conf.has_option('photo:view', 'size')
+        assert self.conf.has_option('photo:image', 'size')
 
         args = self.generator.convert_args['thumb']
         self.assertEqual(args,
             ['-resize', '13', '-quality', '93', '-unsharp', '3'])
 
-        args = self.generator.convert_args['preview']
+        args = self.generator.convert_args['image']
         self.assertEqual(args,
             ['-resize', '12', '-quality', '92', '-unsharp', '2'])
-
-        args = self.generator.convert_args['view']
-        self.assertEqual(args,
-            ['-resize', '11', '-quality', '91', '-unsharp', '1'])
 
 
     @config(CONF_MIN + CONF_PHOTO_CLEAR_ARG)
     def testConversionArgumentsClear(self):
         """clearing photo conversion arguments"""
-        assert self.conf.has_option('photo:view', 'unsharp')
-        assert self.conf.get('photo:view', 'unsharp') == ''
+        assert self.conf.has_option('photo:image', 'unsharp')
+        assert self.conf.get('photo:image', 'unsharp') == ''
 
-        args = self.generator.convert_args['view']
+        args = self.generator.convert_args['image']
         self.assertEqual(len(args), 4)
         self.assert_('-unsharp' not in args)
         self.assert_('' not in args)
@@ -225,8 +209,7 @@ class ConfigTestCase(unittest.TestCase):
     @config(CONF_MIN + CONF_PHOTO_PARAMS)
     def testAdditionalParameters(self):
         """additional parameters"""
-        assert self.conf.has_option('photo:view', 'params')
-        assert self.conf.has_option('photo:preview', 'params')
+        assert self.conf.has_option('photo:image', 'params')
         assert self.conf.has_option('photo:thumb', 'params')
 
         args = self.generator.convert_args['thumb']
@@ -234,15 +217,10 @@ class ConfigTestCase(unittest.TestCase):
             ['-resize', '128x128>', '-quality', '90',
                 '-blur', '15', '-dither', '-unsharp', '0.1x0.1+2.0+0'])
 
-        args = self.generator.convert_args['preview']
+        args = self.generator.convert_args['image']
         self.assertEqual(args,
             ['-resize', '800x600>', '-quality', '90',
                 '-dither', '-blur', '10', '-unsharp', '0.1x0.1+2.0+0'])
-
-        args = self.generator.convert_args['view']
-        self.assertEqual(args,
-            ['-resize', '1024x768>', '-quality', '90',
-                '-level', '2%', '-dither', '-unsharp', '0.1x0.1+2.0+0'])
 
 
     @config(CONF_PATHS)

@@ -37,8 +37,8 @@ $endif$
 $if(album.photos)$
 <div class = 'photos'>
 $album.photos: { photo |
-<div class = 'photo preview'>
-    <img alt = 'photo: $photo.title$' src = '$photo.name$.preview.jpg'/>
+<div class = 'photo'>
+    <img alt = 'photo: $photo.title$' src = '$photo.name$.jpg'/>
 </div>
 }$
 </div>

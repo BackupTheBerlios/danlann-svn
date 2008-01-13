@@ -32,17 +32,20 @@ class Template(object):
     @ivar st_group: StringTemplate reference
     @ivar css: list of css files
     """
-    def __init__(self, gallery, override=None):
+    def __init__(self, name, gallery, override=None):
         """
         Create new instance of a template with gallery instance reference.
 
+        @param name: template name
         @param gallery: gallery reference
         @param override: directory overriding template 
         """
         super(Template, self).__init__()
-        self.copyright = None
+        self.name = name
         self.gallery = gallery
+
         self.css = ['css/danlann.css']
+        self.copyright = None
 
         st_group = stringtemplate.StringTemplateGroup('basic',
                 '%s/tmpl' % danlann.config.libpath)
@@ -53,7 +56,7 @@ class Template(object):
         # template override is realized with StringTemplate
         # supergroup/subgroup functionality
         if override:
-            self.st_group = stringtemplate.StringTemplateGroup('basic', override)
+            self.st_group = stringtemplate.StringTemplateGroup(name, override)
             self.st_group.registerRenderer(str, XMLRenderer());
             self.st_group.registerRenderer(unicode, XMLRenderer());
 
@@ -61,11 +64,11 @@ class Template(object):
         else:
             self.st_group = st_group # no override
 
-        self.tmpl_gallery = 'basic/gallery'
-        self.tmpl_page = 'basic/page'
-        self.tmpl_album = 'basic/album'
-        self.tmpl_photo = 'basic/photo'
-        self.tmpl_exif = 'basic/exif'
+        self.tmpl_gallery = '%s/gallery' % self.name
+        self.tmpl_page    = '%s/page' % self.name
+        self.tmpl_album   = '%s/album' % self.name
+        self.tmpl_photo   = '%s/photo' % self.name
+        self.tmpl_exif    = '%s/exif' % self.name
 
 
     def getPage(self, tmpl, rootdir, cls):

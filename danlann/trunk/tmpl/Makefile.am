@@ -12,6 +12,11 @@ nobase_tmpl_DATA = \
 	basic/page.st \
 	basic/photo.st \
 	basic/pindex.st \
-	basic/sindex.st
+	basic/sindex.st \
+	vflow/album.st \
+	vflow/exif.st \
+	vflow/gallery.st \
+	vflow/page.st \
+	vflow/photo.st
 
 EXTRA_DIST = $(nobase_tmpl_DATA)

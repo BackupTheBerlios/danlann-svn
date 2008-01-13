@@ -260,9 +260,9 @@ class TemplateInheritanceTestCase(unittest.TestCase):
 
     def testOverride(self):
         """template override"""
-        t = Template(self.generator.gallery)
+        t = Template('basic', self.generator.gallery)
         self.assertTrue(t.st_group.superGroup is None)
 
-        t = Template(self.generator.gallery, 'a')
+        t = Template('basic', self.generator.gallery, 'a')
         self.assertTrue(t.st_group.superGroup is not None)
         self.assertEqual(t.st_group.superGroup.name, 'basic')

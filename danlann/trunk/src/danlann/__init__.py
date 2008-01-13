@@ -221,10 +221,17 @@ class Danlann(object):
         # create template object
         #
         override = None
+        name = 'basic'
+
+        # get template name
+        if conf.has_option('template', 'name'):
+            name = conf.get('template', 'name')
+
         # get template override
         if conf.has_option('template', 'override'):
             override = conf.get('template', 'override')
-        tmpl = self.generator.tmpl = Template(self.gallery, override)
+
+        tmpl = self.generator.tmpl = Template(name, self.gallery, override)
 
         if conf.has_option('template', 'copyright'):
             tmpl.copyright = conf.get('template', 'copyright')

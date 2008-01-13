@@ -37,6 +37,9 @@ title     = danlann title test
 albums    = a.txt b.txt
 indir     = input_dir
 outdir    = output_dir
+
+[template]
+copyright = (cc)
 """
 
 class TemplateVariablesTestCase(unittest.TestCase):
@@ -70,23 +73,38 @@ class TemplateVariablesTestCase(unittest.TestCase):
 
     def testGalleryPageVairables(self):
         """gallery page template variables"""
-        self._setTemplate("""\
-group basic;
-page(gallery, class, tmpl, rootdir) ::= "'$gallery.title$' $class$ $tmpl$ $rootdir$"
-""")
+        self._setTemplate('group basic;\n' \
+                'page(gallery, class, tmpl, rootdir, copyright) ::=' \
+                ' "\'$gallery.title$\'' \
+                ' $class$' \
+                ' $tmpl$' \
+                ' $rootdir$' \
+                ' $copyright$"')
 
         f = StringIO()
         self.tmpl.galleryPage(f)
-        self.assertEquals('\'danlann title test\' gallery basic/gallery .\n', f.getvalue())
+
+        expected = '\'danlann title test\'' \
+                ' gallery' \
+                ' basic/gallery' \
+                ' .' \
+                ' (cc)\n'
+        self.assertEquals(expected, f.getvalue())
 
 
     def testAlbumPageVairables(self):
         """album page template variables"""
-        self._setTemplate("group basic;\n" \
-                "page(gallery, class, tmpl, rootdir, album," \
-                "           parent, prev, next) ::=" \
-                " \"'$gallery.title$' $class$ $tmpl$ $rootdir$" \
-                " p:$prev.title$ n:$next.title$ $parent.title$\"")
+        self._setTemplate('group basic;\n' \
+                'page(gallery, class, tmpl, rootdir, copyright, album,' \
+                '           parent, prev, next) ::=' \
+                ' "\'$gallery.title$\'' \
+                ' $class$' \
+                ' $tmpl$' \
+                ' $rootdir$' \
+                ' $copyright$' \
+                ' p:$prev.title$' \
+                ' n:$next.title$' \
+                ' $parent.title$"')
 
         f = StringIO()
         a1 = Album()
@@ -100,18 +118,30 @@ page(gallery, class, tmpl, rootdir) ::= "'$gallery.title$' $class$ $tmpl$ $rootd
 
         self.tmpl.albumPage(f, a1, parent)
 
-        expected = "'danlann title test' album album ../../.." \
-                " p: n:a 2 title danlann title test\n"
+        expected = '\'danlann title test\'' \
+                ' album' \
+                ' album' \
+                ' ../../..' \
+                ' (cc)' \
+                ' p:' \
+                ' n:a 2 title' \
+                ' danlann title test\n'
         self.assertEquals(expected, f.getvalue())
 
 
     def testPhotoPageVariables(self):
         """photo page template variables"""
-        self._setTemplate("group basic;\n" \
-                "page(gallery, class, tmpl, rootdir, album," \
-                "           photo, prev, next) ::=" \
-                " \"'$gallery.title$' $class$ $tmpl$ $rootdir$" \
-                " p:$prev.title$ n:$next.title$ $album.title$\"")
+        self._setTemplate('group basic;\n' \
+                'page(gallery, class, tmpl, rootdir, copyright, album,' \
+                '           photo, prev, next) ::=' \
+                ' "\'$gallery.title$\'' \
+                ' $class$' \
+                ' $tmpl$' \
+                ' $rootdir$' \
+                ' $copyright$' \
+                ' p:$prev.title$' \
+                ' n:$next.title$' \
+                ' $album.title$"')
 
         f = StringIO()
         album = Album()
@@ -134,18 +164,31 @@ page(gallery, class, tmpl, rootdir) ::= "'$gallery.title$' $class$ $tmpl$ $rootd
 
         self.tmpl.photoPage(f, p1)
 
-        expected = "'danlann title test' photo preview basic/photo ../../.. p: n:p2 a title\n"
+        expected = '\'danlann title test\'' \
+                ' photo preview' \
+                ' basic/photo' \
+                ' ../../..' \
+                ' (cc)' \
+                ' p:' \
+                ' n:p2' \
+                ' a title\n'
         self.assertEquals(expected, f.getvalue())
 
 
     def testExifPageVariables(self):
         """exif page template variables"""
         self._setTemplate("group basic;\n" \
-                "page(gallery, class, tmpl, rootdir, album," \
-                "           photo, prev, next) ::=" \
-                " \"'$gallery.title$' $class$ $tmpl$ $rootdir$" \
-                " p:$prev.title$ n:$next.title$ $album.title$" \
-                " $photo.exif: {e | n:$e.name$v:$e.value$}$\"")
+                'page(gallery, class, tmpl, rootdir, copyright, album,' \
+                '           photo, prev, next) ::=' \
+                ' "\'$gallery.title$\'' \
+                ' $class$' \
+                ' $tmpl$' \
+                ' $rootdir$' \
+                ' $copyright$' \
+                ' p:$prev.title$' \
+                ' n:$next.title$' \
+                ' $album.title$' \
+                ' $photo.exif: {e | n:$e.name$v:$e.value$}$"')
 
         f = StringIO()
         album = Album()
@@ -171,6 +214,13 @@ page(gallery, class, tmpl, rootdir) ::= "'$gallery.title$' $class$ $tmpl$ $rootd
 
         self.tmpl.photoPage(f, p1)
 
-        expected = "'danlann title test' photo preview basic/photo" \
-                " ../../.. p: n:p2 a title n:eav:evn:ezv:eq\n"
+        expected = '\'danlann title test\'' \
+                ' photo preview' \
+                ' basic/photo' \
+                ' ../../..' \
+                ' (cc)' \
+                ' p:' \
+                ' n:p2' \
+                ' a title' \
+                ' n:eav:evn:ezv:eq\n'
         self.assertEquals(expected, f.getvalue())

@@ -28,6 +28,7 @@ class Template(object):
     A template.
 
     @ivar gallery: gallery reference
+    @ivar copyright: copyright text
     @ivar st_group: StringTemplate reference
     """
     def __init__(self, gallery):
@@ -35,6 +36,7 @@ class Template(object):
         Create new instance of a template with gallery instance reference.
         """
         super(Template, self).__init__()
+        self.copyright = None
         self.gallery = gallery
         self.st_group = stringtemplate.StringTemplateGroup('basic',
                 '%s/tmpl' % danlann.config.libpath)
@@ -62,6 +64,7 @@ class Template(object):
         page['class'] = cls
         page['tmpl'] = tmpl
         page['rootdir'] = rootdir
+        page['copyright'] = self.copyright
 
         return page
 

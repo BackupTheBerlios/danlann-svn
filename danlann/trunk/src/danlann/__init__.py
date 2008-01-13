@@ -220,7 +220,9 @@ class Danlann(object):
         #
         # create template object
         #
-        self.generator.tmpl = Template(self.gallery)
+        tmpl = self.generator.tmpl = Template(self.gallery)
+        if conf.has_option('template', 'copyright'):
+            tmpl.copyright = conf.get('template', 'copyright')
 
         #
         # check exiv2/GraphicsMagick/ImageMagick existence

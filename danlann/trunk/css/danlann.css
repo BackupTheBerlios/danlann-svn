@@ -161,6 +161,10 @@ body.view div.footer {
     width: 1064px;      /* set to div.body width */
 }
 
+div.photo img {
+    margin: 10px;
+}
+
 /* xhtml tag modifications */
 html {
     color: #dddddd;

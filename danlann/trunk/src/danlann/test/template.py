@@ -28,6 +28,7 @@ import stringtemplate
 import unittest
 
 from danlann import Danlann
+from danlann.template import Template
 from danlann.bc import Photo, Album, Exif
 
 CONF = """
@@ -224,3 +225,36 @@ class TemplateVariablesTestCase(unittest.TestCase):
                 ' a title' \
                 ' n:eav:evn:ezv:eq\n'
         self.assertEquals(expected, f.getvalue())
+
+
+
+class TemplateInheritanceTestCase(unittest.TestCase):
+    """
+    Test template override realized with StringTemplate group template
+    inheritance.
+    """
+    def setUp(self):
+        """
+        Prepare configuration data and initialize Danlann processor
+        for a test case.
+        """
+        self.conf = ConfigParser()
+        conf = ConfigParser()
+        conf.readfp(StringIO(CONF))
+        assert not conf.has_option('danlann', 'validate')
+
+        # initialize processor
+        self.processor = Danlann()
+        self.processor.initialize(conf, False)
+        self.generator = self.processor.generator
+        self.filemanager = self.processor.fm
+
+
+    def testOverride(self):
+        """template override"""
+        t = Template(self.generator.gallery)
+        self.assertTrue(t.st_group.superGroup is None)
+
+        t = Template(self.generator.gallery, 'a')
+        self.assertTrue(t.st_group.superGroup is not None)
+        self.assertEqual(t.st_group.superGroup.name, 'basic')

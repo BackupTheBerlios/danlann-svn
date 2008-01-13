@@ -29,19 +29,33 @@ class Template(object):
 
     @ivar gallery: gallery reference
     @ivar copyright: copyright text
+    @ivar override: template override directory
     @ivar st_group: StringTemplate reference
     """
-    def __init__(self, gallery):
+    def __init__(self, gallery, override=None):
         """
         Create new instance of a template with gallery instance reference.
         """
         super(Template, self).__init__()
         self.copyright = None
         self.gallery = gallery
-        self.st_group = stringtemplate.StringTemplateGroup('basic',
+
+        st_group = stringtemplate.StringTemplateGroup('basic',
                 '%s/tmpl' % danlann.config.libpath)
-        self.st_group.registerRenderer(str, XMLRenderer());
-        self.st_group.registerRenderer(unicode, XMLRenderer());
+        st_group.registerRenderer(str, XMLRenderer());
+        st_group.registerRenderer(unicode, XMLRenderer());
+
+        # set template override if defined
+        # template override is realized with StringTemplate
+        # supergroup/subgroup functionality
+        if override:
+            self.st_group = stringtemplate.StringTemplateGroup('basic', override)
+            self.st_group.registerRenderer(str, XMLRenderer());
+            self.st_group.registerRenderer(unicode, XMLRenderer());
+
+            self.st_group.setSuperGroup(st_group)
+        else:
+            self.st_group = st_group # no override
 
         self.tmpl_gallery = 'basic/gallery'
         self.tmpl_page = 'basic/page'

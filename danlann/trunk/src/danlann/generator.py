@@ -158,8 +158,6 @@ class DanlannGenerator(object):
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
-        self.tmpl.gallery = self.gallery
-
         f = open('%s/index.xhtml' % self.outdir, 'w')
         self.tmpl.galleryPage(f)
         f.close()

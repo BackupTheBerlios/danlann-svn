@@ -217,7 +217,10 @@ class Danlann(object):
         self.setConvertArgs(conf, 'preview')
         self.setConvertArgs(conf, 'view')
 
-        self.generator.tmpl = Template(None)
+        #
+        # create template object
+        #
+        self.generator.tmpl = Template(self.gallery)
 
         #
         # check exiv2/GraphicsMagick/ImageMagick existence

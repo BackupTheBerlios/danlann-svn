@@ -17,11 +17,7 @@
                     problem viewing this page? click here!
                 </a> ]
             </span>
-$if(copyright)$
-<span class="copyright">
-    $copyright$
-</span>
-$endif$
+            $basic/copyright()$
         </div>
     </body>
 </html>

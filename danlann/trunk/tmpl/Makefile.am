@@ -6,6 +6,7 @@ nobase_tmpl_DATA = \
 	basic/album.st \
 	basic/copyright.st \
 	basic/exif.st \
+	basic/footer.st \
 	basic/gallery.st \
 	basic/gindex.st \
 	basic/page.st \

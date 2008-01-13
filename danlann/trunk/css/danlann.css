@@ -147,11 +147,6 @@ div.copyright img {
     top: 3px;
 }
 
-/*div.footer span.copyright {
-    position: absolute;
-    right: 0px;
-}*/
-
 /* modifications for 1024x768 view */
 body.view div.body {
     width: 1064px;        /* 1024 + 40 */

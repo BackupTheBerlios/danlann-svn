@@ -225,8 +225,13 @@ class Danlann(object):
         if conf.has_option('template', 'override'):
             override = conf.get('template', 'override')
         tmpl = self.generator.tmpl = Template(self.gallery, override)
+
         if conf.has_option('template', 'copyright'):
             tmpl.copyright = conf.get('template', 'copyright')
+
+        if conf.has_option('template', 'css'):
+            css = conf.get('template', 'css')
+            tmpl.css.extend(css.split())
 
         #
         # check exiv2/GraphicsMagick/ImageMagick existence

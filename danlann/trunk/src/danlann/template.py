@@ -30,6 +30,7 @@ class Template(object):
     @ivar gallery: gallery reference
     @ivar copyright: copyright text
     @ivar st_group: StringTemplate reference
+    @ivar css: list of css files
     """
     def __init__(self, gallery, override=None):
         """
@@ -41,6 +42,7 @@ class Template(object):
         super(Template, self).__init__()
         self.copyright = None
         self.gallery = gallery
+        self.css = ['css/danlann.css']
 
         st_group = stringtemplate.StringTemplateGroup('basic',
                 '%s/tmpl' % danlann.config.libpath)
@@ -81,6 +83,7 @@ class Template(object):
         page['tmpl'] = tmpl
         page['rootdir'] = rootdir
         page['copyright'] = self.copyright
+        page['css'] = self.css
 
         return page
 

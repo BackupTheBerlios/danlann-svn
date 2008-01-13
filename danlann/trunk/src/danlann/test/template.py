@@ -75,8 +75,9 @@ class TemplateVariablesTestCase(unittest.TestCase):
     def testGalleryPageVairables(self):
         """gallery page template variables"""
         self._setTemplate('group basic;\n' \
-                'page(gallery, class, tmpl, rootdir, copyright) ::=' \
+                'page(gallery, css, class, tmpl, rootdir, copyright) ::=' \
                 ' "\'$gallery.title$\'' \
+                ' $css$' \
                 ' $class$' \
                 ' $tmpl$' \
                 ' $rootdir$' \
@@ -86,6 +87,7 @@ class TemplateVariablesTestCase(unittest.TestCase):
         self.tmpl.galleryPage(f)
 
         expected = '\'danlann title test\'' \
+                ' css/danlann.css' \
                 ' gallery' \
                 ' basic/gallery' \
                 ' .' \
@@ -96,9 +98,10 @@ class TemplateVariablesTestCase(unittest.TestCase):
     def testAlbumPageVairables(self):
         """album page template variables"""
         self._setTemplate('group basic;\n' \
-                'page(gallery, class, tmpl, rootdir, copyright, album,' \
+                'page(gallery, css, class, tmpl, rootdir, copyright, album,' \
                 '           parent, prev, next) ::=' \
                 ' "\'$gallery.title$\'' \
+                ' $css$' \
                 ' $class$' \
                 ' $tmpl$' \
                 ' $rootdir$' \
@@ -120,6 +123,7 @@ class TemplateVariablesTestCase(unittest.TestCase):
         self.tmpl.albumPage(f, a1, parent)
 
         expected = '\'danlann title test\'' \
+                ' css/danlann.css' \
                 ' album' \
                 ' album' \
                 ' ../../..' \
@@ -133,9 +137,10 @@ class TemplateVariablesTestCase(unittest.TestCase):
     def testPhotoPageVariables(self):
         """photo page template variables"""
         self._setTemplate('group basic;\n' \
-                'page(gallery, class, tmpl, rootdir, copyright, album,' \
+                'page(gallery, css, class, tmpl, rootdir, copyright, album,' \
                 '           photo, prev, next) ::=' \
                 ' "\'$gallery.title$\'' \
+                ' $css$' \
                 ' $class$' \
                 ' $tmpl$' \
                 ' $rootdir$' \
@@ -166,6 +171,7 @@ class TemplateVariablesTestCase(unittest.TestCase):
         self.tmpl.photoPage(f, p1)
 
         expected = '\'danlann title test\'' \
+                ' css/danlann.css' \
                 ' photo preview' \
                 ' basic/photo' \
                 ' ../../..' \
@@ -179,9 +185,10 @@ class TemplateVariablesTestCase(unittest.TestCase):
     def testExifPageVariables(self):
         """exif page template variables"""
         self._setTemplate("group basic;\n" \
-                'page(gallery, class, tmpl, rootdir, copyright, album,' \
+                'page(gallery, css, class, tmpl, rootdir, copyright, album,' \
                 '           photo, prev, next) ::=' \
                 ' "\'$gallery.title$\'' \
+                ' $css$' \
                 ' $class$' \
                 ' $tmpl$' \
                 ' $rootdir$' \
@@ -216,6 +223,7 @@ class TemplateVariablesTestCase(unittest.TestCase):
         self.tmpl.photoPage(f, p1)
 
         expected = '\'danlann title test\'' \
+                ' css/danlann.css' \
                 ' photo preview' \
                 ' basic/photo' \
                 ' ../../..' \

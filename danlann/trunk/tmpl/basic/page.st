@@ -3,7 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>$gallery.title$</title>
-        <link rel = 'stylesheet' type = 'text/css' href = '$rootdir$/css/danlann.css' media = 'all'/>
+$css: {c |
+    <link rel = 'stylesheet' type = 'text/css' href = '$rootdir$/$c$' media = 'all'/>
+}$
     </head>
 
     <body class = "$class$">

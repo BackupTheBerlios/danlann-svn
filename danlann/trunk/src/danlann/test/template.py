@@ -171,5 +171,6 @@ page(gallery, class, tmpl, rootdir) ::= "'$gallery.title$' $class$ $tmpl$ $rootd
 
         self.tmpl.photoPage(f, p1)
 
-        expected = "'danlann title test' photo preview basic/photo ../../.. p: n:p2 a title n:eav:evn:ezv:eq\n"
+        expected = "'danlann title test' photo preview basic/photo" \
+                " ../../.. p: n:p2 a title n:eav:evn:ezv:eq\n"
         self.assertEquals(expected, f.getvalue())

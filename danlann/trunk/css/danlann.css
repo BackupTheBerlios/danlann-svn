@@ -15,8 +15,12 @@
 }
 
 /*
- * gallery index settings
+ * gallery page: album index settings
  */
+body.gallery .albums {
+    height: 500px;
+}
+
 body.gallery .album {
     margin-top: 5px;
 }
@@ -43,7 +47,7 @@ body.gallery > .body > .albums > .album {
 }
 
 
-/* album index settings */
+/* album page: subalbums index settings */
 .albums {
     color: gray;
 }
@@ -69,22 +73,46 @@ body.album .albums .album {
     margin-right: 5px;
 }
 
-body.album .photos .photo {
-    text-align: center;
-    display: inline-block;
-    width: 148px;
-    margin: 10px;
-    padding: 7px;
+/* album page: photos index */
+body.album div.body {
+    overflow: hidden; /* hack to allow to use floatings for photo index */
 }
 
+body.album div.photos {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
 
-/* photo settings */
+body.album div.photos:after { /* another hack to allow to use floatings for photo index */
+    content: '.';
+    display: block;
+    height: 0px;
+    clear: both;
+    visibility: hidden;
+}   
+
+/* we should use inline-block here, waiting for browsers to support it :/ */
+body.album div.photos div.photo {
+    /* display: inline-block; */
+    float: left;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 168px;
+    height: 168px;
+}
+
+/* photo page settings */
 body.photo {
     text-align: center;
 }
 
+body.photo div.photo img {
+    margin: 10px;
+}
 
-/* exif settings */
+
+/* exif page settings */
 body.photo div.exif {
     visibility: hidden;
     position: absolute;
@@ -117,9 +145,6 @@ body.exif table {
 
 
 /* page */
-/* it would be nice to automate everything here... but there are no
- * browsers which support css nicely... so fuck this - using appropriate
- * words for appropriate situation :/ */
 div.body {
     width: 840px;        /* 800 + 40 */
     margin-left: auto;
@@ -127,11 +152,6 @@ div.body {
     padding-left: 30px;
     padding-right: 30px;
     border: solid 1px gray;
-}
-
-
-body.gallery div.albums {
-    height: 500px;
 }
 
 div.footer {
@@ -154,10 +174,6 @@ body.view div.body {
 
 body.view div.footer {
     width: 1064px;      /* set to div.body width */
-}
-
-div.photo img {
-    margin: 10px;
 }
 
 /* xhtml tag modifications */

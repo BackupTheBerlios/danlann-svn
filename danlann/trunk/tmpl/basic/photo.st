@@ -21,7 +21,7 @@ $else$
     <span class='next disabled'></span>
 $endif$
     <span class='exif'>
-        <a onclick='toggle_exif_window("$photo.name$.exif.xhtml"); return false' title='exif data' href='$photo.name$.exif.xhtml'>exif</a>
+        <a title='exif data' href='$photo.name$.exif.xhtml'>exif</a>
     </span>
 </div>
 

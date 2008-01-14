@@ -148,7 +148,7 @@ class Template(object):
         album = photo.album
         rootdir = self.gallery.rootdir(photo.album)
 
-        page = self.getPage(self.tmpl_exif, rootdir, 'photo exif')
+        page = self.getPage(self.tmpl_exif, rootdir, 'exif')
         page['photo'] = photo
         page['album'] = album
         page['prev'] = album.prev(photo)

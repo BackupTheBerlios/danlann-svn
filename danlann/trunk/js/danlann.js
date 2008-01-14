@@ -1,39 +1,18 @@
-function toggle_exif_window(filename) {
-    var exif = document.getElementById('exif');
-    if (exif)
-        exif.style.visibility = (exif.style.visibility == 'visible') ?  'hidden' : 'visible';
-    else
-        load_file(filename);
-    return false;
-}
+$(document).ready(function() {
+    var href = $('.navigation .exif a').attr('href');
 
-function create_content() {
-    allTables = xmlDoc.getElementsByTagName('table');
-    table = allTables[0];
+    //$('body .photo').load(href + ' table');
+    $.ajax({type: "GET", url: href, dataType: "xml",
+        success: function(xml) {
+            table = $(xml).find('table');
+            $('div.photo').append(table);
+            $('table.exif').hide();
+         }
+     });
 
-    divEl = document.createElement('div');
-    divEl.setAttribute('id', 'exif');
-    divEl.setAttribute('class', 'exif');
-    divEl.appendChild(table);
-    divEl.style.visibility = 'visible';
 
-    bodyEl = document.getElementById('body');
-    bodyEl.appendChild(divEl);
-}
-
-function load_file(filename) {
-	if (document.implementation && document.implementation.createDocument) {
-		xmlDoc = document.implementation.createDocument("", "", null);
-		xmlDoc.onload = create_content;
-	} else if (window.ActiveXObject) {
-		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-		xmlDoc.onreadystatechange = function () {
-            if (xmlDoc.readyState == 4)
-                create_content();
-        };
- 	} else {
-		alert('Your browser can\'t handle this script');
-		return;
-	}
-	xmlDoc.load(filename);
-}
+    $('.navigation .exif a').click(function() {
+        $('table.exif').slideToggle('slow');
+        return false;
+    })
+})

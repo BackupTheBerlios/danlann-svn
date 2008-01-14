@@ -113,32 +113,32 @@ body.photo div.photo img {
 
 
 /* exif page settings */
-body.photo div.exif {
-    visibility: hidden;
+body.photo table.exif { /* exif on photo page */
     position: absolute;
     top: 55px;
     left: 30px;
-    background-color: #111111;
     padding: 10px;
+    opacity: 0.90;
+    background-color: #111111;
 }
 
-body.exif table {
+body.exif table.exif {
     margin-left: auto;
     margin-right: auto;
     margin-top: 30px;
 }
 
-.exif table {
+table.exif {
     margin: 5px;
     border: solid 1px gray;
 }
 
-.exif table th {
+table.exif  th {
     text-align: left;
     padding: 3px;
 }
 
-.exif table td {
+table.exif  td {
     text-align: left;
     padding: 3px;
 }

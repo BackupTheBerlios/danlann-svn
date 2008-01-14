@@ -1,3 +1,10 @@
+1.2.0
+-----
+- no need to write a code to create own templates (using StringTemplates
+  library, now)
+- album page photo index generated without tables
+- new template - vflow 
+
 1.0.2
 -----
 - fixed execution of third party programs (i.e. ImageMagick/GraphicsMagick)

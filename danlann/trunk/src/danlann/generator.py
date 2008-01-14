@@ -228,8 +228,11 @@ class DanlannGenerator(object):
             log.info('converting to %s' % fn_out)
             try :
                 # get conversion parameters
-                assert photo_type in self.convert_args
-                args = self.convert_args[photo_type]
+                pt = 'image'
+                if photo_type is not None:
+                    pt = photo_type
+                assert pt in self.convert_args
+                args = self.convert_args[pt]
 
                 self.fm.convert(photo.filename, fn_out, args)
             except OSError, ex:

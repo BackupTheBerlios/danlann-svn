@@ -18,6 +18,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
+import re
+
 import stringtemplate
 
 from danlann.bc import Gallery, Album, Photo
@@ -163,6 +165,10 @@ class XMLRenderer(stringtemplate.AttributeRenderer):
     XML renderer for StringTemplate library to convert special characters
     into XML entities.
     """
+    def __init__(self, *args, **kw):
+        super(XMLRenderer, self).__init__(*args, **kw)
+        self.link = re.compile('(\\bhttp://[^<>\\ ]+)')
+
     def str(self, val):
         assert val is not None
         val = val.replace('&', '&amp;')
@@ -171,6 +177,10 @@ class XMLRenderer(stringtemplate.AttributeRenderer):
         val = val.replace('<', '&lt;')
         val = val.replace('>', '&gt;')
 
-        # some special characters
+        # new line to <br/> tag
         val = val.replace('\\n', '<br/>')
+
+        # support links
+        val = self.link.sub('<a href = \'\\1\'>\\1</a>', val)
+
         return val

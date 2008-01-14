@@ -170,4 +170,7 @@ class XMLRenderer(stringtemplate.AttributeRenderer):
         val = val.replace('"', '&quot;')
         val = val.replace('<', '&lt;')
         val = val.replace('>', '&gt;')
+
+        # some special characters
+        val = val.replace('\\n', '<br/>')
         return val

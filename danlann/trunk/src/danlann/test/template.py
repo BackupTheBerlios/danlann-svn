@@ -28,7 +28,7 @@ import stringtemplate
 import unittest
 
 from danlann import Danlann
-from danlann.template import Template
+from danlann.template import Template, XMLRenderer
 from danlann.bc import Photo, Album, Exif
 
 CONF = """
@@ -266,3 +266,27 @@ class TemplateInheritanceTestCase(unittest.TestCase):
         t = Template('basic', self.generator.gallery, 'a')
         self.assertTrue(t.st_group.superGroup is not None)
         self.assertEqual(t.st_group.superGroup.name, 'basic')
+
+
+
+class TemplateSpecialCharacterRenderTestCase(unittest.TestCase):
+    """
+    Test rendering of special XML characters.
+    """
+    def testString(self):
+        """simple string render"""
+        renderer = XMLRenderer()
+        # simple text should be uneffected
+        assert 'a a' == renderer.str('a a')
+
+
+    def testEntities(self):
+        """basic entities render"""
+        renderer = XMLRenderer()
+        assert '&amp;&apos;&quot;&lt;&gt;' == renderer.str('&\'"<>')
+
+
+    def testNewLine(self):
+        """new line render"""
+        renderer = XMLRenderer()
+        assert 'a<br/>a' == renderer.str('a\\na')

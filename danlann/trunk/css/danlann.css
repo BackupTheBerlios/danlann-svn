@@ -6,12 +6,6 @@
     width: auto;
     font-weight: bold;
     font-size: 120%;
-    margin-bottom: 10px;
-}
-
-.description {
-    text-align: right;
-    font-style: italic;
 }
 
 /*
@@ -107,10 +101,21 @@ body.photo {
     text-align: center;
 }
 
-body.photo div.photo img {
-    margin: 10px;
+body.photo h1 {
+    margin-bottom: 0px;
 }
 
+body.photo p.description {
+    text-align: right;
+    font-style: italic;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+body.photo div.photo {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
 
 /* exif page settings */
 body.photo table.exif { /* exif on photo page */
@@ -165,15 +170,6 @@ div.copyright {
 div.copyright img {
     position: relative;
     top: 3px;
-}
-
-/* modifications for 1024x768 view */
-body.view div.body {
-    width: 1064px;        /* 1024 + 40 */
-}
-
-body.view div.footer {
-    width: 1064px;      /* set to div.body width */
 }
 
 /* xhtml tag modifications */

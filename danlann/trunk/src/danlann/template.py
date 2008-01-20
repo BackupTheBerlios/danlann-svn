@@ -169,7 +169,7 @@ class XMLRenderer(stringtemplate.AttributeRenderer):
         super(XMLRenderer, self).__init__(*args, **kw)
         # url starts with http and ends with space, dot, coma or start of a
         # tag
-        self.link = re.compile(r'(\bhttps?://[^<>]+)\b([\s\.,<])')
+        self.link = re.compile(r'(\bhttps?://[^<>\s]+)\b([\s\.,<])')
 
     def str(self, val):
         assert val is not None

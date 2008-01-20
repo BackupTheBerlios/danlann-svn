@@ -304,9 +304,15 @@ class TemplateSpecialCharacterRenderTestCase(unittest.TestCase):
         # link with new line at the begining
         assert ('a<br/><a href = \'%s\'>%s</a> a' % (link, link)) == renderer.str('a\\n%s a' % link)
 
-        # link with punctuation at the end
-        assert ('a<br/><a href = \'%s\'>%s</a>, a' % (link, link)) == renderer.str('a\\n%s, a' % link)
+        # link with punctuation at the end...
+        s = renderer.str('a\\n%s, a' % link)
+        assert ('a<br/><a href = \'%s\'>%s</a>, a' % (link, link)) == s, s
+
+        # ... and with more punctuation in a string
+        s = renderer.str('a\\n%s, abc, aa' % link)
+        assert ('a<br/><a href = \'%s\'>%s</a>, abc, aa' % (link, link)) == s, s
 
         link = 'https://danlann.berlios.de/test/test'
         # https url
-        assert ('a <a href = \'%s\'>%s</a> a' % (link, link)) == renderer.str('a %s a' % link)
+        s = renderer.str('a %s a' % link)
+        assert ('a <a href = \'%s\'>%s</a> a' % (link, link)) == s, s

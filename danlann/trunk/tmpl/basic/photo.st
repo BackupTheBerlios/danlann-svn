@@ -28,7 +28,7 @@ $endif$
 $if(photo.title)$
 <h1 class = 'title'>$album.title$: $photo.title$</h1>
 $else$
-<h1 class = 'title'>$album.title$: no title</h1>
+<h1 class = 'title'>$album.title$</h1>
 $endif$
 $if(photo.description)$
 <p class = 'description'>$photo.description$</p>

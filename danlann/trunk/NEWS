@@ -1,9 +1,10 @@
 1.2.0
 -----
-- no need to write a code to create own templates (using StringTemplates
-  library, now)
-- album page photo index generated without tables
-- new template - vflow 
+- pages are generated using StringTemplate library, this allows easier
+  template customization
+- album page photo index is generated without tables
+- links are parsed and converted into html links
+- css simplification and improvements
 
 1.0.2
 -----

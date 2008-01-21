@@ -295,11 +295,31 @@ class TemplateSpecialCharacterRenderTestCase(unittest.TestCase):
     def testURL(self):
         """url render"""
         renderer = XMLRenderer()
+
+        # simple link
+        link = 'http://danlann.berlios.de'
+        s = renderer.str('%s' % link)
+        assert ('<a href = \'%s\'>%s</a>' % (link, link)) == s, s
+
+        link = 'http://danlann.berlios.de/'
+        s = renderer.str('%s' % link)
+        assert ('<a href = \'%s\'>%s</a>' % (link, link)) == s, s
+
+        # simple link with a text
+        link = 'http://danlann.berlios.de'
+        s = renderer.str('a %s a' % link)
+        assert ('a <a href = \'%s\'>%s</a> a' % (link, link)) == s, s
+
+        link = 'http://danlann.berlios.de/'
+        s = renderer.str('a %s a' % link)
+        assert ('a <a href = \'%s\'>%s</a> a' % (link, link)) == s, s
+
         link = 'http://danlann.berlios.de/test/test'
         assert ('a <a href = \'%s\'>%s</a> a' % (link, link)) == renderer.str('a %s a' % link)
 
         # link with new line at the end
-        assert ('a <a href = \'%s\'>%s</a><br/>a' % (link, link)) == renderer.str('a %s\\na' % link)
+        s = renderer.str('a %s\\na' % link)
+        assert ('a <a href = \'%s\'>%s</a><br/>a' % (link, link)) == s, s
 
         # link with new line at the begining
         assert ('a<br/><a href = \'%s\'>%s</a> a' % (link, link)) == renderer.str('a\\n%s a' % link)

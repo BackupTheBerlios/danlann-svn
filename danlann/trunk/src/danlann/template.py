@@ -167,9 +167,9 @@ class XMLRenderer(stringtemplate.AttributeRenderer):
     """
     def __init__(self, *args, **kw):
         super(XMLRenderer, self).__init__(*args, **kw)
-        # url starts with http and ends with space, dot, coma or start of a
-        # tag
-        self.link = re.compile(r'(\bhttps?://[^<>\s]+)\b([\s\.,<])')
+        # url starts with http and ends with a printable character or slash
+        # <> is not in a link
+        self.link = re.compile(r'(\bhttps?://\w[^<>\s]+[\w/])')
 
     def str(self, val):
         assert val is not None
@@ -183,6 +183,6 @@ class XMLRenderer(stringtemplate.AttributeRenderer):
         val = val.replace('\\n', '<br/>')
 
         # support links
-        val = self.link.sub('<a href = \'\\1\'>\\1</a>\\2', val)
+        val = self.link.sub('<a href = \'\\1\'>\\1</a>', val)
 
         return val

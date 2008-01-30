@@ -27,7 +27,7 @@ own little art pieces to other people than family and friends. Just choose
 photos to be published, change size and sharpness and
 upload to a~hosting server on the Internet.
 
-Gallery creation process can be automated in many areas and do not require
+Gallery creation process can be automated in many areas and does not require
 software with sophisticated user interface --- just specify photos and run
 software to perform repeatable tasks... This way Danlann idea was born.
 
@@ -185,13 +185,9 @@ in gallery output directory
     \begin{itemize}
     \item photo page, it is XHTML file, i.e. \texttt{dsc\_0001.xhtml}
     \item thumbnail image, i.e. \texttt{dsc\_0001.thumb.jpg}
-    \item preview photo XHTML file, i.e. \texttt{dsc\_0001.preview.xhtml}
-    \item view photo XHTML file, i.e. \texttt{dsc\_0001.view.xhtml}
-    \item Exif data XHTML file, i.e. \texttt{dsc\_0001.exif.xhtm}
-    \item preview photo (size 800x600 by default),
-        i.e. \texttt{dsc\_0001.preview.jpg}
-    \item view photo (size 1024x768 by default),
-        i.e. \texttt{dsc\_0001.view.jpg}
+    \item Exif data XHTML file, i.e. \texttt{dsc\_0001.exif.xhtml}
+    \item photo image (size 800x600 by default),
+        i.e. \texttt{dsc\_0001.jpg}
     \end{itemize}
 \end{itemize}
 
@@ -204,20 +200,15 @@ be achieved on several levels described in following subsections.
 \subsection{Photo Conversion Parameters}\label{conversion}
 \begin{listing}
 \begin{lstlisting}
-[photo:view]
-size    = 1024x768>
-quality = 90
-unsharp = 3x3+0.5+0
-
-[photo:preview]
+[photo:image]
 size    = 800x600>
 quality = 90
-unsharp = 3x3+0.5+0
+unsharp = 0.1x0.1+2.0+0
 
 [photo:thumb]
 size    = 128x128>
 quality = 90
-unsharp = 3x3+0.5+0
+unsharp = 0.1x0.1+2.0+0
 \end{lstlisting}
 \caption{Default photo conversion parameters}\label{conf:photo:default}
 \end{listing}
@@ -356,8 +347,7 @@ recognizes several sections
 \begin{description}
 \item[danlann] main gallery and Danlann configuration
 \item[photo:thumb] photo thumbnail configuration
-\item[photo:preview] photo preview configuration
-\item[photo:view] photo view configuration
+\item[photo:image] photo image configuration
 \item[template] template configuration
 \end{description}
 
@@ -383,7 +373,7 @@ exif           & & list of Exif headers separated by coma & see section~\ref{exi
 \hline
 files          & \verb+css js+ & list of files separated by space to be copied from library directories to gallery output directory  &  see section~\ref{files} \\
 \hline
-graphicsmagick & \texttt{True} & use GraphicsMagick if \texttt{True}, ImageMagick otherwise & \\
+graphicsmagick & \texttt{False} & use GraphicsMagick if \texttt{True}, ImageMagick otherwise & \\
 \hline
 indir          &  & list of directories separated by colon, directories contain photo files to be converted into web gallery photos & see section~\ref{example} \\
 \hline
@@ -399,13 +389,13 @@ validate       & \texttt{False} & validate generated XHTML files if set to \text
 \multicolumn{4}{|c|}{\texttt{[photo:*]} sections} \\
 \hline
 \hline
-size & \verb+128x128>+\newline or \verb+800x600>+\newline or \verb+1024x768>+ 
-    & photo (thumbnail, preview, view) size geometry as accepted by GraphicsMagick/ImageMagick
+size & \verb+128x128>+\newline or \verb+800x600>+\newline
+    & photo (thumbnail, photo image itself) size geometry as accepted by GraphicsMagick/ImageMagick
     & see section~\ref{conversion} \\
 \hline
 quality & \verb+90+ & output image JPEG quality ($0-100$) &  \\
 \hline
-unsharp & \verb-3x3+0.5+0- & image sharpening parameters as accepted by GraphicsMagick/ImageMagick &  \\
+unsharp & \verb-0.1x0.1+2.0+0- & image sharpening parameters as accepted by GraphicsMagick/ImageMagick &  \\
 \hline
 params & & additional photo conversion parameters (accepted by GraphicsMagick/ImageMagick) &  \\
 \hline

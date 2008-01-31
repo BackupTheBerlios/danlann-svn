@@ -7,7 +7,7 @@
   into html links
 - css simplification and improvements
 - exif displaying reimplemented using jquery
-- idea of multiple image views is discarded (no more preview/view pages)
+- idea of multiple photo views is discarded (no more preview/view pages)
 
 1.0.2
 -----

@@ -16,8 +16,9 @@ $endif$
 $css: {c |
     <link rel = 'stylesheet' type = 'text/css' href = '$rootdir$/$c$' media = 'all'/>
 }$
-    <script type = "text/javascript" src = '$rootdir$/js/jquery.js'></script>
-    <script type = "text/javascript" src = '$rootdir$/js/danlann.js'></script>
+$js: {j |
+    <script type = "text/javascript" src = '$rootdir$/$j$'></script>
+}$
     </head>
 
     <body class = "$class$">

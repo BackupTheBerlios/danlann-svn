@@ -72,12 +72,13 @@ class TemplateVariablesTestCase(unittest.TestCase):
         self.tmpl.st_group = stringtemplate.StringTemplateGroup(StringIO(tmpl))
 
 
-    def testGalleryPageVairables(self):
+    def testGalleryPageVariables(self):
         """gallery page template variables"""
         self._setTemplate('group basic;\n' \
-                'page(gallery, css, class, tmpl, rootdir, copyright) ::=' \
+                'page(gallery, css, js, class, tmpl, rootdir, copyright) ::=' \
                 ' "\'$gallery.title$\'' \
                 ' $css$' \
+                ' $js$' \
                 ' $class$' \
                 ' $tmpl$' \
                 ' $rootdir$' \
@@ -88,6 +89,7 @@ class TemplateVariablesTestCase(unittest.TestCase):
 
         expected = '\'danlann title test\'' \
                 ' css/danlann.css' \
+                ' js/jquery.jsjs/danlann.js' \
                 ' gallery' \
                 ' basic/gallery' \
                 ' .' \
@@ -98,10 +100,11 @@ class TemplateVariablesTestCase(unittest.TestCase):
     def testAlbumPageVairables(self):
         """album page template variables"""
         self._setTemplate('group basic;\n' \
-                'page(gallery, css, class, tmpl, rootdir, copyright, album,' \
-                '           parent, prev, next) ::=' \
+                'page(gallery, css, js, class, tmpl, rootdir, copyright,' \
+                '           album, parent, prev, next) ::=' \
                 ' "\'$gallery.title$\'' \
                 ' $css$' \
+                ' $js$' \
                 ' $class$' \
                 ' $tmpl$' \
                 ' $rootdir$' \
@@ -124,6 +127,7 @@ class TemplateVariablesTestCase(unittest.TestCase):
 
         expected = '\'danlann title test\'' \
                 ' css/danlann.css' \
+                ' js/jquery.jsjs/danlann.js' \
                 ' album' \
                 ' album' \
                 ' ../../..' \
@@ -137,10 +141,11 @@ class TemplateVariablesTestCase(unittest.TestCase):
     def testPhotoPageVariables(self):
         """photo page template variables"""
         self._setTemplate('group basic;\n' \
-                'page(gallery, css, class, tmpl, rootdir, copyright, album,' \
-                '           photo, prev, next) ::=' \
+                'page(gallery, css, js, class, tmpl, rootdir, copyright,' \
+                '           album, photo, prev, next) ::=' \
                 ' "\'$gallery.title$\'' \
                 ' $css$' \
+                ' $js$' \
                 ' $class$' \
                 ' $tmpl$' \
                 ' $rootdir$' \
@@ -172,6 +177,7 @@ class TemplateVariablesTestCase(unittest.TestCase):
 
         expected = '\'danlann title test\'' \
                 ' css/danlann.css' \
+                ' js/jquery.jsjs/danlann.js' \
                 ' photo' \
                 ' basic/photo' \
                 ' ../../..' \
@@ -185,10 +191,11 @@ class TemplateVariablesTestCase(unittest.TestCase):
     def testExifPageVariables(self):
         """exif page template variables"""
         self._setTemplate("group basic;\n" \
-                'page(gallery, css, class, tmpl, rootdir, copyright, album,' \
-                '           photo, prev, next) ::=' \
+                'page(gallery, css, js, class, tmpl, rootdir, copyright,' \
+                '           album, photo, prev, next) ::=' \
                 ' "\'$gallery.title$\'' \
                 ' $css$' \
+                ' $js$' \
                 ' $class$' \
                 ' $tmpl$' \
                 ' $rootdir$' \
@@ -224,6 +231,7 @@ class TemplateVariablesTestCase(unittest.TestCase):
 
         expected = '\'danlann title test\'' \
                 ' css/danlann.css' \
+                ' js/jquery.jsjs/danlann.js' \
                 ' photo' \
                 ' basic/photo' \
                 ' ../../..' \

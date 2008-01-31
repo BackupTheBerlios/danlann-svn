@@ -33,6 +33,7 @@ class Template(object):
     @ivar copyright: copyright text
     @ivar st_group: StringTemplate reference
     @ivar css: list of css files
+    @ivar js: list of javascript files
     """
     def __init__(self, name, gallery, override=None):
         """
@@ -47,6 +48,7 @@ class Template(object):
         self.gallery = gallery
 
         self.css = ['css/danlann.css']
+        self.js = ['js/jquery.js', 'js/danlann.js']
         self.copyright = None
 
         st_group = stringtemplate.StringTemplateGroup('basic',
@@ -89,6 +91,7 @@ class Template(object):
         page['rootdir'] = rootdir
         page['copyright'] = self.copyright
         page['css'] = self.css
+        page['js'] = self.js
 
         return page
 

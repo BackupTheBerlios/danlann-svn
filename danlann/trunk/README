@@ -11,7 +11,10 @@ quirks of different web browsers. If you your preferred web browser has
 problems with displaying generated pages, then report bug to team
 developing this web browser, please.
 
+This software embeds jQuery library (http://jquery.com/).
+
 Requirements:
+
 - Python 2.4 or later
 
     http://www.python.org/
@@ -33,6 +36,9 @@ Requirements:
 
     http://www.exiv2.org/
 
+- StringTemplate library
+
+    http://www.stringtemplate.org/
 
 See INSTALL file for installation details (standard ac/am stuff).
 

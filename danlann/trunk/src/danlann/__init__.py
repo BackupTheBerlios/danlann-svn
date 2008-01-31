@@ -239,6 +239,10 @@ class Danlann(object):
             css = conf.get('template', 'css')
             tmpl.css.extend(css.split())
 
+        if conf.has_option('template', 'js'):
+            js = conf.get('template', 'js')
+            tmpl.js.extend(js.split())
+
         #
         # check exiv2/GraphicsMagick/ImageMagick existence
         #

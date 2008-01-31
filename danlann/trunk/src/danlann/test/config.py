@@ -100,6 +100,12 @@ outdir    = output_dir
 files     = xx $files ee
 """
 
+CONF_TEMPLATE = """
+[template]
+js = a b c
+css = x y z
+"""
+
 # configuration data for test cases
 # test case name is used as hashtable key
 CONFIG_DATA = {}
@@ -126,10 +132,9 @@ def config(conf):
     return set_config
 
 
-
-class ConfigTestCase(unittest.TestCase):
+class Base(unittest.TestCase):
     """
-    Test file manager directory tree generator.
+    Abstract class for test cases testing configuration.
 
     Configuration data is set using @C{config} decorator.
 
@@ -160,6 +165,12 @@ class ConfigTestCase(unittest.TestCase):
         self.filemanager = self.processor.fm
 
 
+
+
+class ConfigTestCase(Base):
+    """
+    Test basic Danlann configuration functionality.
+    """
     @config(CONF_MIN)
     def testMinimalConfig(self):
         """minimal and default configuration"""
@@ -301,5 +312,19 @@ class ValidationConfigTestCase(unittest.TestCase):
         self.assert_(not processor.validate)
 
 
-if __name__ == '__main__':
-    unittest.main()
+
+class TemplateConfigTestCase(Base):
+    """
+    Test templates configuration option overriding.
+    """
+    @config(CONF_MIN + CONF_TEMPLATE)
+    def testJavaScriptFiles(self):
+        """adding more js"""
+        assert self.conf.has_option('template', 'js')
+        self.assertEqual(self.generator.tmpl.js, ['js/jquery.js', 'js/danlann.js', 'a', 'b', 'c'])
+
+    @config(CONF_MIN + CONF_TEMPLATE)
+    def testCSSStylesheets(self):
+        """adding more css"""
+        assert self.conf.has_option('template', 'css')
+        self.assertEqual(self.generator.tmpl.css, ['css/danlann.css', 'x', 'y', 'z'])

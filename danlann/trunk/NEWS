@@ -2,9 +2,11 @@
 -----
 - pages are generated using StringTemplate library, this allows easier
   template customization
-- album page photo index is generated without tables
-- links are parsed and converted into html links
+- photo index is generated without tables on album page
+- links in album and photo descriptions are parsed and converted
+  into html links
 - css simplification and improvements
+- exif displaying reimplemented using jquery
 
 1.0.2
 -----

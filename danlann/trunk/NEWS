@@ -8,6 +8,7 @@
 - css simplification and improvements
 - exif displaying reimplemented using jquery
 - idea of multiple photo views is discarded (no more preview/view pages)
+- licensed under GPL ver. 3
 
 1.0.2
 -----

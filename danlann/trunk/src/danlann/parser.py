@@ -396,7 +396,7 @@ def check(interpreter, gallery):
 
     if len(interpreter.references) > 0:
         raise ParseError('unresolved album references found: %s'
-            % ''.join(dir for dir in interpreter.references))
+            % ', '.join(dir for dir in interpreter.references))
 
     if len(gallery.subalbums) == 0:
         raise ParseError('no root albums in gallery')

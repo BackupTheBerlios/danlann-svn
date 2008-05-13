@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{geometry}
+\usepackage{multicol}
 \usepackage{hyperref}
 \usepackage{listings}
 \usepackage{float}
@@ -82,6 +83,7 @@ directory.
 Let's assume that we want to create a~gallery, which contains photos from
 our holidays spent in two Irish cities --- Dublin and Galway. We would like
 to title it ``Holidays in Ireland 2006''. Gallery structure can look like
+\begin{multicols}{2}
 \begin{itemize}
 \item album \textit{Dublin}
     \begin{itemize}
@@ -95,6 +97,7 @@ to title it ``Holidays in Ireland 2006''. Gallery structure can look like
     \item photo \texttt{dsc\_0005} \textit{Yeats Monument}
     \item photo \texttt{dsc\_0006} \textit{Spire}
     \end{itemize}
+\columnbreak
 \item album \textit{Galway}
     \begin{itemize}
     \item album \textit{Musicians}
@@ -106,6 +109,7 @@ to title it ``Holidays in Ireland 2006''. Gallery structure can look like
     \item photo dsc\_0010 \textit{Bay}
     \end{itemize}
 \end{itemize}
+\end{multicols}
 
 Above gallery can be defined in two album files \texttt{dublin.txt} and
 \texttt{galway.txt}, see listings~\ref{example:album:dublin}
@@ -294,6 +298,8 @@ exif = Image timestamp, Exposure time, Aperture
 \end{listing}
 
 By default, gallery visitors can see photo parameters information like
+
+\begin{multicols}{3}
 \begin{itemize}
 \item Image timestamp
 \item Exposure time
@@ -307,6 +313,7 @@ By default, gallery visitors can see photo parameters information like
 \item Metering mode
 \item White balance
 \end{itemize}
+\end{multicols}
 
 Exif header names can be determined using \texttt{exiv2} command, which is
 used by Danlann to get photo information.

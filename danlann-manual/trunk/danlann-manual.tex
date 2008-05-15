@@ -237,7 +237,7 @@ listing~\ref{conf:photo:example:thumb}.
 
 \subsection{Additional Gallery Files}\label{files}
 Gallery customization often involves copying of additional files like
-styles, scripts or images into output directory. By default, Danlann copies
+styles, scripts or icon images into output directory. By default, Danlann copies
 \texttt{css} and \texttt{js} directories from Danlann library path. This
 can be changed by setting \texttt{files} and \texttt{libpath} configuration
 options, see listing~\ref{conf:copy} for examples.
@@ -311,8 +311,8 @@ used by Danlann to get photo information.
 Danlann input file defines albums and their content like subalbums and
 photos. Multiple files are accepted for easy maintenance of gallery.
 
-Input file consists of lines. Every line can contain album definition,
-subalbum or photo. A~line can be also a~comment or it can be empty.
+Input file consists of lines. Every line can contain album,
+subalbum or photo definition. A~line can be also a~comment or it can be empty.
 
 Grammar of input file is defined on listing~\ref{grammar}.
 
@@ -334,11 +334,8 @@ comment   := ^\#.*
 \end{listing}
 
 Input file defines also order of subalbums and photos. 
-Therefore, if you want to change order of photos presented in your gallery, then
-change order of photos or subalbums listed for an album in an input file.
-
-This also applies to whole set of albums if order of input files is changed
-in configuration file (see section~\ref{conf:all}).
+Therefore, if order of photos presented in a~gallery needs to be changed, then
+move appropriate lines in an input file.
 
 \section{Configuration Files}\label{conf:all}
 Danlann can read configuration file in \texttt{.ini} format. Danlann

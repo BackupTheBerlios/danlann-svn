@@ -12,7 +12,7 @@
 
 \geometry{papername=a4paper, margin = 2cm}
 
-\title{Danlann Manual}
+\title{Danlann Manual\\\small{Version 0.9.1\\For Danlann 1.2.0}}
 \author{\url{wrobell@pld-linux.org}}
 \begin{document}
 \maketitle
@@ -31,8 +31,6 @@ upload to a~hosting server on the Internet.
 Gallery creation process can be automated in many ways and does not require
 software with sophisticated user interface --- just specify photos and run
 software to perform repeatable tasks... This way idea of Danlann was born.
-
-This manual describes Danlann~1.2.0.
 
 \subsection{Features}
 Danlann is a~command line photo web gallery generator.
@@ -203,28 +201,16 @@ in gallery output directory
 
 \section{Basic Customization}\label{customization}
 Gallery can be customized to fit gallery creator needs and taste. This can
-be achieved on several levels described in following subsections.
+be easily achieved in many ways described in the following subsections.
 
 % fixme: additional files: styles and javascript files
 
 \subsection{Photo Conversion Parameters}\label{conversion}
-\begin{listing}
-\begin{lstlisting}
-[photo:image]
-size    = 800x600>
-quality = 90
-unsharp = 0.1x0.1+2.0+0
-
-[photo:thumb]
-size    = 128x128>
-quality = 90
-unsharp = 0.1x0.1+2.0+0
-\end{lstlisting}
-\caption{Default photo conversion parameters}\label{conf:photo:default}
-\end{listing}
-Listing~\ref{conf:photo:default} presents default photo conversion
-parameters. These parameters are passed as arguments to ImageMagick or GraphicsMagick
-command line utilities during photo conversion.
+ImageMagick (or GraphicsMagick) is used to resize photos for gallery
+purposes. The size, quality and sharpening options can be overriden
+in configuration file. Additional ImageMagick parameters can be specified
+with \texttt{params} option. See section~\ref{conf:all} for default values
+of photo processing options.
 
 \begin{listing}
 \begin{lstlisting}
@@ -232,22 +218,22 @@ command line utilities during photo conversion.
 size    = 100x100>
 quality = 85
 unsharp =
-params  = -blur 2 -dither
+params  = -blur 1 -border 1x1+1+1
 \end{lstlisting}
 \caption{Example of custom photo conversion parameters}\label{conf:photo:example:thumb}
 \end{listing}
 
-It is possible to change and extend conversion parameters. For example, we
-can change thumbnail generation in following way (see
-listing~\ref{conf:photo:example:thumb} for configuration changes)
-% fixme: use more sophisticated example, i.e. border instead of dithering
+It is possible to change and extend photo conversion parameters, for example
+thumbnail could be generated using following receipe
 \begin{itemize}
 \item size of thumbnail should be 100x100
 \item use quality 85
 \item do not perform sharpening operation
 \item blur thumbnail 
-\item apply Floyd/Steinberg error diffusion to thumbnail image
+\item add 1~pixel white border around the thumbnail
 \end{itemize}
+Configuration changes required to realize above receipe are presented on
+listing~\ref{conf:photo:example:thumb}.
 
 \subsection{Additional Gallery Files}\label{files}
 Gallery customization often involves copying of additional files like
@@ -268,7 +254,7 @@ libpath = $libpath:.
 \begin{lstlisting}
 [danlann]
 ; copy standard directories, images and readme file
-; from default Danlann directory, /usr/local/share/galleries
+; from default Danlann directory, /usr/local/share/galleries directory
 ; and from current directory
 files   = $files images doc/README
 libpath = $libpath:/usr/share/local/galleries/:.

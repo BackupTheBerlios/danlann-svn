@@ -1,0 +1,114 @@
+scope
+\item photo: thumbnail, image itself
+\item exif
+\item rss
+\item navigation
+  \item album/photo parent
+  \item prev album/photo
+  \item next album/photo
+
+\item static xhtml valid
+\item one text file as input file
+\item do not overwrite files
+
+titles:
+- gallery title, i.e. bird from hell
+- album title contains gallery title, i.e. bird from hell - wicklow
+- photo title contains album title, i.e. bird from hell - wicklow - power plant
+
+input files
+- albums file
+    dir1; thumbnail; title; description     # definition of album
+    dir2; thumbnail; title; description     # definition of album
+    dir3; thumbnail; title; description     # definition of album
+
+- photos file
+    dir1:                                   # album specification start
+    =dir2                                   # album reference
+    file1; title; description               # file definition and reference
+    file2; title; description
+- another photos file
+    dir2:                                   # album specification start
+    =dir3
+    file1; title; description
+    file3; title; description
+
+example of input file
+    ireland; ireland/dsc_0001.jpg; irish steps; voice from green island
+    ireland/dsc_0001.jpg; wicklow; the highest mountain in wicklow
+
+
+configuration file
+
+[gallery]
+inputdirs = $HOME/Desktop/Images/Photos/out
+validate = True
+exif = Image timestamp, Exposure time, Aperture, Focal length, Flash, ISO speed
+
+# title of gallery
+# i.e. title = bird from hell
+title =
+
+# copyright notice to be shown in the footer
+# i.e. copyright = (cc) by wrobell
+copyright =
+
+# full size image parameters
+[image]
+params = -size 1024x768
+
+# thumbnail image parameters
+[thumb]
+params = -size 128x128
+
+
+html file:
+- gallery index file
+    body.gallery
+        h1.title
+        div.albums
+            div.album 1..*
+                div.album 1..*
+        p.description
+
+- album index file
+    body.album
+        h1.title
+        p.description
+        div.albums
+            div.album 0..*
+        div.photos
+            div.photo 0..*
+
+- photo file
+    body.photo
+        h1.title
+        p.description
+        div.photo
+
+
+Templates
+---------
+Based on StringTemplate library.
+
+There are templates for pages
+- main page containing album index
+- album page containing photo index
+- photo page containing photo
+
+Page template should receive:
+- gallery object
+- album object in case of album page
+- album object and photo object in case of photo page
+- rootdir reference
+- user variables defined in configuration file [template:variables]
+
+Template parts:
++ body
++ title
++ description
++ albums
++ album
++ photos
++ photo
+- navigation

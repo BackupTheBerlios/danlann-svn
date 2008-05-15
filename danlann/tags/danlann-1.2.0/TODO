@@ -1,0 +1,4 @@
+- move to lxml http://codespeak.net/lxml/
+- read generated xhtml files and create gallery representation in memory,
+  which should allow to implement cleanup function, improve performance
+  by regenerating only required pages, etc.

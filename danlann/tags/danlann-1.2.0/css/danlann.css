@@ -1,0 +1,232 @@
+/*
+ * general classes
+ */
+.title {
+    text-align: right;
+    width: auto;
+    font-weight: bold;
+    font-size: 120%;
+}
+
+h1 {
+    margin-bottom: 0px;
+}
+
+p.description {
+    text-align: right;
+    font-style: italic;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.albums {
+    color: gray;
+}
+
+/*
+ * gallery page: album index settings
+ */
+body.gallery .albums {
+    height: 500px;
+}
+
+body.gallery .album {
+    margin-top: 5px;
+}
+
+body.gallery .album {
+    margin-left: 10px;
+}
+
+body.gallery .album:before {
+    content: '[';
+}
+
+body.gallery .album:after {
+    content: ']';
+}
+
+body.gallery .album .album {
+    margin-left: 15px;
+}
+
+body.gallery > .body > .albums > .album {
+    /* display: inline-block; */
+    float: left;
+}
+
+
+/* album page: subalbums index settings */
+
+body.album .albums {
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body.album .album:before {
+    content: '[';
+}
+
+body.album .album:after {
+    content: ']';
+}
+
+body.album .albums .album {
+    display: inline;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+/* album page: photos index */
+body.album div.body {
+    overflow: hidden; /* hack to allow to use floatings for photo index */
+}
+
+body.album div.photos {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+body.album div.photos:after { /* another hack to allow to use floatings for photo index */
+    content: '.';
+    display: block;
+    height: 0px;
+    clear: both;
+    visibility: hidden;
+}   
+
+/* we should use inline-block here, waiting for browsers to support it :/ */
+body.album div.photos div.photo {
+    /* display: inline-block; */
+    float: left;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 168px;
+    height: 168px;
+}
+
+/* photo page settings */
+body.photo {
+    text-align: center;
+}
+
+body.photo div.photo {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+/* exif page settings */
+body.photo table.exif { /* exif on photo page */
+    position: absolute;
+    top: 55px;
+    left: 30px;
+    padding: 10px;
+    opacity: 0.90;
+    background-color: #111111;
+}
+
+body.exif table.exif {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+}
+
+table.exif {
+    margin: 5px;
+    border: solid 1px gray;
+}
+
+table.exif th {
+    text-align: left;
+    padding: 3px;
+}
+
+table.exif td {
+    text-align: left;
+    padding: 3px;
+}
+
+/* page */
+div.body {
+    width: 840px;        /* 800 + 40 */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 30px;
+    padding-right: 30px;
+    border: solid 1px gray;
+}
+
+div.footer {
+    text-align: center;
+}
+
+div.copyright {
+    text-align: right;
+}   
+
+div.copyright img {
+    position: relative;
+    top: 3px;
+}
+
+/* xhtml tag modifications */
+html {
+    color: #dddddd;
+    background-color: black;
+    font-size: 10pt;
+}
+
+a {
+    color: #dddddd;
+}
+
+img {
+    border: 0px;
+}
+
+/* navigation */
+.navigation {
+    position: absolute;
+    font-size: 120%;
+    top: 20px;
+    width: 9em;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid gray;
+}
+
+.navigation span {
+    font-weight: bold;
+}
+
+.navigation span.disabled {
+    color: #aaaaaa;
+}
+
+.navigation span.prev:before {
+    content: '<<';
+}
+
+.navigation span.next:before {
+    content: '>>';
+}
+
+.navigation span.parent:before {
+    content: ' ^ ';
+}
+
+.navigation span.exif:before {
+    content: '[';
+}
+
+.navigation span.exif:after {
+    content: ']';
+}
+
+.navigation span.exif {
+    font-size: 80%;
+    font-weight: normal;
+    margin-left: 10px;
+}

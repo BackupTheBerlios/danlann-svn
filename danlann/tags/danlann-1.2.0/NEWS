@@ -1,0 +1,24 @@
+1.2.0
+-----
+- pages are generated using StringTemplate library, this allows easier
+  template customization
+- photo index is generated without tables on album page
+- links in album and photo descriptions are parsed and converted
+  into html links
+- css simplification and improvements
+- exif displaying reimplemented using jquery
+- idea of multiple photo views is discarded (no more preview/view pages)
+- licensed under GPL ver. 3
+
+1.0.2
+-----
+- fixed execution of third party programs (i.e. ImageMagick/GraphicsMagick)
+
+1.0.1
+-----
+- allow '-' character in photo and album/subalbum names
+- minor bugfixes
+
+1.0.0
+-----
+- first public release

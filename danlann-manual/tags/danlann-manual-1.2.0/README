@@ -1,0 +1,16 @@
+This archive contains Danlann manual. Danlann is command line web photo
+gallery generator, which can be obtained at
+
+    http://danlann.berlios.de/
+
+Danlann manual is written using LaTeX. PDFTex is used to compile LaTeX
+sources, i.e.
+
+    $ pdflatex danlann-manual.tex
+
+To build Danlann manual it is recommended to use provided ac/am build
+support
+
+    $ autoreconf -i
+    $ ./configure
+    $ make

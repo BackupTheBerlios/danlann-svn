@@ -4,17 +4,17 @@ create album index page
 
 <div class='navigation'>
 $if(prev)$
-    <a title='prev album: $prev.title$' href='$rootdir$/$prev.dir$/index.xhtml'>
+    <a class='prev' title='prev album: $prev.title$' href='$rootdir$/$prev.dir$/index.xhtml'>
         <span class='prev'></span>
     </a>
 $else$
     <span class='prev disabled'></span>
 $endif$
-    <a title='album: $parent.title$' href='../index.xhtml'>
+    <a class='parent' title='album: $parent.title$' href='../index.xhtml'>
         <span class='parent'></span>
     </a>
 $if(next)$
-    <a title='next album: $next.title$' href='$rootdir$/$next.dir$/index.xhtml'>
+    <a class='next' title='next album: $next.title$' href='$rootdir$/$next.dir$/index.xhtml'>
         <span class='next'></span>
     </a>
 $else$

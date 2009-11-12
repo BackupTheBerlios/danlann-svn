@@ -1,5 +1,7 @@
 1.2.1
 -----
+- allow to navigate albums and photos by pressing appropriate areas of
+  album/photo pages
 - jquery updated to version 1.3.2
 - various unicode fixes
 

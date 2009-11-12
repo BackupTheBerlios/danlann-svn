@@ -12,7 +12,10 @@ $(document).ready(function() {
 
 
     $('.navigation .exif a').click(function() {
-        $('table.exif').slideToggle('slow');
+        if ($('table.exif').is(':visible'))
+            $('table.exif').fadeOut()
+        else
+            $('table.exif').fadeIn()
         return false;
     })
 })

@@ -20,6 +20,7 @@
 import sys
 import os
 import os.path
+import codecs
 
 from danlann.bc import Gallery, Album, Photo
 
@@ -50,7 +51,7 @@ class ConversionArguments(list):
         super(ConversionArguments, self).__init__()
         self.__dict__['size']    = size
         self.__dict__['quality'] = '90'
-        self.__dict__['unsharp'] = '0.1x0.1+2.0+0'
+        self.__dict__['unsharp'] = '0.5x0.5+1.2+0'
         self.__dict__['params']  = []
 
         self.rebuild()
@@ -159,7 +160,7 @@ class DanlannGenerator(object):
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
-        f = open('%s/index.xhtml' % self.outdir, 'w')
+        f = codecs.open('%s/index.xhtml' % self.outdir, 'w', encoding='utf-8')
         self.tmpl.galleryPage(f)
         f.close()
 
@@ -173,7 +174,7 @@ class DanlannGenerator(object):
         self.fm.mkdir(self.getDir(album))
         fn = self.getAlbumFile(album, 'index.xhtml')
 
-        f = open(fn, 'w')
+        f = codecs.open(fn, 'w', encoding='utf-8')
         self.tmpl.albumPage(f, album, parent)
         f.close()
 
@@ -206,7 +207,7 @@ class DanlannGenerator(object):
 
         if photo.exif:
             exif_fn = self.getPhotoFile(photo, 'exif')
-            f = open(self.getAlbumFile(photo.album, exif_fn), 'w')
+            f = codecs.open(self.getAlbumFile(photo.album, exif_fn), 'w', encoding='utf-8')
             self.tmpl.exifPage(f, photo)
             f.close()
             log.info('generated exif page for photo %s' % photo.name)
@@ -245,7 +246,7 @@ class DanlannGenerator(object):
         fn = self.getAlbumFile(photo.album,
             self.getPhotoFile(photo, photo_type))
 
-        f = open(fn, 'w')
+        f = codecs.open(fn, 'w', encoding='utf-8')
         self.tmpl.photoPage(f, photo)
         f.close()
 

@@ -24,6 +24,7 @@ Danlann processor module.
 import os
 import os.path
 import itertools
+import codecs
 from ConfigParser import ConfigParser
 
 import danlann.config
@@ -276,7 +277,7 @@ class Danlann(object):
         # read album files
         for fn in self.albums:
             log.debug('parsing album file %s' % fn)
-            f = open(fn)
+            f = codecs.open(fn, encoding='utf-8')
             parser.load(f, interpreter)
             f.close()
 

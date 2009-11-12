@@ -19,7 +19,7 @@
 
 import re
 
-import stringtemplate
+import stringtemplate3 as stringtemplate
 
 from danlann.bc import Gallery, Album, Photo
 import danlann.config
@@ -48,7 +48,7 @@ class Template(object):
 
         self.css = ['css/danlann.css']
         self.js = ['js/jquery.js', 'js/danlann.js']
-        self.copyright = None
+        self.copyright = ''
 
         st_group = stringtemplate.StringTemplateGroup('basic',
                 '%s/tmpl' % danlann.config.libpath)
@@ -102,7 +102,7 @@ class Template(object):
         @param f: page output file
         @param page: page to be saved
         """
-        print >> f, str(page)
+        print >> f, unicode(page)
 
 
     def galleryPage(self, f):
@@ -173,7 +173,7 @@ class XMLRenderer(stringtemplate.AttributeRenderer):
         # <> is not in a link
         self.link = re.compile(r'(\bhttps?://\w[^<>\s]+[\w/])')
 
-    def str(self, val):
+    def toString(self, val, fmt):
         assert val is not None
         val = val.replace('&', '&amp;')
         val = val.replace('\'', '&apos;')
@@ -187,4 +187,5 @@ class XMLRenderer(stringtemplate.AttributeRenderer):
         # support links
         val = self.link.sub('<a href = \'\\1\'>\\1</a>', val)
 
+        assert val is not None
         return val

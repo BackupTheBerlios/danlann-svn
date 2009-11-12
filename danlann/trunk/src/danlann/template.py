@@ -63,7 +63,7 @@ class Template(object):
             self.st_group.registerRenderer(str, XMLRenderer());
             self.st_group.registerRenderer(unicode, XMLRenderer());
 
-            self.st_group.setSuperGroup(st_group)
+            self.st_group.superGroup = st_group
         else:
             self.st_group = st_group # no override
 

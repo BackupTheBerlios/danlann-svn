@@ -1,7 +1,7 @@
-AC_INIT(danlann, [1.2.0], [wrobell@pld-linux.org])
+AC_INIT(danlann, [1.2.1], [wrobell@pld-linux.org])
 AM_INIT_AUTOMAKE([dist-bzip2])
 
-AM_PATH_PYTHON(2.4)
+AM_PATH_PYTHON(2.5)
 
 AC_OUTPUT([
     Makefile

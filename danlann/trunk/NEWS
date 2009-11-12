@@ -1,3 +1,8 @@
+1.2.1
+-----
+- jquery updated to version 1.3.2
+- various unicode fixes
+
 1.2.0
 -----
 - pages are generated using StringTemplate library, this allows easier
